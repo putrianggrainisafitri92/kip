@@ -47,7 +47,7 @@ if ($koneksi) {
   <!-- Kolom 1: Info Polinela -->
   <div class="space-y-5">
     <div class="flex items-center">
-      <img src="/KIPWEB/assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
+      <img src="assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
       <div>
         <h4 class="font-bold text-lg text-white leading-tight">POLITEKNIK NEGERI LAMPUNG</h4>
         <p class="text-sm italic text-indigo-200">Kampus Unggul, Profesional, dan Mandiri</p>

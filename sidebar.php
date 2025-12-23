@@ -5,7 +5,7 @@
   </button>
 
   <div class="topbar-brand">
-    <img src="http://localhost/KIPWEB/uploads/Logo_Polinela.png" class="logo-img">
+    <img src="assets/logo-polinela.png" class="logo-img">
     <h1 class="topbar-title">Sistem Informasi KIP-Kuliah</h1>
   </div>
 
@@ -38,7 +38,7 @@
     </div>
 <?php endif; ?>
 
-<form action="/kipweb/cek_login.php" method="POST" class="login-form">
+<form action="cek_login.php" method="POST" class="login-form">
       
       <div class="input-wrap">
         <label>Username</label>
@@ -63,11 +63,11 @@
   </div>
 
   <nav class="nav-links">
-    <a href="/kipweb/index.php">
+    <a href="index.php">
       <i class="bi bi-house-door"></i> Beranda
     </a>
 
-    <a href="/kipweb/pedoman.php">
+    <a href="pedoman.php">
       <i class="bi bi-book"></i> Pedoman 2025
     </a>
 
@@ -78,17 +78,17 @@
       </button>
 
       <div class="dropdown-content">
-        <a href="/kipweb/statistik/statistik_tahun.php">Per Tahun</a>
-        <a href="/kipweb/statistik/statistik_jurusan.php">Per Jurusan</a>
-        <a href="/kipweb/statistik/statistik_prodi.php">Per Prodi</a>
+        <a href="statistik/statistik_tahun.php">Per Tahun</a>
+        <a href="statistik/statistik_jurusan.php">Per Jurusan</a>
+        <a href="statistik/statistik_prodi.php">Per Prodi</a>
       </div>
     </div>
 
-    <a href="/kipweb/pusat_layanan.php">
+    <a href="pusat_layanan.php">
       <i class="bi bi-pencil-square"></i> Pusat Layanan
     </a>
 
-    <a href="/kipweb/form_evaluasi.php">
+    <a href="form_evaluasi.php">
       <i class="bi bi-clipboard-check"></i> Evaluasi Mahasiswa
     </a>
   </nav>
