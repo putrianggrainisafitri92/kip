@@ -1,6 +1,6 @@
 <?php
 require __DIR__.'/fpdf/fpdf.php'; // pastikan folder fpdf di admin/lib/fpdf/
-include $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/koneksi.php';
+include __DIR__ . '/../koneksi.php';
 session_start();
 
 if (!isset($_GET['id'])) {

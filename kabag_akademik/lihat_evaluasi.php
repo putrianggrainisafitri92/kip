@@ -1,5 +1,5 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/koneksi.php';
+include __DIR__ . '/../koneksi.php';
 session_start();
 
 if (!isset($_SESSION['level']) || !in_array($_SESSION['level'], ['12', '13'])) {
@@ -60,7 +60,7 @@ if (isset($_GET['hapus'])) {
         // Hapus file fisik
         $qf = mysqli_query($koneksi, "SELECT file_eval FROM file_eval WHERE id_mahasiswa_kip=$idm");
         while ($f = mysqli_fetch_assoc($qf)) {
-            $path = $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/uploads/evaluasi/' . $f['file_eval'];
+            $path = __DIR__ . '/../uploads/evaluasi/' . $f['file_eval'];
             if (file_exists($path)) {
                 unlink($path);
             }

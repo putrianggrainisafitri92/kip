@@ -1,5 +1,5 @@
 <!-- FOOTER FINAL -->
-<footer class="bg-gradient-to-br from-[#1d0b33] to-[#2d0f4d] py-12 text-indigo-100">
+<footer class="bg-gradient-to-br from-[#1d0b33] to-[#2d0f4d] py-12 pb-6 text-indigo-100" style="background-color: #1d0b33;">
 
 <?php
 include 'koneksi.php'; // sesuaikan path
@@ -47,7 +47,7 @@ if ($koneksi) {
   <!-- Kolom 1: Info Polinela -->
   <div class="space-y-5">
     <div class="flex items-center">
-      <img src="assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
+      <img src="<?= isset($base_url) ? $base_url : '' ?>assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
       <div>
         <h4 class="font-bold text-lg text-white leading-tight">POLITEKNIK NEGERI LAMPUNG</h4>
         <p class="text-sm italic text-indigo-200">Kampus Unggul, Profesional, dan Mandiri</p>
@@ -136,9 +136,10 @@ if ($koneksi) {
 </div>
 
 <!-- Copyright -->
-<div class="border-t border-white/20 mt-10 pt-6 text-center text-indigo-200 text-sm">
+<div class="border-t border-white/20 pt-10 pb-6 text-center text-indigo-200 text-sm" style="background-color: #1d0b33;">
   © <?= date('Y'); ?> Sistem Informasi KIP-Kuliah POLINELA. Semua hak cipta dilindungi.
 </div>
+</footer>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

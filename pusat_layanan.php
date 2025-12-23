@@ -1,4 +1,3 @@
-<?php include 'sidebar.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,23 +7,30 @@
 
   <style>
     .bg-hero {
-      background-image: url('/KIPWEB/assets/bg-pelaporan.jpg');
+      background-image: url('assets/bg-pelaporan.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
     }
 
-    /* PAKSA SEMUA DI DALAM FOOTER JADI NON-TRANSPARAN */
-    .footer-solid *, 
+    /* PAKSA FOOTER JADI NON-TRANSPARAN */
     .footer-solid {
-        background-color: #1d0b33 !important; /* ungu gelap */
+        background-color: #1d0b33;
+        position: relative;
+        z-index: 50;
+    }
+    
+    /* Force footer element to be solid and opaque */
+    .footer-solid footer {
+        background-color: #1d0b33 !important;
+        background-image: none !important;
         opacity: 1 !important;
-        backdrop-filter: none !important;
     }
   </style>
 </head>
 
 <body class="bg-hero">
+<?php include 'sidebar.php'; ?>
 
 <!-- OVERLAY UTAMA -->
 <div class="bg-black bg-opacity-60 min-h-screen pt-32 pb-20 flex justify-center">

@@ -1,11 +1,21 @@
 <!-- ========== HEADER / TOPBAR ========== -->
+<?php
+// Deteksi direktori saat ini untuk menentukan base url
+if (file_exists('index.php')) {
+    $base_url = '';
+} elseif (file_exists('../index.php')) {
+    $base_url = '../';
+} else {
+    $base_url = ''; // Default fallback
+}
+?>
 <header class="topbar">
   <button id="toggle-btn" class="toggle-btn">
     <i class="bi bi-list"></i>
   </button>
 
   <div class="topbar-brand">
-    <img src="assets/logo-polinela.png" class="logo-img">
+    <img src="<?= $base_url ?>assets/logo-polinela.png" class="logo-img">
     <h1 class="topbar-title">Sistem Informasi KIP-Kuliah</h1>
   </div>
 
@@ -38,7 +48,7 @@
     </div>
 <?php endif; ?>
 
-<form action="cek_login.php" method="POST" class="login-form">
+<form action="<?= $base_url ?>cek_login.php" method="POST" class="login-form">
       
       <div class="input-wrap">
         <label>Username</label>
@@ -63,11 +73,11 @@
   </div>
 
   <nav class="nav-links">
-    <a href="index.php">
+    <a href="<?= $base_url ?>index.php">
       <i class="bi bi-house-door"></i> Beranda
     </a>
 
-    <a href="pedoman.php">
+    <a href="<?= $base_url ?>pedoman.php">
       <i class="bi bi-book"></i> Pedoman 2025
     </a>
 
@@ -78,17 +88,17 @@
       </button>
 
       <div class="dropdown-content">
-        <a href="statistik/statistik_tahun.php">Per Tahun</a>
-        <a href="statistik/statistik_jurusan.php">Per Jurusan</a>
-        <a href="statistik/statistik_prodi.php">Per Prodi</a>
+        <a href="<?= $base_url ?>statistik/statistik_tahun.php">Per Tahun</a>
+        <a href="<?= $base_url ?>statistik/statistik_jurusan.php">Per Jurusan</a>
+        <a href="<?= $base_url ?>statistik/statistik_prodi.php">Per Prodi</a>
       </div>
     </div>
 
-    <a href="pusat_layanan.php">
+    <a href="<?= $base_url ?>pusat_layanan.php">
       <i class="bi bi-pencil-square"></i> Pusat Layanan
     </a>
 
-    <a href="form_evaluasi.php">
+    <a href="<?= $base_url ?>form_evaluasi.php">
       <i class="bi bi-clipboard-check"></i> Evaluasi Mahasiswa
     </a>
   </nav>

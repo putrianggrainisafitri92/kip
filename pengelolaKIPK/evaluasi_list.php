@@ -1,5 +1,5 @@
 <?php
-include $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/koneksi.php';
+include __DIR__ . '/../koneksi.php';
 session_start();
 
 // ==== PROSES VERIFIKASI ====
@@ -21,10 +21,10 @@ if (isset($_GET['hapus'])) {
 
     if ($data) {
         $files = [
-            $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/uploads/evaluasi/' . ($data['file_eval'] ?? ''),
-            $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/uploads/evaluasi/' . ($data['file_revisi1'] ?? ''),
-            $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/uploads/evaluasi/' . ($data['file_revisi2'] ?? ''),
-            $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/uploads/evaluasi/' . ($data['pdf_hasil_form'] ?? ''),
+            __DIR__ . '/../uploads/evaluasi/' . ($data['file_eval'] ?? ''),
+            __DIR__ . '/../uploads/evaluasi/' . ($data['file_revisi1'] ?? ''),
+            __DIR__ . '/../uploads/evaluasi/' . ($data['file_revisi2'] ?? ''),
+            __DIR__ . '/../uploads/evaluasi/' . ($data['pdf_hasil_form'] ?? ''),
         ];
 
         foreach ($files as $file) {
@@ -114,28 +114,28 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     // ==== FILE EVALUASI ====
     echo "<td class='p-2 text-center'>";
-    echo (!empty($row['file_eval']) && file_exists($_SERVER['DOCUMENT_ROOT'].$pathEvaluasi))
+    echo (!empty($row['file_eval']) && file_exists(__DIR__ . '/../uploads/evaluasi/' . ($row['file_eval'] ?? '')))
           ? "<a href='$pathEvaluasi' target='_blank' class='text-blue-600 underline'>Lihat</a>"
           : "<span class='text-gray-400'>-</span>";
     echo "</td>";
 
     // ==== REVISI 1 ====
     echo "<td class='p-2 text-center'>";
-    echo (!empty($row['file_revisi1']) && file_exists($_SERVER['DOCUMENT_ROOT'].$pathRevisi1))
+    echo (!empty($row['file_revisi1']) && file_exists(__DIR__ . '/../uploads/evaluasi/' . ($row['file_revisi1'] ?? '')))
           ? "<a href='$pathRevisi1' target='_blank' class='text-blue-600 underline'>Lihat</a>"
           : "<span class='text-gray-400'>-</span>";
     echo "</td>";
 
     // ==== REVISI 2 ====
     echo "<td class='p-2 text-center'>";
-    echo (!empty($row['file_revisi2']) && file_exists($_SERVER['DOCUMENT_ROOT'].$pathRevisi2))
+    echo (!empty($row['file_revisi2']) && file_exists(__DIR__ . '/../uploads/evaluasi/' . ($row['file_revisi2'] ?? '')))
           ? "<a href='$pathRevisi2' target='_blank' class='text-blue-600 underline'>Lihat</a>"
           : "<span class='text-gray-400'>-</span>";
     echo "</td>";
 
     // ==== PDF HASIL FORM (TIDAK HILANG) ====
     echo "<td class='p-2 text-center'>";
-    echo (!empty($row['pdf_hasil_form']) && file_exists($_SERVER['DOCUMENT_ROOT'].$pathHasilPdf))
+    echo (!empty($row['pdf_hasil_form']) && file_exists(__DIR__ . '/../uploads/evaluasi/' . ($row['pdf_hasil_form'] ?? '')))
           ? "<a href='$pathHasilPdf' target='_blank' class='bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs'>Lihat PDF</a>"
           : "<span class='text-gray-400 text-xs italic'>Belum ada</span>";
     echo "</td>";
