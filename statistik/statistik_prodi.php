@@ -38,7 +38,8 @@ while($row = $tahunSKQuery->fetch_assoc()){
    Body & Layout
 ======================== */
 body {
-    background-color: #f5f6fa;
+background: url("../assets/bgpolinela.jpeg") no-repeat center center;
+background-size: cover;
     font-family: 'Poppins', sans-serif;
     color: #333;
     margin: 0;
