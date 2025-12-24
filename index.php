@@ -555,27 +555,26 @@ html {
 
 
 <!-- ================== GRAFIK PENERIMAAN KIP PER TAHUN ================== -->
-<section class="pt-4 pb-4 px-8 fade-in">
+<section class="pt-6 pb-8 px-2 md:px-8 fade-in"> 
 
+  <div class="max-w-5xl mx-auto bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl p-2 md:p-8 border border-white/50">
 
-  <div class="max-w-5xl mx-auto bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl p-10">
-
-    <h2 class="text-3xl font-bold text-center text-primary-mid mb-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-center text-primary-mid mb-6 mt-4">
       Grafik Penerimaan KIP-Kuliah per Tahun
     </h2>
 
-    <!-- Canvas Grafik -->
-    <div class="w-full h-80">
+    <!-- Canvas Grafik: Full Width, Tinggi Optimal, Tanpa Scroll -->
+    <div class="w-full h-[350px] md:h-[500px] relative">
       <canvas id="grafikKipTahunan"></canvas>
     </div>
 
-    <p class="text-center text-gray-700 mt-6">
-      Total Penerima: <span class="font-bold text-primary-dark"><?= $totalMahasiswa ?></span>
+    <p class="text-center text-gray-700 mt-4 mb-4 text-sm md:text-base">
+      Total Penerima: <span class="font-bold text-primary-dark text-lg"><?= $totalMahasiswa ?></span> Mahasiswa
     </p>
 
   </div>
 </section>
-
+ 
 <!-- BERITA & KEGIATAN -->
 <?php
 include 'koneksi.php';
@@ -716,72 +715,65 @@ $berita = mysqli_query($koneksi, "
 
 
    <!-- TENTANG KIP-KULIAH -->
-   <section id="tentang" class="relative w-full pt-20 pb-20 flex items-center justify-center">
+   <!-- TENTANG KIP-KULIAH -->
+   <section id="tentang" class="relative w-full py-10 md:py-16 flex items-center justify-center overflow-hidden">
 
-  <!-- Wrapper pembatas ukuran seperti HERO -->
-  <div class="absolute inset-y-0 left-4 right-4">
-    <div class="relative w-full h-full rounded-2xl overflow-hidden">
-
-      <!-- Background Image -->
-      <div class="absolute inset-0 bg-cover bg-center"
-           style="background-image: url('assets/bgpolinela.jpeg');"></div>
-
-      <!-- Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-b
-           from-white/70 via-white/80 to-white/90"></div>
-
+  <!-- Wrapper Background -->
+  <div class="absolute inset-y-0 left-0 right-0 md:left-4 md:right-4">
+    <div class="relative w-full h-full md:rounded-3xl overflow-hidden shadow-none md:shadow-lg">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('assets/bgpolinela.jpeg');"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-white/85 via-white/95 to-white"></div>
     </div>
   </div>
-
-
   
   <!-- CONTENT CARD -->
-<div class="relative z-10 max-w-6xl mx-auto text-center px-6">
+<div class="relative z-10 max-w-5xl mx-auto text-center px-4 md:px-6">
 
-  <h2 class="text-4xl font-bold text-gray-900 mb-4 drop-shadow">
+  <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-4 drop-shadow">
     Tentang KIP-Kuliah
   </h2>
 
-  <p class="text-lg text-gray-700 mb-10 drop-shadow">
+  <p class="text-sm md:text-base text-gray-700 mb-6 md:mb-8 drop-shadow max-w-xl mx-auto">
     Membuka akses pendidikan tinggi yang lebih merata bagi seluruh generasi muda Indonesia.
   </p>
 
   <!-- WRAPPER SEMUA CARD -->
-  <div class="bg-white/90 rounded-2xl shadow-xl p-10 max-w-6xl mx-auto backdrop-blur-md space-y-10">
+  <div class="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-4 md:p-8 max-w-5xl mx-auto space-y-6 md:space-y-8 border border-white/50">
 
     <!-- ===================== 2 KOLOM ===================== -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
       <!-- CARD KIRI: Apa Itu KIP-Kuliah -->
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition duration-300 border border-purple-200">
-        <h3 class="text-2xl font-bold text-primary-mid mb-4 text-center">
+      <div class="bg-white rounded-xl shadow p-5 md:p-6 border border-purple-100 text-left hover:shadow-md transition">
+        <h3 class="text-lg md:text-xl font-bold text-primary-mid mb-3 text-center md:text-left">
           Apa itu KIP-Kuliah?
         </h3>
 
-        <p class="text-gray-700 leading-relaxed text-justify mb-4">
-          KIP-Kuliah adalah program bantuan pendidikan dari pemerintah berupa pembebasan biaya kuliah sepenuhnya serta dukungan biaya hidup bagi mahasiswa. Bantuan ini diberikan khusus kepada calon mahasiswa yang memiliki prestasi akademik maupun non-akademik, tetapi berasal dari keluarga dengan kondisi ekonomi yang kurang mampu
+        <p class="text-gray-700 text-xs md:text-sm leading-relaxed text-justify mb-3">
+          KIP-Kuliah adalah program bantuan pendidikan dari pemerintah berupa pembebasan biaya kuliah sepenuhnya serta dukungan biaya hidup. Khusus bagi calon mahasiswa berprestasi namun terkendala ekonomi.
         </p>
 
-        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 p-5 rounded-xl border border-purple-100">
-          <h4 class="font-semibold text-primary-mid mb-3 text-lg">Manfaat KIP-Kuliah:</h4>
-          <ul class="space-y-2 text-gray-700 text-left">
-            <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Pembebasan biaya pendidikan</li>
-            <li class="flex items-center"><span class="text-green-500 mr-2">✔</span>Bantuan biaya hidup</li>
+        <div class="bg-purple-50 p-3 rounded-lg border border-purple-100">
+          <h4 class="font-semibold text-primary-mid mb-2 text-sm md:text-base">Manfaat Utama:</h4>
+          <ul class="space-y-1 text-gray-700 text-xs md:text-sm">
+            <li class="flex items-center"><i class="bi bi-check-circle-fill text-green-500 mr-2"></i> Gratis Biaya Kuliah</li>
+            <li class="flex items-center"><i class="bi bi-check-circle-fill text-green-500 mr-2"></i> Bantuan Biaya Hidup</li>
           </ul>
         </div>
       </div>
 
       <!-- CARD KANAN: Sejarah KIP Nasional -->
-      <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition duration-300 border border-indigo-200">
-        <h3 class="text-2xl font-bold text-accent-blue mb-4 text-center">
-          Sejarah KIP-Kuliah (Nasional)
+      <div class="bg-white rounded-xl shadow p-5 md:p-6 border border-indigo-100 text-left hover:shadow-md transition">
+        <h3 class="text-lg md:text-xl font-bold text-accent-blue mb-3 text-center md:text-left">
+          Sejarah Singkat
         </h3>
 
-        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border-l-4 border-primary-light p-5 rounded-xl shadow-sm">
-          <p class="text-gray-700 text-justify leading-relaxed">
-            Program KIP pertama kali diperkenalkan pada tahun 2007.  
-            Tahun 2020, pemerintah meluncurkan KIP-Kuliah sebagai pengembangan Bidikmisi,
-            untuk mendukung mahasiswa prasejahtera menempuh pendidikan tinggi tanpa hambatan biaya.
+        <!-- Hapus h-full agar bg biru mengikuti panjang teks (biar gak keluar kolam) -->
+        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-lg shadow-sm">
+          <p class="text-gray-700 text-xs md:text-sm text-justify leading-relaxed">
+            Dimulai tahun 2010 sebagai <b>Bidikmisi</b>.
+            <br><br>
+            Tahun 2020 bertransformasi menjadi <b>KIP-Kuliah</b> untuk akses yang lebih luas dan merata bagi anak bangsa.
           </p>
         </div>
       </div>
@@ -789,15 +781,14 @@ $berita = mysqli_query($koneksi, "
     </div>
     <!-- ================== END 2 KOLOM ================== -->
 
-
     <!-- ================== CARD: Sejarah Polinela ================== -->
-    <div class="bg-white rounded-2xl shadow-lg p-10 hover:shadow-2xl transition duration-300 border border-purple-300 max-w-6xl mx-auto">
+    <div class="bg-white rounded-xl shadow p-5 md:p-8 border border-purple-200 hover:shadow-md transition">
 
-      <h3 class="text-3xl font-bold text-primary-mid mb-6 text-center">
-       KIP-Kuliah di Politeknik Negeri Lampung
+      <h3 class="text-xl md:text-2xl font-bold text-primary-mid mb-4 text-center">
+       KIP-Kuliah di Polinela
       </h3>
 
-      <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-primary-mid p-8 rounded-xl shadow-sm">
+      <div class="bg-gradient-to-br from-purple-50 to-white p-4 md:p-6 rounded-xl border border-purple-100">
 
         <p class="text-gray-700 leading-relaxed text-justify mb-5">
           Politeknik Negeri Lampung secara konsisten melaksanakan program ini
