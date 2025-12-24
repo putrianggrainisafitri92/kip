@@ -48,42 +48,57 @@ $persetujuan = $_SESSION['tahap1']['persetujuan'] ?? '';
 <title>Tahap 1 - Persetujuan Pengisian | Evaluasi</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <style>
     body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
         background-image: url('assets/bg-pelaporan.jpg');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
+
+    /* Main Layout */
+    .main-content {
+      transition: margin-left 0.3s ease;
+      padding-top: 90px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+    .main-content.shifted {
+      margin-left: 260px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content.shifted { margin-left: 0; }
+      .main-content { padding-top: 80px; padding-left: 1rem; padding-right: 1rem; }
+    }
 </style>
 </head>
+<body class="text-gray-900">
+  
   <!-- SIDEBAR -->
   <?php include 'sidebar.php'; ?>
-<body class="text-gray-900 flex flex-col relative">
 
- <div class="mt-40 flex justify-center">
-  <div class="bg-white rounded-2xl shadow-lg px-6 py-4 inline-block">
-    <div class="flex flex-wrap items-center gap-6">
+  <div class="main-content" id="main-content">
 
-      <div class="flex flex-col items-center">
-        <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white font-bold ring-4 ring-purple-400/50">1</div>
-        <span class="mt-2 text-sm font-semibold text-purple-800 text-center">Persetujuan<br>Pengisian</span>
+      <!-- STEP INDICATOR -->
+      <div class="mb-8 w-full max-w-3xl flex justify-center">
+        <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg px-8 py-4 inline-block border border-purple-100">
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white font-bold ring-4 ring-purple-400/50 text-lg shadow">1</div>
+              <span class="mt-2 text-sm font-bold text-purple-800 text-center uppercase tracking-wide">Persetujuan</span>
+            </div>
+        </div>
       </div>
 
-     
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Overlay biar teks jelas -->
-<div class="absolute inset-0 bg-black/50 -z-10"></div>
-
-<main class="flex justify-center mt-10 mb-6 px-4">
-
-<div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-8">
+     <!-- FORM CONTENT -->
+     <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-8 md:p-10 relative z-10 border border-purple-100">
     <h2 class="text-2xl font-bold text-purple-800 mb-4 text-center">Persetujuan Pengisian</h2>
 
     <form action="" method="POST" class="space-y-6">
@@ -113,9 +128,8 @@ $persetujuan = $_SESSION['tahap1']['persetujuan'] ?? '';
             </button>
         </div>
     </form>
-</div>
-
-</main>
+    </div>
+  </div> <!-- End Main Content -->
 
 <!-- SCRIPT -->
 <script>

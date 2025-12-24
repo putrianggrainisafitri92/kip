@@ -38,7 +38,7 @@ if (isset($_POST['submit'])) {
                 $cleanName = preg_replace("/[^a-zA-Z0-9_\.-]/", "_", $file['name']);
                 $fileName = time() . '_' . $cleanName;
                 $filePath = $uploadDir . $fileName;
-                $fileUrl  = '/KIPWEB/uploads/sk/' . $fileName;
+                $fileUrl  = '../uploads/sk/' . $fileName;
 
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
 

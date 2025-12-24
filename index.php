@@ -454,6 +454,128 @@ html {
   .main-content.shifted {
     margin-left: 0;
   }
+  .main-content {
+    padding: 1rem;
+  }
+  /* Hero section */
+  .h-\[60vh\] {
+    height: 50vh !important;
+  }
+  .text-4xl {
+    font-size: 1.75rem !important;
+  }
+  .text-6xl {
+    font-size: 2rem !important;
+  }
+  /* Chart section */
+  .h-80 {
+    height: 250px !important;
+  }
+  .p-10 {
+    padding: 1.5rem !important;
+  }
+  .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  /* News cards: 2 Kolom di Tablet */
+  .grid.md\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .gap-8 {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+  /* Hero */
+  .h-\[60vh\] {
+    height: 45vh !important;
+  }
+  .pt-20 {
+    padding-top: 4rem !important;
+  }
+  .text-4xl {
+    font-size: 1.5rem !important;
+  }
+  .text-6xl {
+    font-size: 1.75rem !important;
+  }
+  .text-lg {
+    font-size: 0.95rem !important;
+  }
+  .py-3 {
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+  }
+  .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  /* Chart */
+  .h-80 {
+    height: 280px !important;
+  }
+  .p-10 {
+    padding: 1rem !important;
+  }
+  .text-3xl {
+    font-size: 1.25rem !important;
+  }
+  
+  /* News cards: 1 Kolom di HP (permintaan user) */
+  .grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .news-card {
+    padding: 1rem !important;
+  }
+  .news-card img {
+    height: 150px !important; /* Tinggi sedang agar proporsional di 1 kolom */
+    width: 100% !important;
+    object-fit: cover !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .news-card h4 {
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .btn-read-more {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Tentang KIP: Kurangi padding agar tidak 1 layar 1 kartu */
+  .grid-cols-1.md\:grid-cols-2 > div {
+    padding: 1.25rem !important;
+  }
+  #tentang p {
+    font-size: 0.9rem !important;
+    text-align: left !important; /* Justify kadang bolong di HP */
+  }
+
+  .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+  /* Slider buttons */
+  .w-12 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  .left-6 {
+    left: 0.5rem !important;
+  }
+  .right-6 {
+    right: 0.5rem !important;
+  }
 }
 </style>
 </head>
@@ -745,24 +867,7 @@ $berita = mysqli_query($koneksi, "
   </script>
 
   <!-- BERITA & KEGIATAN -->
-<?php
-include 'koneksi.php';
-// Ambil 6 berita terbaru yang sudah disetujui beserta 1 gambar pertama (jika ada)
-$berita = mysqli_query($koneksi, "
-    SELECT b.id_berita, b.judul, bg.file AS gambar
-    FROM berita b
-    LEFT JOIN berita_gambar bg ON b.id_berita = bg.id_berita
-    AND bg.sortorder = (
-        SELECT MIN(sortorder) 
-        FROM berita_gambar 
-        WHERE id_berita = b.id_berita
-    )
-    WHERE b.status='approved'
-    GROUP BY b.id_berita
-    ORDER BY b.id_berita DESC
-    LIMIT 6
-");
-?>
+
 
 
 

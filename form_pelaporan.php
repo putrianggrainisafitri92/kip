@@ -120,12 +120,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pelaporan Mahasiswa - KIP Kuliah</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <style>
   body { font-family: 'Tahoma', sans-serif; }
   .bg-hero {
-    background-image: url('/KIPWEB/assets/bg-pelaporan.jpg');
+    background-image: url('assets/bg-pelaporan.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -141,6 +142,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     margin-top: 5px;
     font-size: 0.9rem;
     color: #4B0082;
+  }
+
+  /* ========== RESPONSIVE DESIGN ========== */
+  @media (max-width: 768px) {
+    .pt-24 {
+      padding-top: 5rem !important;
+    }
+    .pb-20 {
+      padding-bottom: 3rem !important;
+    }
+    .p-6 {
+      padding: 1rem !important;
+    }
+    .p-10 {
+      padding: 1.5rem !important;
+    }
+    .text-3xl {
+      font-size: 1.5rem !important;
+    }
+    .max-w-2xl {
+      max-width: 95% !important;
+    }
+    .rounded-3xl {
+      border-radius: 1rem !important;
+    }
+    .grid-cols-1.md\\:grid-cols-2 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pt-24 {
+      padding-top: 4.5rem !important;
+    }
+    .p-10 {
+      padding: 1rem !important;
+    }
+    .text-3xl {
+      font-size: 1.25rem !important;
+    }
+    .px-4 {
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
+    }
+    .py-3 {
+      padding-top: 0.625rem !important;
+      padding-bottom: 0.625rem !important;
+    }
+    input, select, textarea {
+      font-size: 14px !important;
+    }
+    .flex.justify-between {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .flex.justify-between a,
+    .flex.justify-between button {
+      width: 100%;
+      text-align: center;
+    }
   }
 </style>
 </head>

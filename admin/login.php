@@ -37,7 +37,7 @@ if (isset($_POST['login'])) {
 
   <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
     <div class="text-center mb-6">
-      <img src="/KIPWEB/assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
+      <img src="../assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
       <h1 class="text-3xl font-bold text-white">Login Admin</h1>
       <p class="text-blue-100 text-sm mt-1">Sistem Informasi KIP-KULIAH POLINELA</p>
     </div>

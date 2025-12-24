@@ -197,7 +197,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
   while ($row = mysqli_fetch_assoc($result)) {
 
-    $pathEvaluasi  = '/KIPWEB/uploads/evaluasi/' . ($row['file_eval'] ?? '');
+    $pathEvaluasi  = '../uploads/evaluasi/' . ($row['file_eval'] ?? '');
  
 
     echo "<tr class='border-b hover:bg-purple-50 transition'>";

@@ -385,6 +385,153 @@ main, .content {
     height: auto !important;
     line-height: 1.3rem !important;
 }
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 1024px) {
+  .topbar-title {
+    font-size: 1.1rem;
+  }
+  .logo-img {
+    height: 38px;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    height: 60px;
+    padding: 0 15px;
+  }
+  
+  .topbar-title {
+    font-size: 0.95rem;
+  }
+  
+  .logo-img {
+    height: 32px;
+  }
+  
+  .toggle-btn {
+    font-size: 1.6rem;
+    margin-right: 12px;
+  }
+  
+  .login-btn {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+  }
+  
+  .sidebar {
+    width: 240px;
+    left: -250px;
+    padding-top: 75px;
+  }
+  
+  .sidebar-title {
+    font-size: 1.1rem;
+  }
+  
+  .nav-links a {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  .dropdown-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  main, .content {
+    padding-top: 75px;
+  }
+  
+  .login-box {
+    width: 90%;
+    max-width: 360px;
+    padding: 25px;
+  }
+  
+  .login-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    height: 55px;
+    padding: 0 10px;
+  }
+  
+  .topbar-title {
+    font-size: 0.8rem;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .logo-img {
+    height: 28px;
+  }
+  
+  .toggle-btn {
+    font-size: 1.4rem;
+    margin-right: 8px;
+  }
+  
+  .login-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .login-btn i {
+    display: none;
+  }
+  
+  .sidebar {
+    width: 220px;
+    left: -230px;
+    padding-top: 70px;
+  }
+  
+  .sidebar-title {
+    font-size: 1rem;
+  }
+  
+  .nav-links a {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    gap: 10px;
+  }
+  
+  .dropdown-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  main, .content {
+    padding-top: 70px;
+  }
+  
+  .login-box {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .login-title {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+  
+  .input-wrap input {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+  
+  .btn-login {
+    padding: 11px;
+    font-size: 1rem;
+  }
+}
  
 </style>
 

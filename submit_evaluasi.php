@@ -76,12 +76,12 @@ if($cekFile && mysqli_num_rows($cekFile) > 0){
             uploaded_at=NOW()
         WHERE id_mahasiswa_kip='$id'
     ");
-} else {
-    mysqli_query($koneksi, "
+    } else {
+        mysqli_query($koneksi, "
         INSERT INTO file_eval
         (id_mahasiswa_kip, file_eval, uploaded_at)
         VALUES
-        ('$id','$file_eval','$file_rev1','$file_rev2',NOW())
+        ('$id','$file_eval',NOW())
     ");
 }
 
@@ -99,6 +99,7 @@ unset($_SESSION['tahap1'], $_SESSION['tahap2'], $_SESSION['tahap3'], $_SESSION['
 <title>Terima Kasih | KIP Kuliah Polinela</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <style>
 @keyframes bounce {
@@ -111,36 +112,39 @@ unset($_SESSION['tahap1'], $_SESSION['tahap2'], $_SESSION['tahap3'], $_SESSION['
 </style>
 </head>
 
-<body class="bg-gradient-to-b from-purple-900 via-purple-800 to-purple-950 text-white min-h-screen flex flex-col justify-center items-center px-6">
+<body class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white min-h-screen flex flex-col justify-center items-center px-4 py-8">
 
-<div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-10 max-w-xl text-center mt-10">
+<div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-6 md:p-12 max-w-lg w-full text-center relative overflow-hidden">
+    
+    <!-- Pattern Background (Optional Decoration) -->
+    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 to-pink-500"></div>
 
-    <div class="flex justify-center mb-6">
-        <div class="bg-gradient-to-r from-purple-700 to-pink-600 text-white rounded-full p-5 shadow-lg animate-bounce-slow">
-            <i class="bi bi-check-circle text-6xl"></i>
+    <div class="flex justify-center mb-6 mt-4">
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full p-4 md:p-5 shadow-lg animate-bounce-slow ring-4 ring-green-100">
+            <i class="bi bi-check-lg text-4xl md:text-5xl"></i>
         </div>
     </div>
 
-    <h1 class="text-3xl font-bold text-purple-800 mb-4">Terima Kasih!</h1>
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Terima Kasih!</h1>
+    <p class="text-purple-600 font-medium mb-6">Data Evaluasi Berhasil Dikirim</p>
 
-    <p class="text-gray-700 leading-relaxed mb-6 text-left">
-        Anda telah berhasil menyelesaikan proses 
-        <strong>Monitoring dan Evaluasi Penerima KIP Kuliah & Bantuan Biaya Pendidikan (BBP)</strong>.<br><br>
+    <div class="text-gray-600 text-sm md:text-base leading-relaxed mb-8 text-left bg-gray-50 p-4 rounded-xl border border-gray-100">
+        <p class="mb-2">Anda telah berhasil menyelesaikan proses:</p>
+        <p class="font-bold text-gray-800 mb-2">Monitoring dan Evaluasi Penerima KIP Kuliah & Bantuan Biaya Pendidikan (BBP).</p>
+        <p>Data dan dokumen Anda telah tersimpan aman dan antrian verifikasi.</p>
+    </div>
 
-        Semua data dan dokumen yang Anda unggah telah diterima dan akan segera diverifikasi oleh tim pengelola.
-    </p>
-
-    <div class="flex justify-center">
+    <div class="flex justify-center w-full">
         <a href="form_evaluasi.php" 
-           class="px-8 py-3 bg-gradient-to-r from-purple-700 to-pink-600 text-white font-semibold rounded-full shadow-md hover:scale-105 transition-transform duration-300">
-            <i class="bi bi-house-door mr-2"></i> Kembali ke Beranda Evaluasi
+           class="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-purple-700 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+            <i class="bi bi-house-door-fill"></i> Kembali ke Beranda
         </a>
     </div>
 
 </div>
 
-<p class="text-sm text-purple-200 mt-10 mb-4">
-    &copy; 2025 Politeknik Negeri Lampung | Sistem Informasi KIP Kuliah
+<p class="text-xs md:text-sm text-purple-200/60 mt-8 text-center max-w-md">
+    &copy; <?= date('Y'); ?> Politeknik Negeri Lampung<br>Sistem Informasi KIP Kuliah
 </p>
 
 </body>

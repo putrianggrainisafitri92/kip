@@ -156,167 +156,246 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tahap 3 — Kondisi Ekonomi</title>
 <script src="https://cdn.tailwindcss.com"></script>
-</head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <style>
     body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
         background-image: url('assets/bg-pelaporan.jpg');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
+
+    /* Main Layout */
+    .main-content {
+      transition: margin-left 0.3s ease;
+      padding-top: 90px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+    .main-content.shifted {
+      margin-left: 260px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content.shifted { margin-left: 0; }
+      .main-content { padding-top: 80px; padding-left: 1rem; padding-right: 1rem; }
+    }
 </style>
 </head>
 
-<body class="text-gray-900 flex flex-col relative">
-<div class="absolute inset-0 bg-black/50 -z-10"></div>
+<body class="text-gray-900 relative">
 
   <!-- SIDEBAR -->
   <?php include 'sidebar.php'; ?>
-<body class="text-gray-900 flex flex-col relative">
 
- <div class="mt-40 flex justify-center">
-  <div class="bg-white rounded-2xl shadow-lg px-6 py-4 inline-block">
-    <div class="flex items-center gap-6">
-      <div class="flex flex-col items-center">
-        <div class="w-14 h-14 flex items-center justify-center rounded-full
-          bg-gradient-to-br from-purple-700 to-purple-900
-          text-white font-bold ring-4 ring-purple-400/50">
-          3
+  <div class="main-content" id="main-content">
+
+      <!-- STEP INDICATOR -->
+      <div class="mb-8 w-full max-w-3xl flex justify-center">
+        <div class="bg-white/90 backdrop-blur rounded-2xl shadow-lg px-8 py-4 inline-block border border-purple-100">
+            <div class="flex flex-col items-center">
+              <div class="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white font-bold ring-4 ring-purple-400/50 text-lg shadow">3</div>
+              <span class="mt-2 text-sm font-bold text-purple-800 text-center uppercase tracking-wide">Kondisi Ekonomi<br>& Keluarga</span>
+            </div>
         </div>
-        <span class="mt-2 text-sm font-semibold text-purple-800 text-center">
-          Kondisi Ekonomi<br>&<br>Keluarga
-        </span>
       </div>
+
+     <!-- FORM CONTENT -->
+     <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-8 md:p-10 relative z-10 border border-purple-100">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-purple-600">
+        Tahap 3 — Kondisi Ekonomi
+      </h2>
+
+      <?php if(!empty($errors)): ?>
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm">
+            <div class="font-bold mb-1"><i class="bi bi-exclamation-triangle-fill mr-2"></i>Terjadi Kesalahan:</div>
+            <?php foreach($errors as $e) echo "<div class='ml-6'>- ".htmlspecialchars($e)."</div>"; ?>
+        </div>
+      <?php endif; ?>
+
+      <form method="POST" class="space-y-8">
+        
+        <!-- BANSOS -->
+        <div class="bg-purple-50 p-6 rounded-xl border border-purple-100">
+           <label class="font-bold text-purple-900 block mb-2"><i class="bi bi-cash-coin mr-2"></i>Apakah keluarga Anda penerima bansos dari pemerintah? <span class="text-red-500">*</span></label>
+            <select name="penerima_bansos" required class="w-full border border-purple-200 rounded-lg p-3 focus:ring-2 focus:ring-purple-400 outline-none bg-white">
+                <option value="">-- Pilih --</option>
+                <option value="Ya" <?= $penerima_bansos_val=='Ya'?'selected':'' ?>>Ya</option>
+                <option value="Tidak" <?= $penerima_bansos_val=='Tidak'?'selected':'' ?>>Tidak</option>
+            </select>
+        </div>
+
+        <!-- DATA ORANG TUA -->
+        <div class="space-y-6">
+            <h3 class="text-xl font-bold text-gray-800 border-b pb-2">Data Orang Tua / Wali</h3>
+            
+            <!-- AYAH -->
+            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                <h4 class="font-bold text-gray-700 mb-4 uppercase text-sm tracking-wider"><i class="bi bi-person-fill mr-1"></i> Data Ayah</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="font-semibold text-sm">Nama Ayah/Wali <span class="text-red-500">*</span></label>
+                        <input name="nama_ayah_wali" value="<?= htmlspecialchars($nama_ayah_val) ?>" required class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Status Ayah <span class="text-red-500">*</span></label>
+                        <select name="status_ayah" required class="w-full border rounded-lg p-3 mt-1 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                            <option value="">-- Pilih --</option>
+                            <option value="Hidup" <?= $status_ayah_val=='Hidup'?'selected':'' ?>>Hidup</option>
+                            <option value="Meninggal" <?= $status_ayah_val=='Meninggal'?'selected':'' ?>>Meninggal</option>
+                            <option value="Lainnya" <?= $status_ayah_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Pekerjaan Ayah/Wali <span class="text-red-500">*</span></label>
+                        <input name="pekerjaan_ayah" value="<?= htmlspecialchars($pekerjaan_ayah_val) ?>" required class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Nama Instansi Ayah</label>
+                        <input name="instansi_ayah" value="<?= htmlspecialchars($instansi_ayah_val) ?>" class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="font-semibold text-sm">Penghasilan Ayah/Wali <span class="text-red-500">*</span></label>
+                        <select name="penghasilan_ayah" required class="w-full border rounded-lg p-3 mt-1 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                            <option value="">-- Pilih Penghasilan --</option>
+                            <?php foreach($range_penghasilan as $key=>$label): ?>
+                                <option value="<?= $key ?>" <?= $penghasilan_ayah_val==$key?'selected':'' ?>><?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IBU -->
+            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                <h4 class="font-bold text-gray-700 mb-4 uppercase text-sm tracking-wider"><i class="bi bi-person-fill mr-1"></i> Data Ibu</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="font-semibold text-sm">Nama Ibu/Wali <span class="text-red-500">*</span></label>
+                        <input name="nama_ibu_wali" value="<?= htmlspecialchars($nama_ibu_val) ?>" required class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Status Ibu <span class="text-red-500">*</span></label>
+                        <select name="status_ibu" required class="w-full border rounded-lg p-3 mt-1 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                            <option value="">-- Pilih --</option>
+                            <option value="Hidup" <?= $status_ibu_val=='Hidup'?'selected':'' ?>>Hidup</option>
+                            <option value="Meninggal" <?= $status_ibu_val=='Meninggal'?'selected':'' ?>>Meninggal</option>
+                            <option value="Lainnya" <?= $status_ibu_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Pekerjaan Ibu/Wali <span class="text-red-500">*</span></label>
+                        <input name="pekerjaan_ibu" value="<?= htmlspecialchars($pekerjaan_ibu_val) ?>" required class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm">Nama Instansi Ibu</label>
+                        <input name="instansi_ibu" value="<?= htmlspecialchars($instansi_ibu_val) ?>" class="w-full border rounded-lg p-3 mt-1 focus:ring-2 focus:ring-purple-400 outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="font-semibold text-sm">Penghasilan Ibu/Wali <span class="text-red-500">*</span></label>
+                        <select name="penghasilan_ibu" required class="w-full border rounded-lg p-3 mt-1 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                            <option value="">-- Pilih Penghasilan --</option>
+                            <?php foreach($range_penghasilan as $key=>$label): ?>
+                                <option value="<?= $key ?>" <?= $penghasilan_ibu_val==$key?'selected':'' ?>><?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASET & LAINNYA -->
+        <div class="bg-white p-6 rounded-xl border-2 border-dashed border-gray-300">
+             <h3 class="text-lg font-bold text-gray-800 mb-4">Aset & Informasi Lainnya</h3>
+             <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="font-semibold block mb-1">Jumlah Tanggungan Keluarga <span class="text-red-500">*</span></label>
+                    <input type="number" name="jumlah_tanggungan" value="<?= htmlspecialchars($jumlah_tanggungan_val) ?>" min="0" required class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 outline-none">
+                </div>
+                
+                <div>
+                    <label class="font-semibold block mb-1">Status Tempat Tinggal Keluarga <span class="text-red-500">*</span></label>
+                    <select name="status_tempat_tinggal" required class="w-full border rounded-lg p-3 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                        <option value="">-- Pilih Status --</option>
+                        <option value="Rumah Sendiri" <?= $status_rumah_val=='Rumah Sendiri'?'selected':'' ?>>Rumah Sendiri</option>
+                        <option value="Sewa" <?= $status_rumah_val=='Sewa'?'selected':'' ?>>Sewa</option>
+                        <option value="Yang lain" <?= $status_rumah_val=='Yang lain'?'selected':'' ?>>Yang lain</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-semibold block mb-1">Tuliskan Merk HP, Harga & Tahun Pembelian <span class="text-red-500">*</span></label>
+                    <input name="info_hp" value="<?= htmlspecialchars($info_hp_val) ?>" placeholder="Contoh: Samsung A50, Rp 3.000.000, 2021" required class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 outline-none">
+                </div>
+
+                <div>
+                    <label class="font-semibold block mb-1">Alat Transportasi ke Kampus <span class="text-red-500">*</span></label>
+                    <select name="alat_transportasi" required class="w-full border rounded-lg p-3 bg-white focus:ring-2 focus:ring-purple-400 outline-none">
+                        <option value="">-- Pilih --</option>
+                        <option value="Kendaraan Pribadi" <?= $alat_transportasi_val=='Kendaraan Pribadi'?'selected':'' ?>>Kendaraan Pribadi</option>
+                        <option value="Kendaraan Umum" <?= $alat_transportasi_val=='Kendaraan Umum'?'selected':'' ?>>Kendaraan Umum</option>
+                        <option value="Jalan Kaki" <?= $alat_transportasi_val=='Jalan Kaki'?'selected':'' ?>>Jalan Kaki</option>
+                        <option value="Lainnya" <?= $alat_transportasi_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="font-semibold block mb-1">Jenis, Merek, Tahun Kendaraan <span class="text-red-500">*</span></label>
+                    <input name="detail_kendaraan" value="<?= htmlspecialchars($detail_kendaraan_val) ?>" placeholder="Contoh: Honda Beat, 2019" class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 outline-none">
+                </div>
+
+                <div>
+                    <label class="font-semibold block mb-1">No Handphone (WhatsApp) <span class="text-red-500">*</span></label>
+                    <input type="text" name="nomor_wa" value="<?= htmlspecialchars($nohp_val) ?>" required
+                    pattern="(08[0-9]{8,11}|\+628[0-9]{8,11})"
+                    placeholder="08xxxxxxxxxx"
+                    class="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 outline-none">
+                    <?php if(isset($errors['nomor_wa'])): ?>
+                    <div class="text-red-600 mt-1 text-sm"><i class="bi bi-x-circle mr-1"></i><?= htmlspecialchars($errors['nomor_wa']) ?></div>
+                    <?php endif; ?>
+                </div>
+             </div>
+        </div>
+
+        <!-- TOMBOL NAVIGASI -->
+        <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-100">
+            <a href="form_evaluasi_tahap2.php" class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition text-center">
+                <i class="bi bi-arrow-left mr-2"></i> Kembali
+            </a>
+            <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-purple-700 to-purple-900 text-white font-semibold rounded-xl shadow-lg hover:shadow-purple-500/30 hover:scale-[1.02] transition duration-300 flex items-center justify-center gap-2">
+                Lanjut Tahap 4 <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+
+      </form>
     </div>
-  </div>
-</div>
 
-<main class="flex justify-center mt-10 mb-6 px-4">
+  </div> <!-- End Main Content -->
 
+<!-- SCRIPT -->
+<script>
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            if (sidebar) sidebar.classList.toggle('active');
+            if (mainContent) mainContent.classList.toggle('shifted');
+        });
+    }
+</script>
 
-<div class="bg-white w-full max-w-3xl rounded-2xl shadow-lg p-8 text-purple-900">
-<h1 class="text-2xl font-bold mb-6 text-center">Tahap 3 — Kondisi Ekonomi & Keluarga</h1>
-
-<?php if(!empty($errors)): ?>
-<div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
-    <?php foreach($errors as $e) echo "<div>- ".htmlspecialchars($e)."</div>"; ?>
-</div>
-<?php endif; ?>
-
-<form method="POST" class="space-y-5">
-
-<div>
-    <label class="font-semibold">Apakah keluarga Anda penerima bansos dari pemerintah? *</label>
-    <select name="penerima_bansos" required class="mt-2 w-full border rounded p-3">
-        <option value="">-- Pilih --</option>
-        <option value="Ya" <?= $penerima_bansos_val=='Ya'?'selected':'' ?>>Ya</option>
-        <option value="Tidak" <?= $penerima_bansos_val=='Tidak'?'selected':'' ?>>Tidak</option>
-    </select>
-</div>
-
-<!-- Data Ayah -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div><label>Nama Ayah/Wali *</label><input name="nama_ayah_wali" value="<?= htmlspecialchars($nama_ayah_val) ?>" required class="w-full border rounded p-3"></div>
-    <div><label>Status Ayah *</label>
-        <select name="status_ayah" required class="w-full border rounded p-3">
-            <option value="">-- Pilih --</option>
-            <option value="Hidup" <?= $status_ayah_val=='Hidup'?'selected':'' ?>>Hidup</option>
-            <option value="Meninggal" <?= $status_ayah_val=='Meninggal'?'selected':'' ?>>Meninggal</option>
-            <option value="Lainnya" <?= $status_ayah_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
-        </select>
-    </div>
-    <div><label>Pekerjaan Ayah/Wali *</label><input name="pekerjaan_ayah" value="<?= htmlspecialchars($pekerjaan_ayah_val) ?>" required class="w-full border rounded p-3"></div>
-    <div><label>Nama Instansi/Perusahaan Ayah</label><input name="instansi_ayah" value="<?= htmlspecialchars($instansi_ayah_val) ?>" class="w-full border rounded p-3"></div>
-    <div><label>Penghasilan Ayah/Wali *</label>
-        <select name="penghasilan_ayah" required class="w-full border rounded p-3">
-            <option value="">-- Pilih Penghasilan --</option>
-            <?php foreach($range_penghasilan as $key=>$label): ?>
-                <option value="<?= $key ?>" <?= $penghasilan_ayah_val==$key?'selected':'' ?>><?= $label ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-</div>
-
-<!-- Data Ibu -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div><label>Nama Ibu/Wali *</label><input name="nama_ibu_wali" value="<?= htmlspecialchars($nama_ibu_val) ?>" required class="w-full border rounded p-3"></div>
-    <div><label>Status Ibu *</label>
-        <select name="status_ibu" required class="w-full border rounded p-3">
-            <option value="">-- Pilih --</option>
-            <option value="Hidup" <?= $status_ibu_val=='Hidup'?'selected':'' ?>>Hidup</option>
-            <option value="Meninggal" <?= $status_ibu_val=='Meninggal'?'selected':'' ?>>Meninggal</option>
-            <option value="Lainnya" <?= $status_ibu_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
-        </select>
-    </div>
-    <div><label>Pekerjaan Ibu/Wali *</label><input name="pekerjaan_ibu" value="<?= htmlspecialchars($pekerjaan_ibu_val) ?>" required class="w-full border rounded p-3"></div>
-    <div><label>Nama Instansi/Perusahaan Ibu</label><input name="instansi_ibu" value="<?= htmlspecialchars($instansi_ibu_val) ?>" class="w-full border rounded p-3"></div>
-    <div><label>Penghasilan Ibu/Wali *</label>
-        <select name="penghasilan_ibu" required class="w-full border rounded p-3">
-            <option value="">-- Pilih Penghasilan --</option>
-            <?php foreach($range_penghasilan as $key=>$label): ?>
-                <option value="<?= $key ?>" <?= $penghasilan_ibu_val==$key?'selected':'' ?>><?= $label ?></option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-</div>
-
-<!-- Total & Tanggungan -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div><label>Jumlah Tanggungan Keluarga *</label>
-        <input type="number" name="jumlah_tanggungan" value="<?= htmlspecialchars($jumlah_tanggungan_val) ?>" min="0" required class="w-full border rounded p-3">
-    </div>
-</div>
-
-<!-- Tempat tinggal & HP & Transportasi -->
-<div><label>Status Tempat Tinggal Keluarga *</label>
-    <select name="status_tempat_tinggal" required class="w-full border rounded p-3">
-        <option value="">-- Pilih Status --</option>
-        <option value="Rumah Sendiri" <?= $status_rumah_val=='Rumah Sendiri'?'selected':'' ?>>Rumah Sendiri</option>
-        <option value="Sewa" <?= $status_rumah_val=='Sewa'?'selected':'' ?>>Sewa</option>
-        <option value="Yang lain" <?= $status_rumah_val=='Yang lain'?'selected':'' ?>>Yang lain</option>
-    </select>
-</div>
-
-<div><label>Tuliskan Merk HP, Harga & Tahun Pembelian *</label>
-<input name="info_hp" value="<?= htmlspecialchars($info_hp_val) ?>" required class="w-full border rounded p-3"></div>
-
-<div><label>Alat Transportasi ke Kampus *</label>
-<select name="alat_transportasi" required class="w-full border rounded p-3">
-    <option value="">-- Pilih --</option>
-    <option value="Kendaraan Pribadi" <?= $alat_transportasi_val=='Kendaraan Pribadi'?'selected':'' ?>>Kendaraan Pribadi</option>
-    <option value="Kendaraan Umum" <?= $alat_transportasi_val=='Kendaraan Umum'?'selected':'' ?>>Kendaraan Umum</option>
-    <option value="Jalan Kaki" <?= $alat_transportasi_val=='Jalan Kaki'?'selected':'' ?>>Jalan Kaki</option>
-    <option value="Lainnya" <?= $alat_transportasi_val=='Lainnya'?'selected':'' ?>>Yang lain</option>
-</select></div>
-
-<div><label>Jenis, Merek, Tahun Kendaraan *</label>
-<input name="detail_kendaraan" value="<?= htmlspecialchars($detail_kendaraan_val) ?>" class="w-full border rounded p-3"></div>
-
-<!-- Nomor HP -->
-<div>
-<label>No Handphone *</label>
-<input type="text" name="nomor_wa" value="<?= htmlspecialchars($nohp_val) ?>" required
-pattern="(08[0-9]{8,11}|\+628[0-9]{8,11})"
-title="Nomor HP harus dimulai 08 atau +628 dan terdiri dari 10–13 digit"
-class="w-full border rounded p-3">
-<?php if(isset($errors['nomor_wa'])): ?>
-<div class="text-red-600 mt-1"><?= htmlspecialchars($errors['nomor_wa']) ?></div>
-<?php endif; ?>
-</div>
-
-<div class="flex justify-between items-center mt-6">
-    <a href="form_evaluasi_tahap2.php" class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg">Kembali</a>
-    <button type="submit" class="px-8 py-3 bg-gradient-to-r from-purple-700 to-purple-900 text-white font-semibold rounded-full shadow-md hover:scale-105 transition">
-        Lanjut ke tahap 4 →
-      </button>
-</div>
-
-</form>
-</div>
-</main>
 <?php include 'footer.php'; ?>
+
 </body>
 </html>

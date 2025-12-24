@@ -16,7 +16,7 @@ $q = mysqli_query($koneksi,
 );
 
 
-$basePath = $_SERVER['DOCUMENT_ROOT'] . "/KIPWEB/uploads/evaluasi/";
+$basePath = $_SERVER['DOCUMENT_ROOT'] . "../uploads/evaluasi/";
 
 // hapus file satu-satu
 while ($f = mysqli_fetch_assoc($q)) {

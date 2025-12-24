@@ -3,15 +3,78 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kotak Saran & Pertanyaan</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
   <style>
     .bg-hero {
-      background-image: url('/KIPWEB/assets/bg-pelaporan.jpg');
+      background-image: url('assets/bg-pelaporan.jpg');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 768px) {
+      .bg-hero {
+        background-attachment: scroll; /* Fix background on mobile */
+      }
+      .pt-28 {
+        padding-top: 5rem !important;
+      }
+      /* Tambah padding bawah agar bisa discroll pol */
+      .pb-10-mobile {
+        padding-bottom: 5rem !important;
+      }
+      .p-8 {
+        padding: 1rem !important; 
+        padding-top: 6rem !important; /* Override pt lebih besar */
+      }
+      .p-10 {
+        padding: 1.5rem !important;
+      }
+      .text-3xl {
+        font-size: 1.5rem !important;
+      }
+      .max-w-2xl {
+        max-width: 100% !important;
+      }
+      .rounded-3xl {
+        border-radius: 1rem !important;
+      }
+      .space-y-5 > * + * {
+        margin-top: 0.8rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .p-8 {
+        padding: 0.75rem !important;
+        padding-top: 6.5rem !important; /* Jarak aman dari navbar */
+        padding-bottom: 6rem !important;
+      }
+      .p-10 {
+        padding: 1.25rem !important;
+      }
+      .text-3xl {
+        font-size: 1.25rem !important;
+      }
+      .px-4 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+      .py-3 {
+        padding-top: 0.625rem !important;
+        padding-bottom: 0.625rem !important;
+      }
+      input, select, textarea {
+        font-size: 14px !important;
+      }
+      /* Tombol kembali margin */
+      .mt-6 {
+        margin-top: 1rem !important;
+      }
     }
   </style>
 </head>

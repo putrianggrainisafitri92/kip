@@ -179,7 +179,7 @@ include '../koneksi.php'; // koneksi ke database
     <div id="pdfArea">
       <!-- KOP LAPORAN -->
       <div class="kop-header">
-        <img src="/KIPWEB/assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
+        <img src="../assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
         <h2>POLITEKNIK NEGERI LAMPUNG</h2>
         <h3>Jl. Soekarno-Hatta No.10, Rajabasa, Bandar Lampung 35144</h3>
         <p>Telp. (0721) 703995 | Website: polinela.ac.id</p>
