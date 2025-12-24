@@ -69,9 +69,6 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-
-
  <script>
   tailwind.config = {
     theme: {
@@ -142,19 +139,6 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
   height: 100%;
   z-index: -1;
   overflow: hidden;
-}
-
-.news-card {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s ease;
-}
-
-.news-card:hover {
-  transform: translateY(-10px) scale(1.03);
-  box-shadow:
-    0 25px 50px -12px rgba(0,0,0,0.4),
-    0 0 30px rgba(139,92,246,0.6);
 }
 
 /* Animated Gradient - More visible, slower */
@@ -342,12 +326,6 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
 }
 
 /* ========== NEWS CARD ANIMATIONS ========== */
-
-.news-card > * {
-  position: relative;
-  z-index: 1;
-}
-
 .news-card {
   position: relative;
   overflow: hidden;
@@ -389,36 +367,32 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
 }
 
 /* Shimmer effect */
-/* Shimmer effect - Continuous subtle shine */
 .news-card::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255,255,255,0.15) 50%,
     transparent 100%
   );
-  transform: skewX(-25deg);
-  z-index: 2;
-  transition: none;
-  pointer-events: none;
-  animation: shimmerMove 3s infinite;
+  transform: rotate(30deg);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
-@keyframes shimmerMove {
-  0% { left: -100%; }
-  20% { left: 200%; } /* Fast pass */
-  100% { left: 200%; } /* Wait */
+.news-card:hover::after {
+  opacity: 1;
+  animation: shimmer 2s infinite;
 }
 
-.news-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3), 0 0 25px rgba(139,92,246,0.3);
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
 }
 
 /* Button animation */
@@ -479,6 +453,128 @@ html {
 @media (max-width: 768px) {
   .main-content.shifted {
     margin-left: 0;
+  }
+  .main-content {
+    padding: 1rem;
+  }
+  /* Hero section */
+  .h-\[60vh\] {
+    height: 50vh !important;
+  }
+  .text-4xl {
+    font-size: 1.75rem !important;
+  }
+  .text-6xl {
+    font-size: 2rem !important;
+  }
+  /* Chart section */
+  .h-80 {
+    height: 250px !important;
+  }
+  .p-10 {
+    padding: 1.5rem !important;
+  }
+  .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .text-3xl {
+    font-size: 1.5rem !important;
+  }
+  /* News cards: 2 Kolom di Tablet */
+  .grid.md\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .gap-8 {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+  /* Hero */
+  .h-\[60vh\] {
+    height: 45vh !important;
+  }
+  .pt-20 {
+    padding-top: 4rem !important;
+  }
+  .text-4xl {
+    font-size: 1.5rem !important;
+  }
+  .text-6xl {
+    font-size: 1.75rem !important;
+  }
+  .text-lg {
+    font-size: 0.95rem !important;
+  }
+  .py-3 {
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+  }
+  .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  /* Chart */
+  .h-80 {
+    height: 280px !important;
+  }
+  .p-10 {
+    padding: 1rem !important;
+  }
+  .text-3xl {
+    font-size: 1.25rem !important;
+  }
+  
+  /* News cards: 1 Kolom di HP (permintaan user) */
+  .grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .news-card {
+    padding: 1rem !important;
+  }
+  .news-card img {
+    height: 150px !important; /* Tinggi sedang agar proporsional di 1 kolom */
+    width: 100% !important;
+    object-fit: cover !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .news-card h4 {
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .btn-read-more {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Tentang KIP: Kurangi padding agar tidak 1 layar 1 kartu */
+  .grid-cols-1.md\:grid-cols-2 > div {
+    padding: 1.25rem !important;
+  }
+  #tentang p {
+    font-size: 0.9rem !important;
+    text-align: left !important; /* Justify kadang bolong di HP */
+  }
+
+  .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+  /* Slider buttons */
+  .w-12 {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  .left-6 {
+    left: 0.5rem !important;
+  }
+  .right-6 {
+    right: 0.5rem !important;
   }
 }
 </style>
@@ -595,123 +691,53 @@ $berita = mysqli_query($koneksi, "
 ");
 
 ?>
-<!-- ================== BERITA & KEGIATAN ================== -->
-<section id="berita" class="relative pt-4 md:pt-8 pb-20 px-4 md:px-8">
+<section id="berita" class="relative pt-0 pb-6 px-6 -mt-16">
 
 
-  <!-- HEADER SECTION -->
-  <div class="max-w-7xl mx-auto text-center mb-10 md:mb-14">
-    <h2 class="
-      text-2xl sm:text-3xl md:text-4xl
-      font-extrabold
-      text-white
-      drop-shadow
-      mb-3
-    ">
-      Berita & Kegiatan KIP-Kuliah
-    </h2>
 
-    <p class="
-      text-sm sm:text-base md:text-lg
-      text-purple-100
-      max-w-2xl
-      mx-auto
-    ">
-      Informasi terbaru seputar kegiatan, pengumuman, dan agenda resmi
-      KIP-Kuliah Politeknik Negeri Lampung.
-    </p>
+
+  <div class="relative w-full max-w-[95%] mx-auto rounded-t-2xl overflow-hidden">
+
+    <div class="absolute inset-0 bg-gradient-to-br from-[#FFFFFF] to-[#FFFFFF]"></div>
+
+    <div class="relative z-10 text-white px-6 py-10">
+
+     <!-- JUDUL BERWARNA UNGU -->
+      <h3 class="text-3xl font-bold text-center mb-12 text-purple-700">
+        Berita & Kegiatan KIP-Kuliah
+      </h3>
+
+
+     <div class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+<?php while ($b = mysqli_fetch_assoc($berita)) : ?>
+  <div class="news-card bg-purple-700 rounded-2xl shadow-xl p-6 text-white">
+    <div class="card-content">
+      <!-- Gambar pertama -->
+      <?php if (!empty($b['gambar'])): ?>
+        <img src="uploads/berita/<?= htmlspecialchars($b['gambar']) ?>" 
+             alt="<?= htmlspecialchars($b['judul']) ?>" 
+             class="rounded-xl mb-4 w-full h-48 object-cover shadow-lg transition-transform duration-300 hover:scale-105">
+      <?php endif; ?>
+
+      <!-- Judul -->
+      <h4 class="font-semibold text-xl mb-2 text-white">
+        <?= htmlspecialchars($b['judul']) ?>
+      </h4>
+
+      <!-- Tombol ke detail berita -->
+      <a href="berita_detail.php?id=<?= $b['id_berita'] ?>" 
+         class="btn-read-more inline-block bg-white text-purple-700 font-semibold px-4 py-2 rounded-lg">
+         Baca Selengkapnya →
+      </a>
+    </div>
   </div>
+<?php endwhile; ?>
 
-  <!-- WRAPPER PUTIH -->
-  <div class="
-    max-w-7xl mx-auto
-    bg-white/95
-    backdrop-blur-xl
-    rounded-3xl
-    shadow-2xl
-    px-6 sm:px-8 md:px-10
-    py-10 md:py-12
-  ">
-
-    <!-- SLIDER -->
-    <div class="swiper beritaSwiper">
-      <div class="swiper-wrapper">
-
-        <?php while ($b = mysqli_fetch_assoc($berita)) : ?>
-          <div class="swiper-slide h-auto">
-
- <div class="
-  group news-card
-  bg-gradient-to-br from-primary-mid to-primary-dark
-  rounded-2xl
-  p-4 sm:p-6
-  text-white
-  flex flex-col
-  h-full
-  shadow-lg
-">
-
-
-
-              <!-- GAMBAR -->
-              <?php if (!empty($b['gambar'])): ?>
-                <div class="relative overflow-hidden rounded-xl mb-4">
-                  <img
-                    src="uploads/berita/<?= htmlspecialchars($b['gambar']) ?>"
-                    class="
-                      w-full h-44 sm:h-48
-                      object-cover
-                      transition duration-500
-                      group-hover:scale-110
-                    "
-                  >
-                  <div class="absolute inset-0 bg-black/25"></div>
-                </div>
-              <?php endif; ?>
-
-              <!-- JUDUL -->
-              <h4 class="
-                font-semibold
-                text-base sm:text-lg
-                mb-4
-                leading-snug
-                line-clamp-3
-              ">
-                <?= htmlspecialchars($b['judul']) ?>
-              </h4>
-
-              <!-- BUTTON -->
-              <a href="berita_detail.php?id=<?= $b['id_berita'] ?>"
-                 class="
-                   mt-auto
-                   inline-flex items-center gap-2
-                   bg-white text-purple-700
-                   font-semibold
-                   px-4 py-2
-                   rounded-lg
-                   hover:bg-purple-100
-                   transition
-                 ">
-                Baca Selengkapnya
-                <span class="transition group-hover:translate-x-1">→</span>
-              </a>
-
-            </div>
-          </div>
-        <?php endwhile; ?>
-
-      </div>
-
-      <!-- NAVIGATION -->
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
-
-      <!-- PAGINATION -->
-      <div class="swiper-pagination mt-6"></div>
+</div>
     </div>
   </div>
 </section>
-
 
 
 
@@ -841,24 +867,7 @@ $berita = mysqli_query($koneksi, "
   </script>
 
   <!-- BERITA & KEGIATAN -->
-<?php
-include 'koneksi.php';
-// Ambil 6 berita terbaru yang sudah disetujui beserta 1 gambar pertama (jika ada)
-$berita = mysqli_query($koneksi, "
-    SELECT b.id_berita, b.judul, bg.file AS gambar
-    FROM berita b
-    LEFT JOIN berita_gambar bg ON b.id_berita = bg.id_berita
-    AND bg.sortorder = (
-        SELECT MIN(sortorder) 
-        FROM berita_gambar 
-        WHERE id_berita = b.id_berita
-    )
-    WHERE b.status='approved'
-    GROUP BY b.id_berita
-    ORDER BY b.id_berita DESC
-    LIMIT 6
-");
-?>
+
 
 
 
@@ -977,31 +986,6 @@ new Chart(ctxKIP, {
     currentIndex = (currentIndex + 1) % heroImages.length;
     showImage(currentIndex);
   }, 5000);
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-new Swiper(".beritaSwiper", {
-  slidesPerView: 1,
-  spaceBetween: 24,
-  loop: true,
-  autoplay: {
-    delay: 4000,
-    disableOnInteraction: false,
-  },
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true,
-  },
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-  breakpoints: {
-    640: { slidesPerView: 2, spaceBetween: 20 },
-    1024: { slidesPerView: 3, spaceBetween: 24 }
-  }
-});
 </script>
 
 
