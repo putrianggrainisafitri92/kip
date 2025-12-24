@@ -159,6 +159,103 @@ $nama = $_SESSION['nama_mahasiswa'] ?? '';
       font-weight: 800;
       margin-bottom: 30px;
     }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 1024px) {
+      .header h1 {
+        font-size: 16px;
+      }
+      .content-box {
+        padding: 30px 35px;
+        max-width: 90%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 15px;
+        height: 60px;
+      }
+      .header h1 {
+        font-size: 14px;
+      }
+      .header img {
+        width: 32px;
+        height: 32px;
+      }
+      .main-content {
+        margin-top: 75px;
+        padding: 15px;
+      }
+      .main-content.shifted {
+        margin-left: 0;
+      }
+      .content-box {
+        padding: 25px 20px;
+        border-radius: 15px;
+        max-width: 95%;
+      }
+      .content-box h1 {
+        font-size: 1.5rem !important;
+      }
+      /* Step indicator */
+      .flex.flex-wrap.justify-center.gap-6 {
+        gap: 1rem !important;
+      }
+      .w-14 {
+        width: 3rem !important;
+        height: 3rem !important;
+      }
+      .w-10 {
+        width: 1.5rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 11px;
+      }
+      .header .flex.items-center.gap-4 {
+        display: none; /* Hide logout on very small screens */
+      }
+      .main-content {
+        padding: 10px;
+        margin-top: 70px;
+      }
+      .content-box {
+        padding: 15px;
+        border-radius: 12px;
+      }
+      .content-box h1 {
+        font-size: 1.25rem !important;
+      }
+      .content-box p, .content-box li {
+        font-size: 14px;
+      }
+      /* Step indicator mobile */
+      .flex.flex-wrap.justify-center.gap-6 {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem !important;
+      }
+      .w-10.h-1 {
+        width: 2px !important;
+        height: 1.5rem !important;
+      }
+      .w-14 {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        font-size: 1rem !important;
+      }
+      .text-sm {
+        font-size: 12px !important;
+      }
+      /* Buttons */
+      .px-8 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+      }
+    }
   </style>
 </head>
 

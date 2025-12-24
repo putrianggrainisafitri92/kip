@@ -210,10 +210,94 @@ select {
 @media (max-width: 991px) {
     .main-content {
         margin-left: 0 !important;
+        margin-top: 80px;
+        padding: 15px;
     }
 
     .modal-content {
         width: 90%;
+    }
+    
+    .container-statistik {
+        width: 95%;
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-top: 75px;
+        padding: 10px;
+    }
+    
+    .container-statistik {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .chart-container {
+        height: 250px;
+        width: 100%;
+    }
+    
+    .row.text-center.mt-4 {
+        flex-direction: column;
+    }
+    
+    .col-md-4 {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .info-box {
+        padding: 20px;
+    }
+    
+    select {
+        font-size: 14px;
+        width: 100%;
+    }
+    
+    #prodiSelect {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 8px;
+        margin-top: 70px;
+    }
+    
+    .container-statistik {
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .info-box {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .dropdown-tahun {
+        width: 95%;
+    }
+    
+    #prodiSelect {
+        font-size: 12px;
     }
 }
 

@@ -15,7 +15,7 @@ include 'koneksi.php';
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: url('/KIPWEB/assets/bgpolinela.jpeg') no-repeat center center fixed;
+      background: url('assets/bgpolinela.jpeg') no-repeat center center fixed;
       background-size: cover;
       overflow-x: hidden;
     }
@@ -91,6 +91,79 @@ include 'koneksi.php';
       padding: 40px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       margin-bottom: 40px;
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 1024px) {
+      .header h1 {
+        font-size: 16px;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .card-section {
+        padding: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 0 15px;
+        height: 60px;
+      }
+      .header h1 {
+        font-size: 14px;
+      }
+      .header img {
+        width: 35px;
+        height: 35px;
+      }
+      .main-content {
+        margin-top: 80px;
+        padding: 15px;
+      }
+      .main-content.shifted {
+        margin-left: 0;
+      }
+      .card-section {
+        padding: 20px;
+        border-radius: 15px;
+      }
+      .card-section h1 {
+        font-size: 1.75rem !important;
+      }
+      .card-section h3 {
+        font-size: 1.25rem !important;
+      }
+      .grid.md\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+      }
+      .grid.md\:grid-cols-5 {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 12px;
+      }
+      .main-content {
+        padding: 10px;
+        margin-top: 70px;
+      }
+      .card-section {
+        padding: 15px;
+        border-radius: 12px;
+      }
+      .card-section h1 {
+        font-size: 1.5rem !important;
+      }
+      table {
+        font-size: 12px;
+      }
+      table th, table td {
+        padding: 8px 6px !important;
+      }
     }
 
   </style>

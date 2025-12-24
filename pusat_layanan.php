@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pusat Layanan – KIP Kuliah</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
@@ -25,6 +26,71 @@
         background-color: #1d0b33 !important;
         background-image: none !important;
         opacity: 1 !important;
+    }
+
+    /* ========== RESPONSIVE DESIGN ========== */
+    @media (max-width: 768px) {
+      .pt-32 {
+        padding-top: 6rem !important;
+      }
+      .pb-20 {
+        padding-bottom: 3rem !important;
+      }
+      .p-10 {
+        padding: 1.5rem !important;
+      }
+      .text-4xl {
+        font-size: 1.75rem !important;
+      }
+      .text-2xl {
+        font-size: 1.25rem !important;
+      }
+      .text-lg {
+        font-size: 1rem !important;
+      }
+      .gap-10 {
+        gap: 1.5rem !important;
+      }
+      .max-w-4xl {
+        max-width: 95% !important;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .rounded-3xl {
+        border-radius: 1rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .pt-32 {
+        padding-top: 5rem !important;
+      }
+      .p-10 {
+        padding: 1rem !important;
+      }
+      .p-6 {
+        padding: 1rem !important;
+      }
+      .text-4xl {
+        font-size: 1.5rem !important;
+      }
+      .text-2xl {
+        font-size: 1.1rem !important;
+      }
+      .mb-12 {
+        margin-bottom: 1.5rem !important;
+      }
+      .mt-12 {
+        margin-top: 1.5rem !important;
+      }
+      .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+      }
+      .py-3 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+      }
     }
   </style>
 </head>

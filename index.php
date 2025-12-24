@@ -84,48 +84,378 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
     }
   }
 </script>
-<body class="bg-gradient-to-br from-[#8A4FFF] to-[#C084FC]">
-<style>
+<body class="min-h-screen overflow-x-hidden">
 
-#heroImage {
-    background-size: cover;
-    background-position: center 70%; /* lebih turun */
-    transition: opacity 0.7s ease-in-out;
+<!-- ========== ANIMATED BACKGROUND ========== -->
+<div class="animated-bg-container">
+  <!-- Animated Gradient Base -->
+  <div class="gradient-animate"></div>
+  
+  <!-- Animated Wave Layers -->
+  <div class="wave-container">
+    <svg class="wave wave-1" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="rgba(139, 92, 246, 0.3)" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,186.7C960,213,1056,235,1152,218.7C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+    <svg class="wave wave-2" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="rgba(124, 58, 237, 0.2)" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,106.7C672,117,768,171,864,181.3C960,192,1056,160,1152,144C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+    <svg class="wave wave-3" viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path fill="rgba(168, 85, 247, 0.15)" d="M0,224L48,202.7C96,181,192,139,288,138.7C384,139,480,181,576,197.3C672,213,768,203,864,181.3C960,160,1056,128,1152,128C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+
+  <!-- Floating Geometric Shapes -->
+  <div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+    <div class="shape shape-7"></div>
+    <div class="shape shape-8"></div>
+  </div>
+
+  <!-- Glowing Particles -->
+  <div class="glow-particles">
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+    <div class="glow-particle"></div>
+  </div>
+</div>
+
+<style>
+/* ========== ANIMATED BACKGROUND STYLES ========== */
+.animated-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
 }
 
-  .hero-bg { opacity: 1; transition: opacity 0.8s ease-in-out; }
+/* Animated Gradient - More visible, slower */
+.gradient-animate {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(-45deg, #3B0764, #5B21B6, #7C3AED, #8B5CF6, #6D28D9, #4C1D95);
+  background-size: 300% 300%;
+  animation: gradientFlow 20s ease infinite;
+}
 
-  .slider-btn {
-    cursor: pointer;
-    user-select: none;
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Wave Container - More visible */
+.wave-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+}
+
+.wave-1 { animation: waveMove 10s linear infinite; }
+.wave-2 { animation: waveMove 14s linear infinite reverse; }
+.wave-3 { animation: waveMove 18s linear infinite; }
+
+@keyframes waveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Floating Shapes - Larger, more visible, fewer elements */
+.floating-shapes {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.shape {
+  position: absolute;
+  opacity: 0.6;
+  animation: floatShape 25s ease-in-out infinite;
+  backdrop-filter: blur(2px);
+}
+
+.shape-1 {
+  width: 150px; height: 150px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  top: 8%; left: 5%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 200px; height: 200px;
+  background: linear-gradient(135deg, rgba(192,132,252,0.3), rgba(139,92,246,0.1));
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 50%;
+  top: 15%; right: 8%;
+  animation-delay: -5s;
+  animation-duration: 30s;
+}
+
+.shape-3 {
+  width: 120px; height: 120px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  top: 45%; left: 3%;
+  animation-delay: -10s;
+}
+
+.shape-4 {
+  width: 180px; height: 180px;
+  background: linear-gradient(45deg, rgba(124,58,237,0.25), rgba(168,85,247,0.1));
+  border: 1px solid rgba(168,85,247,0.2);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  bottom: 20%; right: 5%;
+  animation-delay: -15s;
+  animation-duration: 28s;
+}
+
+/* Hide some shapes on mobile */
+.shape-5, .shape-6, .shape-7, .shape-8 {
+  display: none;
+}
+
+@keyframes floatShape {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
   }
+  33% {
+    transform: translate(40px, -30px) rotate(120deg);
+  }
+  66% {
+    transform: translate(-30px, 40px) rotate(240deg);
+  }
+}
+
+/* Glowing Particles - Larger, more visible */
+.glow-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.glow-particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 
+    0 0 30px 8px rgba(255,255,255,0.6),
+    0 0 60px 15px rgba(139,92,246,0.4),
+    0 0 100px 25px rgba(124,58,237,0.2);
+  animation: glowFloat 12s ease-in-out infinite;
+}
+
+.glow-particle:nth-child(1) { left: 8%; top: 20%; animation-delay: 0s; }
+.glow-particle:nth-child(2) { left: 20%; top: 50%; animation-delay: -3s; animation-duration: 14s; }
+.glow-particle:nth-child(3) { left: 35%; top: 70%; animation-delay: -6s; animation-duration: 10s; }
+.glow-particle:nth-child(4) { left: 55%; top: 30%; animation-delay: -2s; animation-duration: 13s; }
+.glow-particle:nth-child(5) { left: 70%; top: 60%; animation-delay: -4s; animation-duration: 11s; }
+.glow-particle:nth-child(6) { left: 85%; top: 25%; animation-delay: -7s; animation-duration: 15s; }
+.glow-particle:nth-child(7) { left: 45%; top: 15%; animation-delay: -5s; animation-duration: 12s; }
+.glow-particle:nth-child(8) { left: 12%; top: 80%; animation-delay: -8s; animation-duration: 16s; }
+
+@keyframes glowFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-80px) scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 1024px) {
+  .shape-1 { width: 100px; height: 100px; }
+  .shape-2 { width: 140px; height: 140px; }
+  .shape-3 { width: 80px; height: 80px; }
+  .shape-4 { width: 120px; height: 120px; }
+  .glow-particle { width: 10px; height: 10px; }
+  .wave-container { height: 25%; }
+}
+
+@media (max-width: 768px) {
+  .shape-1 { width: 70px; height: 70px; top: 5%; }
+  .shape-2 { width: 100px; height: 100px; }
+  .shape-3 { width: 50px; height: 50px; }
+  .shape-4 { width: 80px; height: 80px; }
+  .glow-particle { width: 8px; height: 8px; }
+  .glow-particle:nth-child(5),
+  .glow-particle:nth-child(6),
+  .glow-particle:nth-child(7),
+  .glow-particle:nth-child(8) { display: none; }
+  .wave-container { height: 20%; }
+  .main-content { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .shape-3, .shape-4 { display: none; }
+  .glow-particle { width: 6px; height: 6px; }
+  .wave-container { height: 15%; }
+  .main-content { padding: 0.75rem; }
+}
+
+/* ========== NEWS CARD ANIMATIONS ========== */
+.news-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.news-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.25);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+  z-index: 0;
+}
+
+.news-card:active::before {
+  width: 500px;
+  height: 500px;
+}
+
+.news-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3), 0 0 25px rgba(139,92,246,0.25);
+}
+
+.news-card:active {
+  transform: scale(0.97);
+}
+
+.news-card .card-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Shimmer effect */
+.news-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 100%
+  );
+  transform: rotate(30deg);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.news-card:hover::after {
+  opacity: 1;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* Button animation */
+.btn-read-more {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-read-more:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(124,58,237,0.4);
+}
+
+.btn-read-more:active {
+  transform: scale(0.95);
+}
+
+/* ========== CONTENT STYLES ========== */
+#heroImage {
+  background-size: cover;
+  background-position: center 70%;
+  transition: opacity 0.7s ease-in-out;
+}
+
+.hero-bg { opacity: 1; transition: opacity 0.8s ease-in-out; }
+
+.slider-btn {
+  cursor: pointer;
+  user-select: none;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+  padding: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.main-content.shifted {
+  margin-left: 250px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive main content */
+@media (max-width: 768px) {
+  .main-content.shifted {
+    margin-left: 0;
+  }
+}
 </style>
-
-
-  <style>
-    .main-content {
-      transition: margin-left 0.3s ease;
-      padding: 2.5rem;
-    }
-    .main-content.shifted {
-      margin-left: 250px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    .fade-in {
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </head>
 
 
@@ -259,27 +589,26 @@ $berita = mysqli_query($koneksi, "
      <div class="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
 
 <?php while ($b = mysqli_fetch_assoc($berita)) : ?>
-  <div class="bg-purple-700 rounded-2xl shadow-xl p-6 hover:scale-105 transition duration-300 text-white">
+  <div class="news-card bg-purple-700 rounded-2xl shadow-xl p-6 text-white">
+    <div class="card-content">
+      <!-- Gambar pertama -->
+      <?php if (!empty($b['gambar'])): ?>
+        <img src="uploads/berita/<?= htmlspecialchars($b['gambar']) ?>" 
+             alt="<?= htmlspecialchars($b['judul']) ?>" 
+             class="rounded-xl mb-4 w-full h-48 object-cover shadow-lg transition-transform duration-300 hover:scale-105">
+      <?php endif; ?>
 
+      <!-- Judul -->
+      <h4 class="font-semibold text-xl mb-2 text-white">
+        <?= htmlspecialchars($b['judul']) ?>
+      </h4>
 
-    <!-- Gambar pertama -->
-    <?php if (!empty($b['gambar'])): ?>
-      <img src="uploads/berita/<?= htmlspecialchars($b['gambar']) ?>" 
-           alt="<?= htmlspecialchars($b['judul']) ?>" 
-           class="rounded-xl mb-4 w-full h-48 object-cover shadow-lg">
-    <?php endif; ?>
-
-    <!-- Judul -->
-    <h4 class="font-semibold text-xl mb-2 text-white">
-      <?= htmlspecialchars($b['judul']) ?>
-    </h4>
-
-    <!-- Tombol ke detail berita -->
-    <a href="berita_detail.php?id=<?= $b['id_berita'] ?>" 
-   class="inline-block bg-white text-purple-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-200 transition">
-   Baca Selengkapnya →
-</a>
-
+      <!-- Tombol ke detail berita -->
+      <a href="berita_detail.php?id=<?= $b['id_berita'] ?>" 
+         class="btn-read-more inline-block bg-white text-purple-700 font-semibold px-4 py-2 rounded-lg">
+         Baca Selengkapnya →
+      </a>
+    </div>
   </div>
 <?php endwhile; ?>
 
