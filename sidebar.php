@@ -27,43 +27,114 @@ if (file_exists('index.php')) {
   </div>
 </header>
 
+
+
 <!-- ===== LOGIN MODAL ===== -->
 <div id="loginModal" class="login-modal">
   <div class="login-box">
     <span id="closeLogin" class="close-login">&times;</span>
 
-    <h2 class="login-title">Masuk</h2>
+    <h2 class="login-title">LOGIN ADMIN</h2>
+    <p class="login-note">
+      ⚠ Akses login <strong>khusus Admin</strong>. Mahasiswa tidak dapat login.
+    </p>
 
-      <?php if(isset($_GET['error'])): ?>
-    <div class="login-alert">
+    <!-- ERROR LOGIN SAJA -->
+    <?php if(isset($_GET['login_error'])): ?>
+      <div class="login-alert">
         <?php 
-          if($_GET['error'] === 'user'){
+          if($_GET['login_error'] === 'user'){
               echo "❌ Username tidak ditemukan!";
-          } elseif($_GET['error'] === 'pass'){
+          } elseif($_GET['login_error'] === 'pass'){
               echo "❌ Password salah!";
-          } elseif($_GET['error'] === 'akses'){
-              echo "⚠ Level akun tidak valid!";
+          } elseif($_GET['login_error'] === 'empty'){
+              echo "⚠ Semua field wajib diisi!";
           }
         ?>
-    </div>
-<?php endif; ?>
+      </div>
+    <?php endif; ?>
 
-<form action="<?= $base_url ?>cek_login.php" method="POST" class="login-form">
-      
+    <form action="<?= $base_url ?>cek_login.php" method="POST">
       <div class="input-wrap">
         <label>Username</label>
-        <input type="text" name="username" placeholder="Masukkan username..." required>
+        <input type="text" name="username" required>
       </div>
 
       <div class="input-wrap">
         <label>Password</label>
-        <input type="password" name="password" placeholder="Masukkan password..." required>
+        <input type="password" name="password" required>
       </div>
 
       <button type="submit" class="btn-login">Login</button>
     </form>
+
+    <!-- LINK KE RESET -->
+    <div style="text-align:center; margin:10px 0;">
+      <a href="#" id="openReset" style="color:#6a0dad;font-weight:600;">
+        Lupa password?
+      </a>
+    </div>
+
   </div>
 </div>
+
+
+
+
+<!-- ===== RESET PASSWORD MODAL ===== -->
+<div id="resetModal" class="login-modal">
+  <div class="login-box">
+    <span id="closeReset" class="close-login">&times;</span>
+
+    <h2 class="login-title">Reset Password</h2>
+
+    <!-- ERROR RESET SAJA -->
+    <?php if(isset($_GET['reset_error'])): ?>
+      <div class="login-alert">
+        <?php
+          if($_GET['reset_error']=='empty'){
+            echo "⚠ Semua field wajib diisi!";
+          } elseif($_GET['reset_error']=='user'){
+            echo "❌ Username tidak ditemukan!";
+          }
+        ?>
+      </div>
+    <?php endif; ?>
+
+ <?php if(isset($_GET['reset_success'])): ?>
+  <div class="login-alert alert-purple">
+     Password berhasil diubah
+  </div>
+<?php endif; ?>
+
+
+    <form action="<?= $base_url ?>reset_password.php" method="POST">
+      <div class="input-wrap">
+        <label>Username</label>
+        <input type="text" name="username" required>
+      </div>
+
+      <div class="input-wrap">
+        <label>Password Baru</label>
+        <input type="password" name="new_password" required>
+      </div>
+
+      <button type="submit" class="btn-login">
+        Ubah Password
+      </button>
+    </form>
+
+    <!-- KEMBALI LOGIN -->
+    <div style="text-align:center;margin-top:10px;">
+      <a href="#" id="backLogin" style="font-weight:600;">
+        ← Kembali ke Login
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
 
 
 <!-- ========== SIDEBAR ========== -->
@@ -178,6 +249,66 @@ if (file_exists('index.php')) {
   transform: scale(1.05);
 }
 
+/* ===== LOGIN NOTE (ADMIN ONLY) ===== */
+.login-note {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.login-note strong {
+  color: #4B0082;
+}
+
+
+/* ===== PERTEGAS TEKS LOGIN & RESET ===== */
+
+/* Judul modal */
+.login-title {
+  color: #3b0764;          /* Ungu tua, kontras tinggi */
+  font-weight: 800;        /* Extra bold */
+  letter-spacing: 0.3px;
+}
+
+/* Catatan admin only */
+.login-note {
+  color: #1f2937;          /* Abu gelap (jelas di putih) */
+  font-weight: 600;
+}
+
+/* Label input */
+.input-wrap label {
+  color: #111827;          /* Hampir hitam */
+  font-weight: 700;
+}
+
+/* Isi input */
+.input-wrap input {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Link lupa password & kembali login */
+#openReset,
+#backLogin {
+  color: #4B0082 !important;
+  font-weight: 700;
+}
+
+/* Hover link */
+#openReset:hover,
+#backLogin:hover {
+  color: #2e004f !important;
+  text-decoration: underline;
+}
+
+/* Alert text (error & success) */
+.login-alert {
+  font-weight: 700;
+}
+
+
 /* ===== SIDEBAR ===== */
 .sidebar {
   position: fixed;
@@ -227,6 +358,13 @@ if (file_exists('index.php')) {
 .nav-links a:hover {
   background: rgba(255,255,255,0.15);
 }
+
+.alert-purple {
+  background: #f3e8ff;
+  color: #5b21b6;
+  border-left: 4px solid #7c3aed;
+}
+
 
 /* ===== DROPDOWN ===== */
 .dropdown-btn {
@@ -304,9 +442,39 @@ main, .content {
   border-radius: 16px;
   padding: 30px 35px;
   position: relative;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  animation: zoomIn 0.25s ease;
+  /* Glow ungu statis lembut */
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+  animation: zoomIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   overflow: visible !important;
+  z-index: 10;
+}
+
+/* Moving Border - Purple Gradient */
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: -4px; right: -4px; bottom: -4px; left: -4px;
+  background: linear-gradient(135deg, #7C3AED, #A78BFA, #7C3AED);
+  z-index: -1;
+  border-radius: 20px;
+}
+
+/* White Shimmer (Kilauan Putih) */
+
+.login-box::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(120deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+  background-size: 200% 100%;
+  z-index: -1;
+  border-radius: 16px;
+  animation: whiteShimmer 3s infinite linear;
+}
+
+@keyframes whiteShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @keyframes zoomIn {
@@ -385,153 +553,6 @@ main, .content {
     height: auto !important;
     line-height: 1.3rem !important;
 }
-
-/* ========== RESPONSIVE DESIGN ========== */
-@media (max-width: 1024px) {
-  .topbar-title {
-    font-size: 1.1rem;
-  }
-  .logo-img {
-    height: 38px;
-  }
-}
-
-@media (max-width: 768px) {
-  .topbar {
-    height: 60px;
-    padding: 0 15px;
-  }
-  
-  .topbar-title {
-    font-size: 0.95rem;
-  }
-  
-  .logo-img {
-    height: 32px;
-  }
-  
-  .toggle-btn {
-    font-size: 1.6rem;
-    margin-right: 12px;
-  }
-  
-  .login-btn {
-    padding: 8px 14px;
-    font-size: 0.9rem;
-  }
-  
-  .sidebar {
-    width: 240px;
-    left: -250px;
-    padding-top: 75px;
-  }
-  
-  .sidebar-title {
-    font-size: 1.1rem;
-  }
-  
-  .nav-links a {
-    padding: 12px 20px;
-    font-size: 0.95rem;
-  }
-  
-  .dropdown-btn {
-    padding: 12px 20px;
-    font-size: 0.95rem;
-  }
-  
-  main, .content {
-    padding-top: 75px;
-  }
-  
-  .login-box {
-    width: 90%;
-    max-width: 360px;
-    padding: 25px;
-  }
-  
-  .login-title {
-    font-size: 1.4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .topbar {
-    height: 55px;
-    padding: 0 10px;
-  }
-  
-  .topbar-title {
-    font-size: 0.8rem;
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .logo-img {
-    height: 28px;
-  }
-  
-  .toggle-btn {
-    font-size: 1.4rem;
-    margin-right: 8px;
-  }
-  
-  .login-btn {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .login-btn i {
-    display: none;
-  }
-  
-  .sidebar {
-    width: 220px;
-    left: -230px;
-    padding-top: 70px;
-  }
-  
-  .sidebar-title {
-    font-size: 1rem;
-  }
-  
-  .nav-links a {
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    gap: 10px;
-  }
-  
-  .dropdown-btn {
-    padding: 10px 16px;
-    font-size: 0.9rem;
-  }
-  
-  main, .content {
-    padding-top: 70px;
-  }
-  
-  .login-box {
-    width: 95%;
-    padding: 20px;
-  }
-  
-  .login-title {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-  }
-  
-  .input-wrap input {
-    padding: 10px;
-    font-size: 0.95rem;
-  }
-  
-  .btn-login {
-    padding: 11px;
-    font-size: 1rem;
-  }
-}
  
 </style>
 
@@ -543,12 +564,18 @@ const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
 const dropdownBtns = document.querySelectorAll('.dropdown-btn');
 
-// LOGIN ELEMENTS
+// LOGIN
 const openLogin = document.getElementById('openLogin');
 const loginModal = document.getElementById('loginModal');
 const closeLogin = document.getElementById('closeLogin');
 
-/* ========== SIDEBAR TOGGLE ========== */
+// RESET
+const openReset  = document.getElementById('openReset');
+const resetModal = document.getElementById('resetModal');
+const closeReset = document.getElementById('closeReset');
+const backLogin  = document.getElementById('backLogin');
+
+/* SIDEBAR */
 toggleBtn.addEventListener('click', () => {
   sidebar.classList.toggle('active');
   overlay.classList.toggle('active');
@@ -559,35 +586,68 @@ overlay.addEventListener('click', () => {
   overlay.classList.remove('active');
 });
 
-/* ========== DROPDOWN MENU ========== */
+/* DROPDOWN */
 dropdownBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     btn.parentElement.classList.toggle('open');
   });
 });
 
-/* ========== LOGIN POPUP OPEN ========== */
+/* OPEN LOGIN */
 openLogin.addEventListener('click', () => {
   loginModal.classList.add('active');
 });
 
-/* ========== LOGIN POPUP CLOSE ========== */
+/* CLOSE LOGIN */
 closeLogin.addEventListener('click', () => {
   loginModal.classList.remove('active');
 });
 
-/* Klik luar modal menutup */
+/* CLICK OUTSIDE LOGIN */
 loginModal.addEventListener('click', (e) => {
   if (e.target === loginModal) {
     loginModal.classList.remove('active');
   }
 });
 
-/* ========== AUTO OPEN IF ERROR ========== */
+/* OPEN RESET */
+openReset.addEventListener('click', (e) => {
+  e.preventDefault();
+  loginModal.classList.remove('active');
+  resetModal.classList.add('active');
+});
+
+/* CLOSE RESET */
+closeReset.addEventListener('click', () => {
+  resetModal.classList.remove('active');
+});
+
+/* CLICK OUTSIDE RESET */
+resetModal.addEventListener('click', (e) => {
+  if (e.target === resetModal) {
+    resetModal.classList.remove('active');
+  }
+});
+
+/* BACK TO LOGIN */
+if(backLogin){
+  backLogin.addEventListener('click', function(e){
+    e.preventDefault();
+    resetModal.classList.remove('active');
+    loginModal.classList.add('active');
+  });
+}
+
+/* AUTO OPEN MODAL SESUAI KONTEKS */
 document.addEventListener("DOMContentLoaded", function(){
-    const url = new URL(window.location.href);
-    if(url.searchParams.get("error")){
-        loginModal.classList.add("active");
-    }
+  const url = new URL(window.location.href);
+
+  if(url.searchParams.get("login_error")){
+    loginModal.classList.add("active");
+  }
+
+  if(url.searchParams.get("reset_error") || url.searchParams.get("reset_success")){
+    resetModal.classList.add("active");
+  }
 });
 </script>
