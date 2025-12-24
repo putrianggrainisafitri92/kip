@@ -57,7 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Judul */
         $judul = trim($_POST['judul']);
-        $stmt = $koneksi->prepare("UPDATE berita SET judul=? WHERE id_berita=?");
+        $stmt = $koneksi->prepare(
+        "UPDATE berita 
+        SET judul = ?, status = 'pending' 
+        WHERE id_berita = ?"
+        );
         $stmt->bind_param("si", $judul, $id);
         $stmt->execute();
         $stmt->close();
