@@ -10,7 +10,7 @@ $res = $koneksi->query("SELECT nama_sk, file_path
 
 $list = [];
 while($row = $res->fetch_assoc()){
-    $file_url = str_replace('../', 'http://localhost/KIPWEB/', $row['file_path']);
+    $file_url = "uploads/sk/" . basename($row['file_path']);
     $list[] = ['nama_sk'=>$row['nama_sk'], 'file_url'=>$file_url];
 }
 
