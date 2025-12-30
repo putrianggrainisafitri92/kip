@@ -1,7 +1,14 @@
 <?php
-require __DIR__.'/fpdf/fpdf.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/KIPWEB/koneksi.php';
+ob_start();
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/FPDF/fpdf.php';
+require_once __DIR__ . '/../koneksi.php';
 session_start();
+
 
 if (!isset($_GET['id'])) {
     die("ID evaluasi tidak ditemukan");
@@ -114,7 +121,7 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetAutoPageBreak(true, 15);
 
-$pdf->SetFont('Arial','B',16);
+$pdf->SetFont('Helvetica','B',16);
 $pdf->Cell(0,10,'Laporan Evaluasi Mahasiswa KIPK',0,1,'C');
 
 
@@ -207,6 +214,6 @@ $pdf->Cell(0,6,"Uploaded At: ".$file['uploaded_at'],0,1);
 // ========================
 // Output PDF
 // ========================
-$pdf->Output('I','laporan_evaluasi_'.preg_replace('/[^a-zA-Z0-9]/','',$data['npm']).'.pdf');
+ob_end_clean();
+$pdf->Output('I','laporan_evaluasi_'.$data['npm'].'.pdf');
 exit;
-?>

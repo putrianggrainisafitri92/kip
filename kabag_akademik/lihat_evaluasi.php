@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../koneksi.php';
+include $_SERVER['DOCUMENT_ROOT'] . '../koneksi.php';
 session_start();
 
 if (!isset($_SESSION['level']) || !in_array($_SESSION['level'], ['12', '13'])) {
@@ -60,7 +60,7 @@ if (isset($_GET['hapus'])) {
         // Hapus file fisik
         $qf = mysqli_query($koneksi, "SELECT file_eval FROM file_eval WHERE id_mahasiswa_kip=$idm");
         while ($f = mysqli_fetch_assoc($qf)) {
-            $path = __DIR__ . '/../uploads/evaluasi/' . $f['file_eval'];
+            $path = $_SERVER['DOCUMENT_ROOT'] . '../uploads/evaluasi/' . $f['file_eval'];
             if (file_exists($path)) {
                 unlink($path);
             }
@@ -197,7 +197,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 
   while ($row = mysqli_fetch_assoc($result)) {
 
-    $pathEvaluasi  = '/KIPWEB/uploads/evaluasi/' . ($row['file_eval'] ?? '');
+    $pathEvaluasi  = '../uploads/evaluasi/' . ($row['file_eval'] ?? '');
  
 
     echo "<tr class='border-b hover:bg-purple-50 transition'>";

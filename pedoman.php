@@ -119,24 +119,26 @@ include 'koneksi.php';
         height: 35px;
       }
       .main-content {
-        margin-top: 80px;
-        padding: 15px;
+        margin-top: 65px; /* Lebih rapat ke header */
+        padding: 10px;
       }
       .main-content.shifted {
         margin-left: 0;
       }
       .card-section {
-        padding: 20px;
+        padding: 15px;       
         border-radius: 15px;
+        margin-bottom: 15px; /* Jarak antar kartu lebih dekat */
       }
       .card-section h1 {
-        font-size: 1.75rem !important;
+        font-size: 1.5rem !important;
       }
       .card-section h3 {
-        font-size: 1.25rem !important;
+        font-size: 1.15rem !important;
       }
       .grid.md\:grid-cols-2 {
         grid-template-columns: 1fr !important;
+        gap: 15px !important; /* Jarak grid lebih rapat */
       }
       .grid.md\:grid-cols-5 {
         grid-template-columns: repeat(2, 1fr) !important;

@@ -106,7 +106,10 @@ h2 {
    Select Dropdown
 ======================== */
 .select-box {
-    border-radius: 12px;          /* sudut tumpul sedikit */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;       /* Agar padding tdk bikin lebar berlebih */
+    border-radius: 12px;          
     padding: 10px 12px;          
     border: 2px solid #3d3d4582;   
     background-color: #fff;       
