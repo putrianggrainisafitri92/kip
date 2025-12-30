@@ -3,23 +3,25 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include "koneksi.php";
+include 'sidebar.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nama_pelapor   = mysqli_real_escape_string($koneksi, $_POST['nama_pelapor'] ?? '');
-    $email_pelapor  = mysqli_real_escape_string($koneksi, $_POST['email_pelapor'] ?? '');
-    $nama_terlapor  = mysqli_real_escape_string($koneksi, $_POST['nama_terlapor'] ?? '');
-    $npm_terlapor   = mysqli_real_escape_string($koneksi, $_POST['npm_terlapor'] ?? '');
-    $jurusan        = mysqli_real_escape_string($koneksi, $_POST['jurusan'] ?? '');
-    $prodi          = mysqli_real_escape_string($koneksi, $_POST['prodi'] ?? '');
-    $alasan         = mysqli_real_escape_string($koneksi, $_POST['alasan'] ?? '');
-    $detail_laporan = mysqli_real_escape_string($koneksi, $_POST['detail_laporan'] ?? '');
+    $nama_pelapor   = mysqli_real_escape_string($koneksi, $_POST['nama_pelapor']);
+    $email_pelapor  = mysqli_real_escape_string($koneksi, $_POST['email_pelapor']);
+    $nama_terlapor  = mysqli_real_escape_string($koneksi, $_POST['nama_terlapor']);
+    $npm_terlapor   = mysqli_real_escape_string($koneksi, $_POST['npm_terlapor']);
+    $jurusan        = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
+    $prodi          = mysqli_real_escape_string($koneksi, $_POST['prodi']);
+    $alasan         = mysqli_real_escape_string($koneksi, $_POST['alasan']);
+    $detail_laporan = mysqli_real_escape_string($koneksi, $_POST['detail_laporan']);
+    $pernyataan     = isset($_POST['pernyataan']) ? 1 : 0;
 
     // ✅ Cek ada minimal 1 file
     if(!isset($_FILES['bukti'])) {
         echo "<script>alert('Bukti pendukung wajib diupload!'); history.back();</script>";
         exit;
     }
-    
+
     $uploaded_files = [];
     $target_dir = "uploads/";
     if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
