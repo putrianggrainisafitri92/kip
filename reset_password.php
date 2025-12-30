@@ -1,27 +1,53 @@
 <?php
-include 'koneksi.php';
+session_start();
+include "koneksi.php";
 
-$username     = $_POST['username'] ?? '';
-$new_password = $_POST['new_password'] ?? '';
+$username = mysqli_real_escape_string($koneksi, $_POST['username'] ?? '');
+$new_pass = mysqli_real_escape_string($koneksi, $_POST['new_password'] ?? '');
 
-if($username=='' || $new_password==''){
+if($username == '' || $new_pass == ''){
     header("Location: index.php?reset_error=empty");
     exit;
 }
 
-// cek username admin
-$q = mysqli_query($koneksi, "SELECT * FROM admin WHERE username='$username'");
-if(mysqli_num_rows($q)==0){
+// CEK USER ADMIN
+$query = mysqli_query($koneksi, "SELECT * FROM admin WHERE username='$username'");
+
+if(mysqli_num_rows($query) !== 1){
     header("Location: index.php?reset_error=user");
     exit;
 }
 
-// update password (TANPA HASH sesuai permintaan)
+$admin = mysqli_fetch_assoc($query);
+
+// UPDATE PASSWORD
 mysqli_query($koneksi, "
-  UPDATE admin 
-  SET password='$new_password' 
-  WHERE username='$username'
+    UPDATE admin 
+    SET password='$new_pass' 
+    WHERE username='$username'
 ");
 
-header("Location: index.php?reset_success=1");
-exit;
+// ==================================
+// AUTO LOGIN (TIRU CEK_LOGIN.PHP)
+// ==================================
+$_SESSION['username'] = $admin['username'];
+$_SESSION['level']    = (int)$admin['level'];
+$_SESSION['login']    = true;
+
+// SET ROLE & REDIRECT SESUAI LEVEL
+if($_SESSION['level'] === 11){
+    $_SESSION['role'] = "pengurus";
+    header("Location: pengurus/index.php");
+    exit;
+} elseif($_SESSION['level'] === 12){
+    $_SESSION['role'] = "admin2";
+    header("Location: admin/index.php");
+    exit;
+} elseif($_SESSION['level'] === 13){
+    $_SESSION['role'] = "kabag";
+    header("Location: kabag_akademik/index.php");
+    exit;
+} else {
+    header("Location: index.php?error=akses");
+    exit;
+}

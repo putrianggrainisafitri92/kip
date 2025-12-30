@@ -1,5 +1,6 @@
 <?php
 include 'koneksi.php';
+include 'visitor_counter.php';
 
 // =========================
 // Ambil data Penerima KIP Pertahun (approved saja)
@@ -453,9 +454,10 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
 
 .main-content {
   transition: margin-left 0.3s ease;
-  padding: 2.5rem;
+  padding: 0;
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 
 .main-content.shifted {
@@ -495,10 +497,10 @@ html {
    <!-- Hero Section -->
 <section class="relative w-full h-[60vh] pt-20 flex items-center justify-center select-none">
 
-  <!-- Background SLIDESHOW -->
+  <!-- Background SLIDESHOW (Full Width) -->
   <div id="heroBackground"
-       class="absolute inset-0 px-4 hero-bg transition-opacity duration-700">
-    <div class="relative w-full h-full rounded-2xl overflow-hidden">
+       class="absolute inset-0 px-0 hero-bg transition-opacity duration-700">
+    <div class="relative w-full h-full overflow-hidden">
       <div id="heroImage"
            class="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
            style="background-image: url('assets/bg-polinela.jpeg'); opacity: 1;">
@@ -509,29 +511,7 @@ html {
     </div>
   </div>
 
-  <!-- Tombol Prev -->
-<button id="prevBtn"
-        class="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center
-               bg-white/20 hover:bg-white/40 text-white rounded-full shadow-lg backdrop-blur-md
-               transition-all duration-300 group">
-    <svg xmlns="http://www.w3.org/2000/svg" 
-         class="w-6 h-6 text-white group-hover:text-white" 
-         fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
-</button>
-
-<!-- Tombol Next -->
-<button id="nextBtn"
-        class="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center
-               bg-white/20 hover:bg-white/40 text-white rounded-full shadow-lg backdrop-blur-md
-               transition-all duration-300 group">
-    <svg xmlns="http://www.w3.org/2000/svg" 
-         class="w-6 h-6 text-white group-hover:text-white" 
-         fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-</button>
+  <!-- Tombol Navigasi DIHAPUS agar clean -->
 
   <!-- HERO CONTENT -->
   <div class="relative z-10 text-center px-6 max-w-3xl mx-auto">
@@ -952,16 +932,6 @@ new Chart(ctxKIP, {
       heroImage.style.opacity = 1;
     }, 300);
   }
-
-  document.getElementById("nextBtn").addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % heroImages.length;
-    showImage(currentIndex);
-  });
-
-  document.getElementById("prevBtn").addEventListener("click", () => {
-    currentIndex = (currentIndex - 1 + heroImages.length) % heroImages.length;
-    showImage(currentIndex);
-  });
 
   // Auto Slide
   setInterval(() => {
