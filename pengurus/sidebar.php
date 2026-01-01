@@ -21,6 +21,8 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
             border-right: 2px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            transition: 0.3s;
         }
 
         .sidebar .logo-box {
@@ -75,12 +77,60 @@
             background: #b71c1c !important;
             transform: scale(1.03);
         }
+
+        /* MOBILE TOGGLE */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 900;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -230px;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
     </style>
 
 </head>
 <body>
 
-<div class="sidebar">
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
 
     <div class="logo-box">
         <img src="../assets/logo-polinela.png" width="80" alt="Logo Polinela">
@@ -101,11 +151,23 @@
         <i class="fa-solid fa-book"></i> Upload Pedoman
     </a>
 
+    <a href="prestasi_list.php">
+        <i class="fa-solid fa-user-graduate"></i> Upload Mahasiswa Berprestasi
+    </a>
+
     <a href="../logout.php" class="logout-btn">
         <i class="fa-solid fa-right-from-bracket"></i> Logout
     </a>
 
 </div>
 
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
+</script>
+
 </body>
 </html>
+

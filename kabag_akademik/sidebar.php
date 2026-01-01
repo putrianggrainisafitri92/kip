@@ -1,4 +1,5 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 /* Sidebar Container */
@@ -14,6 +15,8 @@
     padding-top: 25px;
     box-shadow: 4px 0 18px rgba(0,0,0,0.35);
     border-right: 2px solid rgba(255,255,255,0.1);
+    z-index: 1000;
+    transition: 0.3s;
 }
 
 /* Judul */
@@ -76,9 +79,61 @@
     background: #b71c1c !important;
     transform: scale(1.03);
 }
+
+/* MOBILE TOGGLE */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background: #6f42c1;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        left: -230px;
+    }
+    .sidebar.active {
+        left: 0;
+    }
+    .sidebar-toggle {
+        display: block;
+    }
+    .sidebar-overlay.active {
+        display: block;
+    }
+    /* If there's a main-content class in the page, it should reset margin */
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
 </style>
 
-<div class="sidebar">
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
     <div class="logo-box">
         <img src="../assets/logo-polinela.png" alt="Logo">
     </div>
@@ -90,6 +145,7 @@
         <li><a href="validasi_sk.php"><i class="fa-solid fa-file-signature"></i>Validasi SK</a></li>
         <li><a href="validasi_pedoman.php"><i class="fa-solid fa-book"></i>Validasi Pedoman</a></li>
         <li><a href="validasi_kip.php"><i class="fa-solid fa-coins"></i>Validasi Jumlah KIP</a></li>
+        <li><a href="validasi_prestasi.php"><i class="fa-solid fa-user-graduate"></i>Validasi Mahasiswa Berprestasi</a></li>
         <li><a href="lihat_laporan.php"><i class="fa-solid fa-chart-line"></i>Lihat Pelaporan</a></li>
         <li><a href="lihat_evaluasi.php"><i class="fa-solid fa-clipboard-check"></i>Lihat Evaluasi</a></li>
         <li><a href="crud_user.php"><i class="fa-solid fa-users-cog"></i>CRUD User</a></li>
@@ -101,3 +157,11 @@
         <li><a href="../logout.php" class="logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
     </ul>
 </div>
+
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
+</script>
+

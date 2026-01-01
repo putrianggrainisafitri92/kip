@@ -31,8 +31,6 @@ while($row = $skResult->fetch_assoc()){
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Statistik Perjurusan - KIP-Kuliah POLINELA</title>
-<!-- TAILWIND WAJIB UNTUK FOOTER -->
-<script src="https://cdn.tailwindcss.com"></script>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -59,13 +57,17 @@ body {
    Statistik Container
 ======================== */
 .container-statistik {
-    width: 90%;
-    max-width: 1100px;
-    background: rgba(255, 255, 255, 0.95); /* putih semi-transparan */
-    border-radius: 15px;
-    padding: 40px;
+    width: 100%;
+    max-width: 1450px;
+    margin: 0 auto;
+    transform: translateX(-120px); /* geser HALUS ke kiri */
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 20px;
+    padding: 50px;
+    min-height: 650px;  
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
+
 h2 {
     text-align: center;
     font-weight: 700;
@@ -79,8 +81,8 @@ h2 {
 .chart-container {
     position: relative;
     margin: auto;
-    height: 300px;
-    width: 90%;
+    height: 600px;
+    width: 100%;
 }
 
 /* ========================
@@ -246,8 +248,8 @@ h2 {
     }
     
     .chart-container {
-        height: 220px;
-        width: 100%;
+    height: 420px;
+    width: 100%;
     }
     
     .row.text-center.mt-4 {
@@ -308,6 +310,18 @@ h2 {
     white-space: normal;
     word-wrap: break-word;
 }
+.info-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 130px;
+}
+
+@media (max-width: 768px) {
+    .col-6 {
+        width: 100%;   /* di HP turun ke bawah */
+    }
+}
 
 </style>
 </head>
@@ -330,46 +344,60 @@ h2 {
       </select>
     </div>
 
-    <!-- Grafik -->
-    <div class="chart-container mb-4">
+    <div class="row mt-4 align-items-start">
+
+  <!-- GRAFIK (KIRI) -->
+<div class="col-md-10">
+      <div class="chart-container">
       <canvas id="grafikJurusan"></canvas>
     </div>
+  </div>
 
-    <!-- 3 Box Bawah -->
-    <div class="row text-center mt-4">
-      <div class="col-md-4">
-        <div class="info-box" onclick="tampilkanTotal()">
-          Total Mahasiswa<br>
-          <span class="fs-4 text-primary"><?= $totalMahasiswa; ?></span>
-        </div>
-      </div>
+  <!-- 4 BOX -->
+<div class="col-md-2">
+  <div class="d-flex flex-column gap-3">
 
-      <div class="col-md-4">
-        <div class="info-box">
-          <label>Nama Prodi</label><br>
-          <select id="prodiSelect" onchange="tampilkanProdi(this.value)">
-            <option value="">-- Pilih Prodi --</option>
-            
-          </select>
-        </div>
-      </div>
+    <!-- BOX 1 -->
+    <div class="info-box" onclick="tampilkanTotal()">
+      Total Mahasiswa<br>
+      <span class="fs-4 text-primary"><?= $totalMahasiswa; ?></span>
+    </div>
 
-      <div class="col-md-4 position-relative">
-        <div class="info-box" id="skBox">
-          SK KIP-K<br>
-          <span class="text-muted">Klik untuk pilih tahun</span>
-          <div class="dropdown-tahun" id="dropdownSK">
-            <label for="tahunSelect" class="fw-semibold mb-2 d-block">Pilih Tahun:</label>
-            <select id="tahunSelect" class="form-select">
-              <option value="">-- Pilih Tahun --</option>
-              <?php foreach($skTahunList as $tahun): ?>
-                <option value="<?= $tahun ?>"><?= $tahun ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-        </div>
+    <!-- BOX 2 -->
+    <div class="info-box">
+      <label>Nama Prodi</label><br>
+      <select id="prodiSelect" onchange="tampilkanProdi(this.value)">
+        <option value="">-- Pilih Prodi --</option>
+      </select>
+    </div>
+
+    <!-- BOX 3 -->
+    <div class="info-box" onclick="cetakProdi()">
+      Nama Mahasiswa<br>Per Prodi
+      <div class="text-muted" style="font-size:13px;margin-top:5px;">
+        Klik untuk lihat daftar
       </div>
     </div>
+
+    <!-- BOX 4 -->
+    <div class="info-box position-relative" id="skBox">
+      SK KIP-K<br>
+      <span class="text-muted">Klik untuk pilih tahun</span>
+
+      <div class="dropdown-tahun" id="dropdownSK">
+        <label class="fw-semibold mb-2 d-block">Pilih Tahun:</label>
+        <select id="tahunSelect" class="form-select">
+          <option value="">-- Pilih Tahun --</option>
+          <?php foreach($skTahunList as $tahun): ?>
+            <option value="<?= $tahun ?>"><?= $tahun ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
     <div id="hasil"></div>
   </div>
@@ -393,18 +421,44 @@ function createChartIfNotExists(ctx, labels, values, labelText) {
     data: {
       labels,
       datasets: [{
-        label: labelText,
-        data: values,
-        borderColor: '#2b2b9f',
-        borderWidth: 3,
-        tension: 0.3,
-        pointBackgroundColor: '#2b2b9f',
-        pointRadius: 4,
-        fill: false
-      }]
+  label: labelText,
+  data: values,
+  borderColor: '#7a5cff',     // ungu lembut
+  borderWidth: 3,
+  tension: 0.35,
+
+  // TITIK
+  pointBackgroundColor: '#ffffffff',
+  pointBorderColor: '#7a5cff',
+  pointBorderWidth: 2,
+  pointRadius: 5,
+  pointHoverRadius: 6,
+
+  // AREA GRADIENT
+  fill: true,
+  backgroundColor: (context) => {
+    const chart = context.chart;
+    const { ctx, chartArea } = chart;
+    if (!chartArea) return null;
+
+    const gradient = ctx.createLinearGradient(
+      0,
+      chartArea.top,
+      0,
+      chartArea.bottom
+    );
+
+    gradient.addColorStop(0, 'rgba(122, 92, 255, 0.35)');
+    gradient.addColorStop(1, 'rgba(122, 92, 255, 0.03)');
+
+    return gradient;
+  }
+}]
+
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       animation: {
         duration: 900,
         easing: 'easeOutQuart'
@@ -450,6 +504,7 @@ function createChartIfNotExists(ctx, labels, values, labelText) {
 }
 
 function tampilkanGrafikJurusan(jurusan = "") {
+  jurusanAktif = jurusan; // SIMPAN JURUSAN AKTIF
   let url = 'grafik_jurusan.php?status=approved';
   if (jurusan) url += '&jurusan=' + encodeURIComponent(jurusan);
 
@@ -508,6 +563,23 @@ function tampilkanTotal(){
     .then(res=>res.text())
     .then(data=>document.getElementById('hasil').innerHTML=data);
 }
+function cetakProdi() {
+  const prodi = document.getElementById('prodiSelect').value;
+
+  if (!jurusanAktif) {
+    alert('Silakan pilih jurusan terlebih dahulu');
+    return;
+  }
+
+  if (!prodi) {
+    alert('Silakan pilih prodi terlebih dahulu');
+    return;
+  }
+
+  const url = `cetak_prodi.php?jurusan=${encodeURIComponent(jurusanAktif)}&prodi=${encodeURIComponent(prodi)}`;
+  window.open(url, '_blank');
+}
+
 
 // SK KIP-K
 const skBox = document.getElementById('skBox');
@@ -552,9 +624,4 @@ document.addEventListener('DOMContentLoaded', ()=> tampilkanGrafikJurusan());
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
-
-<?php include '../footer.php'; ?>
-
-
 </html> 

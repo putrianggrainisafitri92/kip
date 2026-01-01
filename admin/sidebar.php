@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sidebar Admin</title>
 
     <!-- FONT AWESOME (CDN TERJAMIN BERFUNGSI) -->
@@ -21,6 +22,8 @@
         font-family: 'Segoe UI', Arial, sans-serif;
         box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
         border-right: 2px solid rgba(255,255,255,0.1);
+        z-index: 1000;
+        transition: 0.3s;
     }
 
     /* Logo */
@@ -92,13 +95,66 @@
     .main-content {
         margin-left: 230px;
         padding: 25px;
+        transition: 0.3s;
+    }
+
+    /* MOBILE TOGGLE */
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1100;
+        background: #6f42c1;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 900;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .sidebar {
+            left: -230px;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .main-content {
+            margin-left: 0 !important;
+        }
+        .sidebar-toggle {
+            display: block;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
     }
     </style>
 
 </head>
 <body>
 
-<div class="sidebar">
+<button class="sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
 
     <div class="logo-box">
         <img src="../assets/logo-polinela.png" alt="Logo">
@@ -144,9 +200,10 @@
 
 </div>
 
-<div class="main-content">
-    <!-- konten halaman -->
-</div>
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
+</script>
 
-</body>
-</html>

@@ -152,18 +152,9 @@ if (file_exists('index.php')) {
       <i class="bi bi-book"></i> Pedoman 2025
     </a>
 
-    <div class="dropdown">
-      <button class="dropdown-btn">
-        <i class="bi bi-bar-chart"></i> Statistik
-        <i class="bi bi-caret-down-fill arrow"></i>
-      </button>
-
-      <div class="dropdown-content">
-        <a href="<?= $base_url ?>statistik/statistik_tahun.php">Per Tahun</a>
-        <a href="<?= $base_url ?>statistik/statistik_jurusan.php">Per Jurusan</a>
-        <a href="<?= $base_url ?>statistik/statistik_prodi.php">Per Prodi</a>
-      </div>
-    </div>
+    <a href="<?= $base_url ?>berprestasi.php">
+      <i class="bi bi-mortarboard-fill"></i> Mahasiswa Berprestasi
+    </a>
 
     <a href="<?= $base_url ?>pusat_layanan.php">
       <i class="bi bi-pencil-square"></i> Pusat Layanan
@@ -171,6 +162,10 @@ if (file_exists('index.php')) {
 
     <a href="<?= $base_url ?>form_evaluasi.php">
       <i class="bi bi-clipboard-check"></i> Evaluasi Mahasiswa
+    </a>
+    
+    <a href="#" onclick="toggleChat(); return false;">
+      <i class="bi bi-chat-dots-fill"></i> Bantuan
     </a>
   </nav>
 </aside>

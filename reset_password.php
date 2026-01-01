@@ -2,8 +2,10 @@
 session_start();
 include "koneksi.php";
 
-$username = mysqli_real_escape_string($koneksi, $_POST['username'] ?? '');
-$new_pass = mysqli_real_escape_string($koneksi, $_POST['new_password'] ?? '');
+$username = mysqli_real_escape_string($koneksi, $_POST['username'] ?? '');$new_pass = mysqli_real_escape_string($koneksi, $_POST['new_password'] ?? '');
+$raw_pass = $_POST['new_password'] ?? '';
+$hash_pass = password_hash($raw_pass, PASSWORD_DEFAULT);
+
 
 if($username == '' || $new_pass == ''){
     header("Location: index.php?reset_error=empty");
@@ -23,7 +25,7 @@ $admin = mysqli_fetch_assoc($query);
 // UPDATE PASSWORD
 mysqli_query($koneksi, "
     UPDATE admin 
-    SET password='$new_pass' 
+    SET password='$hash_pass'
     WHERE username='$username'
 ");
 

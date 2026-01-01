@@ -426,5 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
 
 <?php include 'footer.php'; ?>
+
+<?php include 'chatbot_widget.php'; ?>
 </body>
 </html>

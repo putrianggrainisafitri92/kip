@@ -69,6 +69,12 @@ $pengunjung_hari_ini = mysqli_fetch_assoc($q2)['hari_ini'];
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="style.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
@@ -534,26 +540,131 @@ html {
 </section>
 
 
-<!-- ================== GRAFIK PENERIMAAN KIP PER TAHUN ================== -->
-<section class="pt-6 pb-8 px-2 md:px-8 fade-in"> 
-
-  <div class="max-w-5xl mx-auto bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl p-2 md:p-8 border border-white/50">
-
-    <h2 class="text-2xl md:text-3xl font-bold text-center text-primary-mid mb-6 mt-4">
-      Grafik Penerimaan KIP-Kuliah per Tahun
-    </h2>
-
-    <!-- Canvas Grafik: Full Width, Tinggi Optimal, Tanpa Scroll -->
-    <div class="w-full h-[350px] md:h-[500px] relative">
-      <canvas id="grafikKipTahunan"></canvas>
-    </div>
-
-    <p class="text-center text-gray-700 mt-4 mb-4 text-sm md:text-base">
-      Total Penerima: <span class="font-bold text-primary-dark text-lg"><?= $totalMahasiswa ?></span> Mahasiswa
-    </p>
-
+<!-- ================== STATISTIK PER JURUSAN ================== -->
+<?php
+$qJ=$koneksi->query("SELECT DISTINCT jurusan FROM mahasiswa_kip WHERE status='approved' ORDER BY jurusan ASC");
+$jurList=[]; while($r=$qJ->fetch_assoc()) $jurList[]=$r['jurusan'];
+$qS=$koneksi->query("SELECT DISTINCT tahun FROM sk_kipk WHERE status='approved' ORDER BY tahun ASC");
+$skList=[]; while($r=$qS->fetch_assoc()) $skList[]=$r['tahun'];
+?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.container-statistik{background:rgba(255,255,255,0.96);border-radius:20px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.1)}
+.chart-container{position:relative;height:500px;width:100%}
+.info-box{background:#f8f9fc;border:1px solid #e3e6f0;border-radius:12px;padding:15px;text-align:center;cursor:pointer;margin-bottom:12px;min-height:100px;display:flex;flex-direction:column;justify-content:center;transition:0.3s}
+.info-box:hover{background:#eef2ff;border-color:#6366f1;transform:translateY(-2px)}
+.select-box{width:100%;padding:10px;border-radius:8px;border:1px solid #d1d5db;background:#fff}
+.dropdown-tahun-idx{display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ddd;padding:10px;z-index:50;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.modal-idx{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5);overflow:auto}
+.modal-content-idx{background:#fff;margin:10% auto;padding:20px;border-radius:15px;width:90%;max-width:500px;position:relative}
+.close-idx{position:absolute;right:15px;top:10px;font-size:24px;font-weight:bold;cursor:pointer}
+/* Animasi Judul Keren */
+.animated-gradient-text {
+  background: linear-gradient(to right, #1e3a8a, #7c3aed, #db2777, #1e3a8a);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 5s ease-in-out infinite alternate;
+}
+@keyframes textShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+</style>
+<section class="py-12 px-2 md:px-4">
+ <div class="w-[95%] mx-auto container-statistik">
+  <h2 class="text-2xl md:text-4xl font-extrabold text-center mb-10 animated-gradient-text tracking-tight drop-shadow-sm transform hover:scale-105 transition duration-500">
+    Grafik Penerimaan KIP-K Tahun 2021-2025
+  </h2>
+  <div class="mb-6 max-w-md mx-auto text-center">
+   <label class="block font-bold mb-2 text-gray-700">Pilih Jurusan:</label>
+   <select id="jurusanSelect" class="select-box" onchange="tampilkanGrafikJurusan(this.value)">
+    <option value="">-- Semua Jurusan --</option>
+    <?php foreach($jurList as $j): ?><option value="<?=htmlspecialchars($j)?>"><?=htmlspecialchars($j)?></option><?php endforeach; ?>
+   </select>
   </div>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+   <div class="lg:col-span-9 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+    <div class="chart-container"><canvas id="grafikJurusan"></canvas></div>
+   </div>
+   <div class="lg:col-span-3 flex flex-col gap-3">
+    <div class="info-box" onclick="tampilkanTotal()">
+     <span class="text-sm text-gray-500 font-bold uppercase">Total Keseluruhan Mahasiswa Tahun 2021-2025</span>
+     <span class="text-3xl font-extrabold text-blue-600 mt-1"><?=$totalMahasiswa?></span>
+    </div>
+    <div class="info-box">
+     <label class="text-sm font-bold text-gray-700 mb-2">Filter Prodi</label>
+     <select id="prodiSelect" class="select-box text-sm" onchange="tampilkanProdi(this.value)"><option value="">-- Pilih Prodi --</option></select>
+    </div>
+    <div class="info-box" onclick="cetakProdi()">
+     <span class="font-bold text-purple-700">Cetak Data Nama Mahasiswa</span>
+     <span class="text-xs text-gray-500 mt-1">Unduh PDF</span>
+    </div>
+    <div class="info-box relative" id="skBoxIdx">
+     <span class="font-bold text-green-700">SK KIP-Kuliah</span>
+     <span class="text-xs text-gray-500 mt-1">Klik pilih tahun</span>
+     <div class="dropdown-tahun-idx" id="dropdownSKIdx">
+      <label class="block text-xs font-bold mb-1 text-left">Pilih Tahun:</label>
+      <select id="tahunSelect" class="select-box text-sm">
+       <option value="">-- Pilih Tahun --</option>
+       <?php foreach($skList as $t): ?><option value="<?=$t?>"><?=$t?></option><?php endforeach; ?>
+      </select>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div id="hasil" class="mt-6"></div>
+ </div>
 </section>
+<div id="modalSK" class="modal-idx"><div class="modal-content-idx"><span class="close-idx" onclick="closeModal()">&times;</span><h4 class="text-xl font-bold mb-4">Daftar SK <span id="modalTahun"></span></h4><ul id="listSK" class="space-y-2"></ul></div></div>
+<script>
+let chartJurusan, jurAktif='';
+function createChart(ctx,labels,vals,txt){
+ const cfg={type:'line',data:{labels,datasets:[{label:txt,data:vals,borderColor:'#7a5cff',borderWidth:3,tension:0.35,fill:true,backgroundColor:(ctx)=>{const c=ctx.chart.ctx;const g=c.createLinearGradient(0,0,0,400);g.addColorStop(0,'rgba(122,92,255,0.3)');g.addColorStop(1,'rgba(122,92,255,0.01)');return g},pointBackgroundColor:'#fff',pointBorderColor:'#7a5cff',pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom'}}}};
+ if(!chartJurusan)chartJurusan=new Chart(ctx,cfg);
+ else{chartJurusan.data.labels=labels;chartJurusan.data.datasets[0].label=txt;chartJurusan.data.datasets[0].data=vals;chartJurusan.update();}
+}
+function tampilkanGrafikJurusan(jur=''){
+ jurAktif=jur;
+ let u='statistik/grafik_jurusan.php?status=approved'; if(jur)u+='&jurusan='+encodeURIComponent(jur);
+ fetch(u).then(r=>r.json()).then(d=>{
+  if(d.error){alert(d.message);return;}
+  const lbl=[],v=[]; d.labels.forEach((l,i)=>{if(d.data[i]>0){lbl.push(l);v.push(d.data[i])}});
+  const ps=document.getElementById('prodiSelect'); ps.innerHTML='<option value="">-- Pilih Prodi --</option>';
+  if(d.prodi)d.prodi.forEach(p=>{const o=document.createElement('option');o.value=p;o.innerText=p;ps.appendChild(o)});
+  createChart(document.getElementById('grafikJurusan'),lbl,v,jur?'Mahasiswa '+jur:'Total Mahasiswa');
+ }).catch(e=>console.error(e));
+}
+function tampilkanProdi(p){
+ if(!p)return;
+ fetch('statistik/get_grafik_prodi.php?status=approved&prodi='+encodeURIComponent(p)).then(r=>r.json()).then(d=>{
+  const lbl=[],v=[]; d.labels.forEach((l,i)=>{if(d.data[i]>0){lbl.push(l);v.push(d.data[i])}});
+  createChart(document.getElementById('grafikJurusan'),lbl,v,'Prodi '+d.prodi);
+ });
+}
+function tampilkanTotal(){ fetch('statistik/tampilkan_total.php?status=approved').then(r=>r.text()).then(h=>document.getElementById('hasil').innerHTML=h); }
+function cetakProdi(){ if(!jurAktif){alert('Pilih jurusan dulu');return;} if(!document.getElementById('prodiSelect').value){alert('Pilih prodi dulu');return;} window.open('statistik/cetak_prodi.php?jurusan='+encodeURIComponent(jurAktif)+'&prodi='+encodeURIComponent(document.getElementById('prodiSelect').value),'_blank'); }
+const sb=document.getElementById('skBoxIdx'),dd=document.getElementById('dropdownSKIdx'),ts=document.getElementById('tahunSelect'),md=document.getElementById('modalSK'),ls=document.getElementById('listSK');
+sb.addEventListener('click',e=>{e.stopPropagation();dd.style.display=(dd.style.display==='block'?'none':'block')});
+dd.addEventListener('click',e=>e.stopPropagation());
+document.addEventListener('click',e=>{if(!sb.contains(e.target))dd.style.display='none'});
+function closeModal(){md.style.display='none'}
+window.onclick=(e)=>{if(e.target==md)closeModal()}
+ts.addEventListener('change',function(){
+ const t=this.value; dd.style.display='none'; if(!t)return;
+ fetch('statistik/get_sk.php?status=approved&tahun='+t).then(r=>r.json()).then(d=>{
+  if(!d||d.length===0){alert('SK Kosong');return;}
+  if(d.length===1){let url=d[0].file_url; if(url.startsWith('../'))url=url.substring(3); window.open(url,'_blank');}
+  else{
+   ls.innerHTML=''; document.getElementById('modalTahun').innerText=t;
+   d.forEach(s=>{ let url=s.file_url; if(url.startsWith('../'))url=url.substring(3); const li=document.createElement('li');li.innerHTML=`<a href="${url}" target="_blank" class="block p-2 bg-purple-100 rounded text-purple-700 hover:bg-purple-200">${s.nama_sk}</a>`;ls.appendChild(li); });
+   md.style.display='block';
+  }
+ });
+});
+document.addEventListener('DOMContentLoaded',()=>tampilkanGrafikJurusan());
+</script>
  
 <!-- BERITA & KEGIATAN -->
 <?php
@@ -695,8 +806,7 @@ $berita = mysqli_query($koneksi, "
 
 
    <!-- TENTANG KIP-KULIAH -->
-   <!-- TENTANG KIP-KULIAH -->
-   <section id="tentang" class="relative w-full py-10 md:py-16 flex items-center justify-center overflow-hidden">
+    <section id="tentang" class="relative w-full py-10 md:py-16 mb-16 md:mb-24 flex items-center justify-center overflow-hidden">
 
   <!-- Wrapper Background -->
   <div class="absolute inset-y-0 left-0 right-0 md:left-4 md:right-4">
@@ -966,5 +1076,7 @@ new Swiper(".beritaSwiper", {
 </script>
 
 
+
+<?php include 'chatbot_widget.php'; ?>
 </body>
 </html>
