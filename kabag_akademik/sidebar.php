@@ -1,5 +1,4 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 /* Sidebar Container */
@@ -15,8 +14,6 @@
     padding-top: 25px;
     box-shadow: 4px 0 18px rgba(0,0,0,0.35);
     border-right: 2px solid rgba(255,255,255,0.1);
-    z-index: 1000;
-    transition: 0.3s;
 }
 
 /* Judul */
@@ -79,61 +76,9 @@
     background: #b71c1c !important;
     transform: scale(1.03);
 }
-
-/* MOBILE TOGGLE */
-.sidebar-toggle {
-    display: none;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 1100;
-    background: #6f42c1;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 900;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        left: -230px;
-    }
-    .sidebar.active {
-        left: 0;
-    }
-    .sidebar-toggle {
-        display: block;
-    }
-    .sidebar-overlay.active {
-        display: block;
-    }
-    /* If there's a main-content class in the page, it should reset margin */
-    .main-content {
-        margin-left: 0 !important;
-    }
-}
 </style>
 
-<button class="sidebar-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-</button>
-
-<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
     <div class="logo-box">
         <img src="../assets/logo-polinela.png" alt="Logo">
     </div>
@@ -153,15 +98,8 @@
         <!-- POSISI DIPINDAH KE BAWAH -->
         <li><a href="saran.php"><i class="fa-solid fa-lightbulb"></i>Saran Pengguna</a></li>
         <li><a href="pertanyaan.php"><i class="fa-solid fa-circle-question"></i>Pertanyaan User</a></li>
+        <li><a href="bantuan.php"><i class="fa-solid fa-info-circle"></i>Bantuan</a></li>
 
         <li><a href="../logout.php" class="logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
     </ul>
 </div>
-
-<script>
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.getElementById('overlay').classList.toggle('active');
-}
-</script>
-
