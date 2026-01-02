@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../protect.php';
 check_level(13);
 include '../koneksi.php';
@@ -8,208 +9,271 @@ include 'sidebar.php';
 $q = mysqli_query($koneksi, "SELECT * FROM sk_kipk ORDER BY id_sk_kipk DESC");
 ?>
 
-<style>
-body {
-    background: #efeaff;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Validasi SK KIPK - Kabag Akademik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-.content-wrapper {
-    margin-left: 260px;
-    padding: 35px;
-}
+        /* ===== Content Wrapper ===== */
+        .content {
+            margin-left: 240px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
 
-/* HEADER CARD */
-.header-card {
-    background: #ffffff;
-    padding: 28px;
-    border-radius: 18px;
-    border-left: 10px solid #6a0dad;
-    box-shadow: 0 6px 22px rgba(106, 13, 173, 0.18);
-    margin-bottom: 25px;
-}
+        /* ===== Title ===== */
+        .header-section {
+            margin-bottom: 30px;
+        }
 
-.header-card h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 800;
-    color: #4e0a8a;
-}
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
 
-/* TABLE CARD */
-.table-card {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    margin-top: 25px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
+        /* Responsif Mobile */
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 85px 15px 40px 15px;
+            }
+            .header-section h2 { font-size: 22px; }
+        }
 
-/* TABLE */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        /* ===== Table Container ===== */
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
 
-.styled-table thead tr {
-    background: #6a0dad;
-    color: white;
-}
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.styled-table th,
-.styled-table td {
-    padding: 14px 16px;
-    text-align: center;
-    font-size: 14px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
 
-.styled-table tbody tr {
-    background: #fbf7ff;
-    border-bottom: 8px solid #ffffff;
-    transition: 0.2s;
-}
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+        }
 
-.styled-table tbody tr:hover {
-    background: #f0e4ff;
-    transform: scale(1.002);
-}
+        th:first-child { border-radius: 12px 0 0 12px; }
+        th:last-child { border-radius: 0 12px 12px 0; }
 
-/* STATUS BADGES */
-.badge {
-    padding: 7px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-}
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
 
-.success { background: #2ecc71; }
-.danger  { background: #e74c3c; }
-.pending { background: #f1c40f; color: #4a3d00; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbf9ff; }
 
-/* BUTTONS */
-.btn-info {
-    background: #6a0dad;
-    padding: 7px 14px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 13px;
-}
+        /* ===== Badges ===== */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .pending { background: #fff8e1; color: #ffa000; border: 1px solid #ffe082; }
+        .approved { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .rejected, .revisi { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
 
-.btn-detail {
-    background: #0288D1;
-    padding: 7px 14px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 13px;
-}
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+        }
 
-/* MODAL */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 999;
-}
+        .btn-view { background: #f3e8ff; color: #7b35d4; }
+        .btn-view:hover { background: #7b35d4; color: white; transform: translateY(-2px); }
 
-.modal-box {
-    background: white;
-    width: 40%;
-    margin: 8% auto;
-    padding: 25px;
-    border-radius: 18px;
-    border-top: 6px solid #6a0dad;
-    position: relative;
-    animation: fadeIn 0.25s ease;
-}
+        .btn-detail { background: #e3f2fd; color: #1976d2; }
+        .btn-detail:hover { background: #1976d2; color: white; transform: translateY(-2px); }
 
-.close {
-    position: absolute;
-    right: 18px;
-    top: 10px;
-    font-size: 22px;
-    cursor: pointer;
-    color: #6a0dad;
-}
+        /* ===== Modal ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
 
-/* ANIMATION */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-</style>
+        .modal-content {
+            background: white;
+            margin: 15vh auto;
+            padding: 35px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            animation: modalScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
+        @keyframes modalScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-<div class="content-wrapper">
+        .close {
+            position: absolute;
+            right: 25px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+            transition: 0.3s;
+        }
+        .close:hover { color: #4e0a8a; }
 
-    <div class="header-card">
-        <h2>📄 Validasi SK KIPK</h2>
+        .modal-header h3 {
+            margin: 0;
+            color: #4e0a8a;
+            font-weight: 700;
+        }
+
+        .catatan-box {
+            background: #f8f2ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #7b35d4;
+            color: #444;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="header-section">
+        <h2>Validasi SK KIPK</h2>
     </div>
 
-    <div class="table-card">
-
-        <table class="styled-table">
+    <div class="table-container">
+        <table>
             <thead>
                 <tr>
                     <th>Nama SK</th>
-                    <th>Status</th>
-                    <th>Catatan Revisi</th>
-                    <th>Aksi</th>
+                    <th>Tgl Upload</th>
+                    <th style="text-align:center;">Status</th>
+                    <th style="text-align:center;">Catatan Revisi</th>
+                    <th style="text-align:center;">Aksi</th>
                 </tr>
             </thead>
-
             <tbody>
-            <?php while($d = mysqli_fetch_assoc($q)) {
-                $status = strtolower($d['status']);
-                $id = $d['id_sk_kipk'];
+                <?php while($d = mysqli_fetch_assoc($q)) { 
+                    $statusLower = strtolower($d['status']);
+                    $id = $d['id_sk_kipk'];
+                    $catatan = !empty($d['catatan_revisi']) ? htmlspecialchars($d['catatan_revisi']) : "Belum ada catatan.";
+                ?>
+                <tr>
+                    <td style="font-weight: 600; color: #4e0a8a;">
+                        <i class="far fa-file-pdf mr-2" style="color: #d32f2f;"></i>
+                        <?= htmlspecialchars($d['nama_sk']) ?>
+                    </td>
+                    <td>
+                    <?= !empty($d['tanggal_upload']) 
+                        ? date('d M Y', strtotime($d['tanggal_upload'])) 
+                        : '-' ?>
+                    </td>
+                        <td style="text-align:center;">
+                        <span class="badge <?= $statusLower ?>">
+                            <?= strtoupper(htmlspecialchars($d['status'])) ?>
+                        </span>
+                    </td>
+                    <td style="text-align:center;">
+                        <?php if($statusLower == 'rejected' || $statusLower == 'revisi'): ?>
+                            <button class="btn btn-view" onclick="openModal('modal-<?= $id ?>')">
+                                <i class="fas fa-comment-dots"></i> Lihat
+                            </button>
 
-                // BADGE STATUS
-                if ($status == "approved") {
-                    $badge = '<span class="badge success">APPROVED</span>';
-                } elseif ($status == "pending") {
-                    $badge = '<span class="badge pending">PENDING</span>';
-                } else {
-                    $badge = '<span class="badge danger">REJECTED / REVISI</span>';
-                }
-            ?>
-            <tr>
-                <td style="text-align:left;"><?= htmlspecialchars($d['nama_sk']) ?></td>
-                <td><?= $badge ?></td>
-
-                <td>
-                    <?php 
-                    if ($status == 'rejected') {
-                        $catatan = !empty($d['catatan_revisi']) ? htmlspecialchars($d['catatan_revisi']) : "Belum ada catatan";
-                    ?>
-                        <button class="btn-info" onclick="openModal('modal-<?= $id ?>')">Lihat</button>
-
-                        <div id="modal-<?= $id ?>" class="modal-overlay">
-                            <div class="modal-box">
-                                <span class="close" onclick="closeModal('modal-<?= $id ?>')">&times;</span>
-                                <h3>Catatan Revisi</h3>
-                                <p><?= nl2br($catatan) ?></p>
+                            <div id="modal-<?= $id ?>" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" onclick="closeModal('modal-<?= $id ?>')">&times;</span>
+                                    <div class="modal-header">
+                                        <h3>Catatan Revisi</h3>
+                                    </div>
+                                    <div class="catatan-box">
+                                        <?= nl2br($catatan) ?>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    <?php } else { echo "-"; } ?>
-                </td>
-
-                <td>
-                    <a class="btn-detail" href="validasi_sk_detail.php?id=<?= $id ?>">Detail</a>
-                </td>
-            </tr>
-            <?php } ?>
+                        <?php else: ?>
+                            <span style="color: #bbb;">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="validasi_sk_detail.php?id=<?= $id ?>" class="btn btn-detail">
+                            <i class="fas fa-eye"></i> Detail & Validasi
+                        </a>
+                    </td>
+                </tr>
+                <?php } ?>
             </tbody>
         </table>
-
     </div>
 </div>
-
 
 <script>
 function openModal(id){
@@ -220,7 +284,7 @@ function closeModal(id){
 }
 
 window.onclick = function(event){
-    const modals = document.querySelectorAll('.modal-overlay');
+    const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
         if(event.target == modal){
             modal.style.display = "none";
@@ -229,4 +293,5 @@ window.onclick = function(event){
 }
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</body>
+</html>

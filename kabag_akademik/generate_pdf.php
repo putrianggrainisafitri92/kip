@@ -50,14 +50,9 @@ $transportasi = mysqli_fetch_assoc($rTransportasi) ?: [
     'detail_transportasi' => '-'
 ];
 
-// 4. Ambil file dokumen
-$qFile = "SELECT file_eval, uploaded_at FROM file_eval WHERE id_mahasiswa_kip = $id_mhs";
-$rFile = mysqli_query($koneksi, $qFile);
-$file = mysqli_fetch_assoc($rFile) ?: ['file_eval' => '-', 'uploaded_at' => '-'];
-
 if (ob_get_length()) ob_end_clean();
 
-function formatRangePenghasilan($val){
+function formatRange($val){
     if(!$val || $val == '-') return '-';
     if(strpos($val, '-') !== false){
         [$min, $max] = explode('-', $val);
@@ -71,111 +66,106 @@ function formatRangePenghasilan($val){
 // 5. GENERATE PDF
 class PDF extends FPDF {
     function Header() {
-        $this->SetFont('Arial', 'B', 14);
-        $this->SetTextColor(78, 10, 138); // Deep Purple
-        $this->Cell(0, 10, 'POLITEKNIK NEGERI LAMPUNG', 0, 1, 'C');
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('Arial', 'B', 12);
+        $this->SetTextColor(78, 10, 138); 
+        $this->Cell(0, 8, 'POLITEKNIK NEGERI LAMPUNG', 0, 1, 'C');
+        $this->SetFont('Arial', '', 9);
         $this->SetTextColor(100, 100, 100);
-        $this->Cell(0, 5, 'Sistem Informasi Monitoring KIP-K (KIPWEB)', 0, 1, 'C');
-        $this->Ln(5);
-        $this->SetDrawColor(123, 53, 212); // Purple Line
-        $this->SetLineWidth(1);
+        $this->Cell(0, 4, 'Sistem Informasi Monitoring KIP-K (KIPWEB)', 0, 1, 'C');
+        $this->Ln(2);
+        $this->SetDrawColor(123, 53, 212);
+        $this->SetLineWidth(0.6);
         $this->Line(10, $this->GetY(), 200, $this->GetY());
-        $this->Ln(10);
+        $this->Ln(5);
     }
 
     function Footer() {
         $this->SetY(-15);
-        $this->SetFont('Arial', 'I', 8);
+        $this->SetFont('Arial', 'I', 7);
         $this->SetTextColor(150, 150, 150);
-        $this->Cell(0, 10, 'Halaman ' . $this->PageNo() . ' / {nb} - Dicetak secara sistem pada ' . date('d/m/Y H:i'), 0, 0, 'C');
+        $this->Cell(0, 10, 'Halaman ' . $this->PageNo() . ' - Dokumen Digital KIPWEB Polinela', 0, 0, 'C');
     }
 
     function SectionTitle($title) {
-        $this->SetFont('Arial', 'B', 12);
-        $this->SetFillColor(248, 242, 255); // Very Light Purple
-        $this->SetTextColor(78, 10, 138);
-        $this->Cell(0, 10, "  " . strtoupper($title), 0, 1, 'L', true);
-        $this->Ln(3);
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetFillColor(78, 10, 138);
+        $this->SetTextColor(255, 255, 255);
+        $this->Cell(0, 7, "  " . strtoupper($title), 0, 1, 'L', true);
+        $this->Ln(1);
     }
 
-    function InfoRow($label, $value) {
-        $this->SetFont('Arial', 'B', 10);
+    function TableRow($label, $value) {
+        $this->SetFont('Arial', 'B', 8);
+        $this->SetFillColor(245, 245, 255);
         $this->SetTextColor(50, 50, 50);
-        $this->Cell(60, 8, $label, 0, 0);
-        $this->SetFont('Arial', '', 10);
-        $this->SetTextColor(80, 80, 80);
-        $this->MultiCell(0, 8, ": " . $value, 0, 'L');
+        $this->Cell(55, 7, " " . $label, 1, 0, 'L', true);
+        
+        $this->SetFont('Arial', '', 8);
+        $this->SetFillColor(255, 255, 255);
+        $this->Cell(0, 7, " " . $value, 1, 1, 'L');
     }
 }
 
 $pdf = new PDF();
 $pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->SetAutoPageBreak(true, 20);
+// Matikan auto break sementara untuk kontrol manual kalau diperlukan, 
+// tapi di sini kita hanya kecilkan margin bawah
+$pdf->SetAutoPageBreak(true, 10);
 
-$pdf->SetFont('Arial', 'B', 14);
-$pdf->SetTextColor(0,0,0);
-$pdf->Cell(0, 10, 'FORMULIR EVALUASI PENERIMA KIP KULIAH', 0, 1, 'C');
-$pdf->Ln(5);
-
-// DATA MAHASISWA
-$pdf->SectionTitle('Data Mahasiswa');
-$pdf->InfoRow('NPM', $data['npm']);
-$pdf->InfoRow('Nama Mahasiswa', $data['nama_mahasiswa']);
-$pdf->InfoRow('Program Studi', $data['program_studi']);
-$pdf->InfoRow('Jurusan', $data['jurusan']);
-$pdf->InfoRow('Tahun Angkatan', $data['tahun']);
-$pdf->Ln(5);
-
-// HASIL EVALUASI
-$pdf->SectionTitle('Hasil Evaluasi');
-$pdf->InfoRow('Keaktifan Kuliah', $data['keaktifan']);
-$pdf->InfoRow('Prestasi Non-Akademik', $data['prestasi']);
-$pdf->InfoRow('Status Bansos', $data['penerima_bansos']);
-$pdf->InfoRow('Merk/Tipe HP', $data['info_hp']);
-$pdf->InfoRow('Nomor WhatsApp', $data['nomor_wa']);
-$pdf->Ln(5);
-
-// DATA KELUARGA
-$pdf->SectionTitle('Data Orang Tua / Keluarga');
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->Cell(0, 8, 'A. Ayah', 0, 1);
-$pdf->InfoRow('Nama Ayah', $keluarga['nm_ayah']);
-$pdf->InfoRow('Status', $keluarga['status_ayah']);
-$pdf->InfoRow('Pekerjaan', $keluarga['pkerjan_ayah']);
-$pdf->InfoRow('Penghasilan', formatRangePenghasilan($keluarga['penghasilan_ayah']));
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetTextColor(50, 50, 50);
+$pdf->Cell(0, 8, 'FORMULIR HASIL EVALUASI MAHASISWA PENERIMA KIP KULIAH', 0, 1, 'C');
 $pdf->Ln(2);
-$pdf->SetFont('Arial', 'B', 10);
-$pdf->Cell(0, 8, 'B. Ibu', 0, 1);
-$pdf->InfoRow('Nama Ibu', $keluarga['nm_ibu']);
-$pdf->InfoRow('Status', $keluarga['status_ibu']);
-$pdf->InfoRow('Pekerjaan', $keluarga['pkerjan_ibu']);
-$pdf->InfoRow('Penghasilan', formatRangePenghasilan($keluarga['penghasilan_ibu']));
+
+// 1. DATA MAHASISWA
+$pdf->SectionTitle('I. Identitas Mahasiswa');
+$pdf->TableRow('NPM', $data['npm']);
+$pdf->TableRow('Nama Lengkap', $data['nama_mahasiswa']);
+$pdf->TableRow('Program Studi', $data['program_studi']);
+$pdf->TableRow('Jurusan', $data['jurusan']);
+$pdf->TableRow('Tahun Angkatan', $data['tahun']);
 $pdf->Ln(2);
-$pdf->InfoRow('Jumlah Tanggungan', $keluarga['jumlah_tgngn'] . " orang");
-$pdf->Ln(5);
 
-// TRANSPORTASI
-$pdf->SectionTitle('Informasi Transportasi');
-$pdf->InfoRow('Alat Transportasi', $transportasi['alat_transportasi']);
-$pdf->InfoRow('Detail Kendaraan', $transportasi['detail_transportasi']);
-$pdf->Ln(5);
+// 2. HASIL EVALUASI
+$pdf->SectionTitle('II. Hasil Evaluasi Mandiri');
+$pdf->TableRow('Keaktifan Kuliah', $data['keaktifan']);
+$pdf->TableRow('Prestasi / Kegiatan Akademik', $data['prestasi']);
+$pdf->TableRow('Status Penerima Bansos', $data['penerima_bansos']);
+$pdf->TableRow('Spesifikasi Perangkat (HP)', $data['info_hp']);
+$pdf->TableRow('Nomor WhatsApp Aktif', $data['nomor_wa']);
+$pdf->Ln(2);
 
-// FOOTER SIGNATURE (Formal touch)
+// 3. DATA KELUARGA
+$pdf->SectionTitle('III. Data Kondisi Keluarga');
+$pdf->TableRow('Nama Ayah', $keluarga['nm_ayah'] . " (" . $keluarga['status_ayah'] . ")");
+$pdf->TableRow('Pekerjaan Ayah', $keluarga['pkerjan_ayah']);
+$pdf->TableRow('Penghasilan Ayah', formatRange($keluarga['penghasilan_ayah']));
+$pdf->TableRow('Nama Ibu', $keluarga['nm_ibu'] . " (" . $keluarga['status_ibu'] . ")");
+$pdf->TableRow('Pekerjaan Ibu', $keluarga['pkerjan_ibu']);
+$pdf->TableRow('Penghasilan Ibu', formatRange($keluarga['penghasilan_ibu']));
+$pdf->TableRow('Jumlah Tanggungan', $keluarga['jumlah_tgngn'] . " orang");
+$pdf->Ln(2);
+
+// 4. TRANSPORTASI
+$pdf->SectionTitle('IV. Sarana Transportasi');
+$pdf->TableRow('Alat Transportasi Utama', $transportasi['alat_transportasi']);
+$pdf->TableRow('Detail / Merk Kendaraan', $transportasi['detail_transportasi']);
 $pdf->Ln(10);
-$pdf->SetX(130);
-$pdf->SetFont('Arial', '', 10);
-$pdf->Cell(60, 5, 'Bandar Lampung, ' . date('d F Y'), 0, 1, 'C');
-$pdf->SetX(130);
-$pdf->Cell(60, 5, 'Penerima KIP-K,', 0, 1, 'C');
-$pdf->Ln(15);
-$pdf->SetX(130);
-$pdf->SetFont('Arial', 'BU', 10);
-$pdf->Cell(60, 5, $data['nama_mahasiswa'], 0, 1, 'C');
-$pdf->SetX(130);
-$pdf->SetFont('Arial', '', 10);
-$pdf->Cell(60, 5, 'NPM. ' . $data['npm'], 0, 1, 'C');
+
+// SIGNATURE (Lebih padat)
+$pdf->SetFont('Arial', '', 9);
+$pdf->Cell(130);
+$pdf->Cell(0, 4, 'Bandar Lampung, ' . date('d F Y'), 0, 1, 'C');
+$pdf->Cell(130);
+$pdf->Cell(0, 4, 'Mahasiswa Bersangkutan,', 0, 1, 'C');
+$pdf->Ln(12);
+$pdf->Cell(130);
+$pdf->SetFont('Arial', 'BU', 9);
+$pdf->Cell(0, 4, $data['nama_mahasiswa'], 0, 1, 'C');
+$pdf->Cell(130);
+$pdf->SetFont('Arial', '', 9);
+$pdf->Cell(0, 4, 'NPM. ' . $data['npm'], 0, 1, 'C');
 
 ob_end_clean();
 $pdf->Output('I', 'Evaluasi_KIPK_' . $data['npm'] . '.pdf');

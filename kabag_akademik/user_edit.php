@@ -1,25 +1,15 @@
 <?php
-// user_edit.php (FINAL FIX)
-// lokasi: kabag_akademik/user_edit.php
-
+session_start();
 include '../protect.php';
-check_level(13); // hanya admin3
+check_level(13);
 include '../koneksi.php';
-include 'sidebar.php';
 
-// inisialisasi agar tidak ada notice
-$msg = '';
-$user = null;
-
-// Pastikan ada id
 if (!isset($_GET['id'])) {
     echo "<script>alert('ID user tidak ditemukan'); location='crud_user.php';</script>";
     exit;
 }
 
 $id = intval($_GET['id']);
-
-// Ambil data user
 $stmt = $koneksi->prepare("SELECT * FROM admin WHERE id_admin = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -31,118 +21,275 @@ if (!$user) {
     exit;
 }
 
-// Proses update
+$msg = "";
 if (isset($_POST['submit'])) {
-
-    $nama = trim($_POST['nama_lengkap'] ?? '');
+    $nama     = trim($_POST['nama_lengkap'] ?? '');
     $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $level = intval($_POST['level'] ?? 0);
+    $password_plain = $_POST['password'] ?? '';
+    $level    = intval($_POST['level'] ?? 0);
 
     if ($nama === '' || $username === '') {
         $msg = 'Nama dan username wajib diisi!';
     } else {
-        // cek username unik kecuali user ini
-        $stmt = $koneksi->prepare("SELECT id_admin FROM admin WHERE username=? AND id_admin<>? LIMIT 1");
-        $stmt->bind_param("si", $username, $id);
-        $stmt->execute();
-        $stmt->store_result();
 
-        if ($stmt->num_rows > 0) {
+        // CEK USERNAME UNIK
+        $cek = $koneksi->prepare(
+            "SELECT id_admin FROM admin WHERE username=? AND id_admin<>? LIMIT 1"
+        );
+        $cek->bind_param("si", $username, $id);
+        $cek->execute();
+        $cek->store_result();
+
+        if ($cek->num_rows > 0) {
             $msg = 'Username sudah digunakan!';
         } else {
 
-            // Jika password diubah
-            if ($password !== '') {
-                $hash = password_hash($password, PASSWORD_DEFAULT);
-                $stmt2 = $koneksi->prepare("UPDATE admin SET nama_lengkap=?, username=?, password=?, level=? WHERE id_admin=?");
-                $stmt2->bind_param("sssii", $nama, $username, $hash, $level, $id);
-            } else {
-                // tanpa password
-                $stmt2 = $koneksi->prepare("UPDATE admin SET nama_lengkap=?, username=?, level=? WHERE id_admin=?");
+            // JIKA PASSWORD DIISI
+            if ($password_plain !== '') {
+
+                if (strlen($password_plain) < 6) {
+                    $msg = 'Password minimal 6 karakter!';
+                } else {
+                    $password = password_hash($password_plain, PASSWORD_DEFAULT);
+
+                    $stmt2 = $koneksi->prepare(
+                        "UPDATE admin 
+                         SET nama_lengkap=?, username=?, password=?, level=? 
+                         WHERE id_admin=?"
+                    );
+                    $stmt2->bind_param("sssii", $nama, $username, $password, $level, $id);
+                }
+
+            } 
+            // JIKA PASSWORD KOSONG
+            else {
+                $stmt2 = $koneksi->prepare(
+                    "UPDATE admin 
+                     SET nama_lengkap=?, username=?, level=? 
+                     WHERE id_admin=?"
+                );
                 $stmt2->bind_param("ssii", $nama, $username, $level, $id);
             }
 
-            if ($stmt2->execute()) {
-                echo "<script>alert('User berhasil diperbarui'); location='crud_user.php';</script>";
-                exit;
-            } else {
-                $msg = 'Gagal memperbarui user.';
+            // EKSEKUSI QUERY JIKA ADA
+            if (empty($msg) && isset($stmt2)) {
+                if ($stmt2->execute()) {
+                    echo "<script>alert('User berhasil diperbarui'); window.location='crud_user.php';</script>";
+                    exit;
+                } else {
+                    $msg = 'Gagal memperbarui user.';
+                }
             }
 
-            $stmt2->close();
+            // CLOSE stmt2 JIKA ADA
+            if (isset($stmt2)) {
+                $stmt2->close();
+            }
         }
 
-        $stmt->close();
+        $cek->close();
     }
-
-    // refresh data
-    $stmtR = $koneksi->prepare("SELECT * FROM admin WHERE id_admin = ?");
-    $stmtR->bind_param("i", $id);
-    $stmtR->execute();
-    $user = $stmtR->get_result()->fetch_assoc();
-    $stmtR->close();
 }
+
+
+include 'sidebar.php';
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<title>Edit User — Admin</title>
+    <meta charset="UTF-8">
+    <title>Edit User - Kabag Akademik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(123, 53, 212, 0.95);
+        }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-<style>
-/* layout */
-.content-wrapper { margin-left: 260px; padding: 35px; font-family: 'Segoe UI', sans-serif; background:#efeaff; min-height:100vh; }
-.card { background:#fff; padding:28px; border-radius:16px; border-left:10px solid #6a0dad; box-shadow:0 8px 28px rgba(0,0,0,0.08); max-width:760px; margin:0 auto; }
-.card h2 { color:#4e0a8a; margin-bottom:18px; font-weight:800; }
-.label { font-weight:700; color:#4e0a8a; display:block; margin-bottom:6px; }
-.form-control { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #dcd1f6; background:#fbf7ff; margin-bottom:14px; }
-.form-control:focus { outline:none; box-shadow:0 6px 18px rgba(106,13,173,0.12); border-color:#6a0dad; background:#fff; }
-.btn-primary { background:#6a0dad; border:none; padding:10px 18px; border-radius:10px; font-weight:700; color:#fff; }
-.btn-primary:hover { background:#4e0a8a; }
-.btn-secondary { background:#777; border:none; padding:10px 18px; border-radius:10px; color:#fff; margin-left:8px; text-decoration:none; display:inline-block; }
-.msg-error { background:#fff1f2; color:#9b2c2c; padding:10px 14px; border-left:5px solid #e74c3c; border-radius:8px; margin-bottom:16px; }
-</style>
+        .content {
+            margin-left: 240px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 30px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(15px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #f1e4ff;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        select option { color: #333; }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(123, 53, 212, 0.5);
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .alert {
+            background: #ff5252;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 1024px) {
+            .content { margin-left: 0; padding: 85px 15px 40px 15px; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="content-wrapper">
-    <div class="card">
-        <h2>Edit User</h2>
+<div class="content">
+    <div class="form-card">
+        <h2>Perbarui Data User</h2>
 
-        <?php if ($msg): ?>
-            <div class="msg-error"><?= htmlspecialchars($msg) ?></div>
+        <?php if($msg != ""): ?>
+            <div class="alert">
+                <i class="fas fa-exclamation-circle"></i> <?= $msg ?>
+            </div>
         <?php endif; ?>
 
         <form method="post">
-
-            <label class="label">Nama Lengkap</label>
-            <input type="text" name="nama_lengkap" class="form-control"
-                   value="<?= htmlspecialchars($user['nama_lengkap'] ?? '') ?>" required>
-
-            <label class="label">Username</label>
-            <input type="text" name="username" class="form-control"
-                   value="<?= htmlspecialchars($user['username'] ?? '') ?>" required>
-
-            <label class="label">Password (kosongkan jika tidak ingin diubah)</label>
-            <input type="password" name="password" class="form-control">
-
-            <label class="label">Level</label>
-            <select name="level" class="form-control" required>
-                <option value="11" <?= intval($user['level']) === 11 ? 'selected' : '' ?>>Admin1 (Pengurus)</option>
-                <option value="12" <?= intval($user['level']) === 12 ? 'selected' : '' ?>>Admin2</option>
-                <option value="13" <?= intval($user['level']) === 13 ? 'selected' : '' ?>>Admin3</option>
-            </select>
-
-            <div style="margin-top:16px;">
-                <button type="submit" name="submit" class="btn-primary">Simpan Perubahan</button>
-                <a href="crud_user.php" class="btn-secondary">Kembali</a>
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" name="nama_lengkap" value="<?= htmlspecialchars($user['nama_lengkap']) ?>" required>
             </div>
 
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password (Kosongkan jika tidak diganti)</label>
+                <input type="password" name="password" placeholder="Masukkan password baru jika ingin ganti...">
+            </div>
+
+            <div class="form-group">
+                <label>Level Akses</label>
+                <select name="level" required>
+                    <option value="11" <?= $user['level'] == 11 ? 'selected' : '' ?>>Admin 1 (Pengurus)</option>
+                    <option value="12" <?= $user['level'] == 12 ? 'selected' : '' ?>>Admin 2 (Pimpinan)</option>
+                    <option value="13" <?= $user['level'] == 13 ? 'selected' : '' ?>>Admin 3 (Kabag Akademik)</option>
+                </select>
+            </div>
+
+            <button type="submit" name="submit" class="btn-submit">
+                <i class="fas fa-save"></i> Simpan Perubahan
+            </button>
+
+            <a href="crud_user.php" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
         </form>
     </div>
 </div>

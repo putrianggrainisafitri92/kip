@@ -1,150 +1,199 @@
-<?php  
+<?php
+session_start();
 include '../protect.php';
 check_level(13);
 include '../koneksi.php';
 include 'sidebar.php';
 
 // Ambil laporan berdasarkan status
-$aktif   = $koneksi->query("SELECT * FROM laporan WHERE status_tindak!='selesai' OR status_tindak IS NULL ORDER BY created_at DESC");
-$riwayat = $koneksi->query("SELECT * FROM laporan WHERE status_tindak='selesai' ORDER BY created_at DESC");
+$riwayat = $koneksi->query("SELECT * FROM laporan ORDER BY created_at DESC");
 ?>
 
-<!-- ======================= MAIN WRAPPER ======================= -->
-<div class="content-wrapper">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Lihat Pelaporan - Kabag Akademik</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-    <!-- ==== HEADER CARD ==== -->
-    <div class="header-card">
-        <h2>📑 Daftar Laporan Mahasiswa</h2>
+        .content {
+            margin-left: 240px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -5px;
+            width: 50px; height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+        }
+
+        th:first-child { border-radius: 12px 0 0 12px; }
+        th:last-child { border-radius: 0 12px 12px 0; }
+
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbf9ff; }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .selesai { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .proses { background: #fff8e1; color: #ffa000; border: 1px solid #ffe082; }
+
+        .btn-view {
+            padding: 8px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3e8ff;
+            color: #7b35d4;
+        }
+        .btn-view:hover {
+            background: #7b35d4;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .content { margin-left: 0; padding: 85px 15px 40px 15px; }
+            .header-section h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="header-section">
+        <h2>Lihat Pelaporan</h2>
     </div>
 
-
-    <!-- =================  TABEL RIWAYAT LAPORAN  ================= -->
-    <div class="table-card" style="margin-top:35px;">
-      
-
-        <table class="styled-table">
+    <div class="table-container">
+        <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style="width:50px; text-align:center;">ID</th>
                     <th>Pelapor</th>
                     <th>Terlapor</th>
                     <th>Jurusan / Prodi</th>
-                    <th>Alasan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                    <th>Alasan Singkat</th>
+                    <th style="text-align:center;">Status</th>
+                    <th style="text-align:center;">Aksi</th>
                 </tr>
             </thead>
-
             <tbody>
-            <?php while($d = $riwayat->fetch_assoc()): ?>
+                <?php while($d = $riwayat->fetch_assoc()): 
+                    $status = strtolower($d['status_tindak'] ?? 'proses');
+                    $status_label = ($status == 'selesai') ? 'Selesai' : 'Dalam Proses';
+                ?>
                 <tr>
-                    <td><?= $d['id_laporan'] ?></td>
-                    <td><?= htmlspecialchars($d['nama_pelapor']) ?></td>
-
+                    <td style="text-align:center; font-weight: 700; color: #7b35d4;"><?= $d['id_laporan'] ?></td>
                     <td>
-                        <?= htmlspecialchars($d['nama_terlapor']) ?>
-                        <br><small style="color:gray">(<?= $d['npm_terlapor'] ?>)</small>
+                        <div style="font-weight: 600; color: #4e0a8a;"><?= htmlspecialchars($d['nama_pelapor']) ?></div>
                     </td>
-
-                    <td><?= htmlspecialchars($d['jurusan']) ?> / <?= htmlspecialchars($d['prodi']) ?></td>
-                    <td><?= htmlspecialchars($d['alasan']) ?></td>
-
                     <td>
-                        <span class='badge success'>Selesai</span>
+                        <div style="font-weight: 600; color: #333;"><?= htmlspecialchars($d['nama_terlapor']) ?></div>
+                        <div style="font-size: 0.8rem; color: #999;"><?= htmlspecialchars($d['npm_terlapor']) ?></div>
                     </td>
-
                     <td>
-                        <a href="detail_laporan.php?id=<?= $d['id_laporan'] ?>" class="btn-info">Detail</a>
+                        <div style="font-size:0.85rem; color:#666;">
+                            <?= htmlspecialchars($d['jurusan']) ?><br>
+                            <span style="opacity:0.7; font-size: 0.8rem;"><?= htmlspecialchars($d['prodi']) ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size:0.85rem; color:#555; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <?= htmlspecialchars($d['alasan']) ?>
+                        </div>
+                    </td>
+                    <td style="text-align:center;">
+                        <span class="badge <?= ($status == 'selesai') ? 'selesai' : 'proses' ?>">
+                            <?= $status_label ?>
+                        </span>
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="detail_laporan.php?id=<?= $d['id_laporan'] ?>" class="btn-view">
+                            <i class="fas fa-eye"></i> Detail
+                        </a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
             </tbody>
-
         </table>
     </div>
-
 </div>
 
-
-<!-- ======================= STYLE ======================= -->
-<style>
-.content-wrapper {
-    margin-left: 260px;
-    padding: 35px;
-    background: #efeaff;
-    min-height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.header-card {
-    background: white;
-    padding: 28px;
-    border-radius: 18px;
-    border-left: 10px solid #6a0dad;
-    margin-bottom: 25px;
-    box-shadow: 0 6px 22px rgba(106, 13, 173, .18);
-}
-
-.header-card h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 800;
-    color: #4e0a8a;
-}
-
-.table-card {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    margin-top: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.styled-table thead tr {
-    background: #6a0dad;
-    color: white;
-}
-
-.styled-table th,
-.styled-table td {
-    padding: 14px 16px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.styled-table tbody tr {
-    background: #fbf7ff;
-    border-bottom: 8px solid white;
-    transition: 0.2s;
-}
-
-.styled-table tbody tr:hover {
-    background: #f0e4ff;
-    transform: scale(1.002);
-}
-
-.badge {
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-}
-
-.success { background: #2ecc71; }
-.info    { background: #3498db; }
-.pending { background: #f1c40f; color: #4a3d00; }
-
-.btn-info {
-    background: #6a0dad;
-    padding: 7px 12px;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-}
-</style>
+</body>
+</html>

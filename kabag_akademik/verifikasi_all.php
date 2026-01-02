@@ -12,6 +12,6 @@ if (!isset($_SESSION['level']) || !in_array($_SESSION['level'], ['12', '13'])) {
 mysqli_query($koneksi, "UPDATE evaluasi SET status_verifikasi='Diterima'");
 
 // kembali ke halaman list
-header("Location: evaluasi_list.php?all_verified=1");
+header("Location: lihat_evaluasi.php?all_verified=1");
 exit;
 ?>
