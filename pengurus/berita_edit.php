@@ -57,12 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         /* Judul */
         $judul = trim($_POST['judul']);
+        $tgl_kegiatan = $_POST['tanggal_kegiatan'];
         $stmt = $koneksi->prepare(
         "UPDATE berita 
-        SET judul = ?, status = 'pending' 
+        SET judul = ?, tanggal_kegiatan = ?, status = 'pending' 
         WHERE id_berita = ?"
         );
-        $stmt->bind_param("si", $judul, $id);
+        $stmt->bind_param("ssi", $judul, $tgl_kegiatan, $id);
         $stmt->execute();
         $stmt->close();
 
@@ -142,129 +143,196 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html>
 <head>
 <title>Edit Berita</title>
-<style>
-/* ===== BODY ===== */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f2e6ff; /* lembut ungu muda */
-    margin: 0;
-    padding: 0;
-}
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
+        }
 
-/* ===== CONTENT CARD ===== */
-.content {
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 30px;
-    background: #5a2a83; /* ungu terong */
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    color: #fff;
-}
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-/* ===== FORM CARD ===== */
-.form-card {
-    display: flex;
-    flex-direction: column;
-}
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-/* ===== LABELS ===== */
-label, h3 {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #f2dfff;
-}
+        .form-card {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-/* ===== INPUT ===== */
-input[type="text"], textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 12px;
-    border: none;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    resize: vertical;
-}
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-/* input & textarea focus */
-input[type="text"]:focus, textarea:focus {
-    outline: none;
-    box-shadow: 0 0 10px #d699ff;
-    background: #fff0ff;
-    color: #000;
-}
+        label, h3 {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #f1e4ff;
+        }
 
-/* ===== GRID GAMBAR ===== */
-.grid {
-    background: rgba(255,255,255,0.1);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s;
-}
+        input[type=text], input[type=date], input[type=file], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
 
-.grid:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
+        input:focus, textarea:focus {
+            outline: none;
+            background: rgba(255,255,255,0.2);
+            border-color: #ba68ff;
+            box-shadow: 0 0 15px rgba(186, 104, 255, 0.3);
+        }
 
-/* ===== GAMBAR PREVIEW ===== */
-.preview-img {
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
+        /* ===== GRID GAMBAR ===== */
+        .grid {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
 
-/* ===== BUTTON ===== */
-button {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-}
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
 
-/* tombol hapus */
-.btn-del {
-    background: #ff4d6d;
-    color: #fff;
-    margin-top: 10px;
-}
+        .preview-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
 
-.btn-del:hover {
-    background: #ff1a3c;
-}
+        /* ===== BUTTONS ===== */
+        button {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
 
-/* tombol tambah & simpan */
-button[type="submit"], button[onclick] {
-    background: #b64fcf;
-    color: #fff;
-    margin-top: 10px;
-}
+        .btn-del {
+            background: #ff4d4d;
+            color: white;
+            margin-top: 10px;
+        }
+        .btn-del:hover { background: #ff1a1a; transform: scale(1.02); }
 
-button[type="submit"]:hover, button[onclick]:hover {
-    background: #933ab5;
-}
+        .btn-add {
+            background: rgba(255,255,255,0.1);
+            border: 2px dashed rgba(255,255,255,0.3);
+            color: white;
+            padding: 18px;
+            width: 100%;
+            border-radius: 16px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-add:hover { 
+            background: rgba(255,255,255,0.2); 
+            border-color: rgba(255,255,255,0.5);
+        }
 
-/* ===== TAMBAHAN ===== */
-#rows .grid:last-child {
-    margin-bottom: 0;
-}
+        .btn-save {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.3);
+        }
+        .btn-save:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 15px 25px rgba(123, 53, 212, 0.4); }
 
-.hint-left {
-    text-align: left;
-    font-size: 0.85rem;
-    color: #ddd;
-    margin-top: 3px;
-}
-</style>
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -277,6 +345,9 @@ button[type="submit"]:hover, button[onclick]:hover {
 
 <label>Judul</label>
 <input type="text" name="judul" value="<?= htmlspecialchars($berita['judul']) ?>">
+
+<label>Tanggal Kegiatan</label>
+<input type="date" name="tanggal_kegiatan" value="<?= $berita['tanggal_kegiatan'] ?>" style="width: 100%; padding: 10px; border-radius: 12px; border: none; margin-top: 5px; margin-bottom: 15px; font-size: 1rem;">
 
 <h3>Gambar</h3>
 
@@ -311,9 +382,17 @@ onclick="hapusGambar(<?= $g['id_gambar'] ?>, this)">Hapus Gambar</button>
 </div>
 </div>
 
-<button type="button" onclick="addRow()">+ Tambah</button><br><br>
+<button type="button" class="btn-add" onclick="addRow()">
+    <i class="fas fa-plus"></i> Tambah Slot Gambar
+</button>
 
-<button type="submit" onclick="simpan()">Simpan</button>
+<button type="submit" class="btn-save" onclick="simpan()">
+    <i class="fas fa-save"></i> Simpan Perubahan Berita
+</button>
+
+<a href="berita_list.php" class="btn-back">
+    <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+</a>
 </form>
 
 </div>

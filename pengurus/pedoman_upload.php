@@ -53,141 +53,190 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
     <title>Upload Pedoman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
+        }
 
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-        background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
-        background-size: cover;
-    }
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-    .content {
-        margin-left: 230px; /* ruang untuk sidebar */
-        padding: 40px 20px;
-        min-height: 100vh;
-    }
+        .form-card {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    /* CARD FORM UNGU (SAMA DENGAN TAMBAH BERITA) */
-    .form-card {
-        width: 90%;
-        max-width: 700px;
-        margin: auto;
-        padding: 35px;
-        border-radius: 18px;
-        background: rgba(123, 31, 162, 0.92);
-        backdrop-filter: blur(3px);
-        color: white;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.40);
-        animation: fadeIn 0.4s ease-out;
-    }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #f1e4ff;
+        }
 
-    h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        font-size: 28px;
-        color: #fff;
-    }
+        input[type=file] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
 
-    label {
-        font-weight: bold;
-        color: #fff;
-        font-size: 14px;
-    }
+        input[type=file]:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
 
-    input[type=file] {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        margin-top: 6px;
-        margin-bottom: 18px;
-        font-size: 14px;
-        background: #f8f2ff;
-        color: #3a0063;
-        box-shadow: inset 0 0 5px rgba(0,0,0,0.15);
-    }
+        .btn-upload {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.3);
+            transition: 0.3s;
+        }
 
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #ffffff;
-        border: none;
-        color: #5e1780;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.25s ease;
-    }
+        .btn-upload:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(123, 53, 212, 0.4);
+        }
 
-    button:hover {
-        background: #f2dfff;
-        transform: scale(1.02);
-    }
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
 
-    /* TOMBOL DAFTAR PEDOMAN (SAMA STYLE DENGAN DAFTAR BERITA) */
-    .icon-list {
-        display: inline-flex;
-        align-items: center;
-        padding: 10px 18px;
-        background: #7b1fa2;
-        color: white;
-        border-radius: 10px;
-        text-decoration: none;
-        font-size: 15px;
-        font-weight: bold;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-        transition: 0.3s ease;
-    }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
 
-    .icon-list:hover {
-        background: #5e1780;
-        transform: translateY(-3px);
-    }
+        .header-section {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: flex-start;
+        }
 
-    .icon-list span {
-        margin-left: 8px;
-    }
-</style>
+        .btn-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #4e0a8a;
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
 
+        .btn-list:hover {
+            background: #7b35d4;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="content">
 
-    <!-- TOMBOL DAFTAR PEDOMAN POSISI SAMA SEPERTI TAMBAH BERITA -->
-    <div style="width: 90%; max-width: 700px; margin: 0 auto 25px auto; text-align: left;">
-        <a href="pedoman_list.php" class="icon-list">📄 <span>Daftar Pedoman</span></a>
-    </div>
-
     <div class="form-card">
         <h2>Upload Pedoman</h2>
 
-        <div class="inner">
-            <form method="post" enctype="multipart/form-data">
-                <label>Pilih File PDF:</label>
-                <input type="file" name="file" required>
+        <form method="post" enctype="multipart/form-data">
+            <label>Pilih File Pedoman (Format: PDF, Max 10MB)</label>
+            <input type="file" name="file" accept="application/pdf" required>
 
-                <button type="submit">Upload</button>
-            </form>
-        </div>
+            <button type="submit" class="btn-upload">
+                <i class="fas fa-cloud-upload-alt"></i> Upload File Pedoman
+            </button>
+
+            <a href="pedoman_list.php" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
+        </form>
     </div>
 
 </div>
 
 </body>
 </html>
-

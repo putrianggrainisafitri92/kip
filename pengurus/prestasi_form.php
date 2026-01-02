@@ -28,11 +28,9 @@ if (isset($_POST['simpan'])) {
     // Handle Gambar Lama & Hapus
     $gambarArr = json_decode($data['file_gambar'], true);
     if (!is_array($gambarArr)) {
-        // Handle legacy single file format
         $gambarArr = !empty($data['file_gambar']) ? [$data['file_gambar']] : [];
     }
 
-    // Jika ada request hapus gambar tertentu
     if (isset($_POST['hapus_gambar'])) {
         foreach ($_POST['hapus_gambar'] as $hapus) {
             if (($key = array_search($hapus, $gambarArr)) !== false) {
@@ -42,7 +40,7 @@ if (isset($_POST['simpan'])) {
                 }
             }
         }
-        $gambarArr = array_values($gambarArr); // Reindex
+        $gambarArr = array_values($gambarArr); 
     }
 
     // Upload Gambar Baru (Multiple)
@@ -85,147 +83,296 @@ if (isset($_POST['simpan'])) {
     }
 }
 
-// Persiapan Tampilan Gambar
 $currentImages = json_decode($data['file_gambar'], true);
 if(!is_array($currentImages)) $currentImages = !empty($data['file_gambar']) ? [$data['file_gambar']] : [];
+
+include 'sidebar.php'; 
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title><?= $is_edit ? 'Edit' : 'Tambah' ?> Prestasi</title>
+    <title><?= $is_edit ? 'Edit' : 'Tambah' ?> Prestasi Mahasiswa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bs-primary: #6f42c1; /* Purple */
-            --bs-primary-rgb: 111, 66, 193;
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
         }
-        .btn-primary { background-color: #6f42c1 !important; border-color: #6f42c1 !important; }
-        .btn-primary:hover { background-color: #59359a !important; border-color: #59359a !important; }
-        .text-primary { color: #6f42c1 !important; }
-        .bg-primary { background-color: #6f42c1 !important; }
-        .card-header { border-bottom: 2px solid #e9ecef; }
-        
-        /* Delete State Style */
-        .img-delete-overlay {
-            position: absolute; inset: 0; background: rgba(220, 53, 69, 0.8);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: bold; border-radius: 4px;
-            opacity: 0; transition: 0.3s; pointer-events: none;
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
         }
-        .marked-for-delete .img-delete-overlay { opacity: 1; }
-        .marked-for-delete img { filter: grayscale(100%); }
-    </style>
-</head>
-<body class="bg-light">
-    
-    <?php include 'sidebar.php'; ?>
 
-    <div class="main-content" style="margin-left: 260px; padding: 20px;">
-        <div class="container-fluid">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0 fw-bold text-primary"><?= $is_edit ? 'Edit' : 'Tambah' ?> Data Prestasi</h4>
-                </div>
-                <div class="card-body p-4">
-                    
-                    <?php if(isset($error)): ?>
-                        <div class="alert alert-danger"><?= $error ?></div>
-                    <?php endif; ?>
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-                    <form method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Mahasiswa</label>
-                            <input type="text" name="nama_mahasiswa" class="form-control" value="<?= htmlspecialchars($data['nama_mahasiswa']) ?>" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Judul Prestasi / Kejuaraan</label>
-                            <input type="text" name="judul_prestasi" class="form-control" value="<?= htmlspecialchars($data['judul_prestasi']) ?>" required>
-                        </div>
+        .form-card {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tanggal Perolehan Prestasi</label>
-                            <input type="date" name="tanggal_prestasi" class="form-control" value="<?= $data['tanggal_prestasi'] ?>" required>
-                        </div>
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Deskripsi Singkat</label>
-                            <textarea name="deskripsi" class="form-control" rows="4" required><?= htmlspecialchars($data['deskripsi']) ?></textarea>
-                        </div>
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #f1e4ff;
+        }
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Bukti Gambar / Piagam (Bisa Banyak)</label>
-                            <input type="file" name="file_gambar[]" class="form-control" accept="image/*" multiple <?= (!$is_edit && empty($currentImages)) ? 'required' : '' ?>>
-                            <div class="form-text text-primary">
-                                <i class="fas fa-info-circle"></i> 
-                                <strong>Tips HP:</strong> Tekan dan tahan lama pada foto untuk memilih banyak sekaligus. <br>
-                                <strong>Tips PC:</strong> Tahan tombol CTRL sambil klik foto.
-                            </div>
-                            
-                            <!-- Preview Gambar Lama -->
-                            <?php if(!empty($currentImages)): ?>
-                                <div class="mt-4 p-3 border rounded bg-light">
-                                    <label class="form-label fw-bold text-muted mb-3">Foto Saat Ini (Kelola):</label>
-                                    <div class="d-flex flex-wrap gap-3">
-                                        <?php foreach($currentImages as $idx => $img): 
-                                            if(empty($img)) continue;
-                                        ?>
-                                            <div class="position-relative border p-1 rounded bg-white shadow-sm img-wrapper" id="wrapper-<?= $idx ?>" style="width: 140px;">
-                                                <img src="../uploads/prestasi/<?= $img ?>" class="w-100 rounded" style="height: 120px; object-fit: cover;">
-                                                
-                                                <div class="img-delete-overlay">
-                                                    <span><i class="fas fa-trash"></i> DIHAPUS</span>
-                                                </div>
+        input[type=text], input[type=date], input[type=file], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
 
-                                                <!-- Checkbox Hidden -->
-                                                <input type="checkbox" name="hapus_gambar[]" value="<?= $img ?>" id="chk-<?= $idx ?>" class="d-none">
-                                                
-                                                <button type="button" class="btn btn-sm btn-outline-danger w-100 mt-2 fw-bold" onclick="toggleDelete(<?= $idx ?>)" id="btn-<?= $idx ?>">
-                                                    <i class="fas fa-trash"></i> Hapus
-                                                </button>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                    <div class="form-text mt-2">* Foto yang ditandai "DIHAPUS" akan hilang permanen setelah tombol Simpan ditekan.</div>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+        input:focus, textarea:focus {
+            outline: none;
+            background: rgba(255,255,255,0.2);
+            border-color: #ba68ff;
+            box-shadow: 0 0 15px rgba(186, 104, 255, 0.3);
+        }
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="prestasi_list.php" class="btn btn-secondary px-4">Kembali</a>
-                            <button type="submit" name="simpan" class="btn btn-primary px-4 fw-bold">
-                                <?= $is_edit ? 'Update Data' : 'Simpan Data' ?>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        function toggleDelete(idx) {
-            const wrapper = document.getElementById('wrapper-' + idx);
-            const checkbox = document.getElementById('chk-' + idx);
-            const btn = document.getElementById('btn-' + idx);
-            
-            if (checkbox.checked) {
-                // Cancel Delete
-                checkbox.checked = false;
-                wrapper.classList.remove('marked-for-delete');
-                btn.innerHTML = '<i class="fas fa-trash"></i> Hapus';
-                btn.className = 'btn btn-sm btn-outline-danger w-100 mt-2 fw-bold';
-            } else {
-                // Mark for Delete
-                checkbox.checked = true;
-                wrapper.classList.add('marked-for-delete');
-                btn.innerHTML = '<i class="fas fa-undo"></i> Batal';
-                btn.className = 'btn btn-sm btn-secondary w-100 mt-2 fw-bold';
+        /* ===== Image Gallery Management ===== */
+        .image-manager {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 18px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.2);
+            aspect-ratio: 1;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .image-item.marked-del img {
+            filter: grayscale(1) brightness(0.5);
+        }
+
+        .del-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(211, 47, 47, 0.7);
+            color: white;
+            font-weight: 800;
+            font-size: 12px;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .image-item.marked-del .del-overlay {
+            opacity: 1;
+        }
+
+        .btn-toggle-del {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: white;
+            color: #d32f2f;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-submit {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.3);
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(123, 53, 212, 0.4);
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
             }
         }
-    </script>
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="form-card">
+        <h2><?= $is_edit ? 'Edit' : 'Tambah' ?> Prestasi</h2>
+
+        <?php if(isset($error)): ?>
+            <div style="background: rgba(255, 77, 77, 0.2); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ff4d4d; color: #ffcccc;">
+                <i class="fas fa-exclamation-triangle"></i> <?= $error ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" enctype="multipart/form-data">
+            <label>Nama Mahasiswa</label>
+            <input type="text" name="nama_mahasiswa" value="<?= htmlspecialchars($data['nama_mahasiswa']) ?>" required placeholder="Masukkan nama mahasiswa">
+
+            <label>Judul Prestasi / Kejuaraan</label>
+            <input type="text" name="judul_prestasi" value="<?= htmlspecialchars($data['judul_prestasi']) ?>" required placeholder="Contoh: Juara 1 Lomba IT Nasional">
+
+            <label>Tanggal Perolehan Prestasi</label>
+            <input type="date" name="tanggal_prestasi" value="<?= $data['tanggal_prestasi'] ?>" required>
+
+            <label>Deskripsi Singkat</label>
+            <textarea name="deskripsi" rows="5" required placeholder="Ceritakan detail prestasinya..."><?= htmlspecialchars($data['deskripsi']) ?></textarea>
+
+            <label>Upload Bukti Gambar / Piagam (Multiple)</label>
+            <input type="file" name="file_gambar[]" accept="image/*" multiple <?= (!$is_edit && empty($currentImages)) ? 'required' : '' ?>>
+            <div style="font-size: 12px; color: #f1e4ff; margin-top: 5px;">
+                <i class="fas fa-info-circle"></i> Tips: Anda dapat memilih lebih dari satu file sekaligus.
+            </div>
+
+            <?php if(!empty($currentImages)): ?>
+                <label>Kelola Gambar Saat Ini</label>
+                <div class="image-manager">
+                    <?php foreach($currentImages as $idx => $img): 
+                        if(empty($img)) continue;
+                    ?>
+                        <div class="image-item" id="item-<?= $idx ?>">
+                            <img src="../uploads/prestasi/<?= $img ?>">
+                            <div class="del-overlay">AKAN DIHAPUS</div>
+                            <input type="checkbox" name="hapus_gambar[]" value="<?= $img ?>" id="chk-<?= $idx ?>" style="display:none;">
+                            <button type="button" class="btn-toggle-del" onclick="toggleImageDelete(<?= $idx ?>)" id="btn-<?= $idx ?>">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div style="font-size: 11px; color: #ccc; margin-top: 10px;">
+                    * Gambar yang ditandai merah akan dihapus permanen setelah data disimpan.
+                </div>
+            <?php endif; ?>
+
+            <button type="submit" name="simpan" class="btn-submit">
+                <i class="fas fa-save"></i> <?= $is_edit ? 'Update Data Prestasi' : 'Simpan & Ajukan Prestasi' ?>
+            </button>
+
+            <a href="prestasi_list.php" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleImageDelete(idx) {
+    const item = document.getElementById('item-' + idx);
+    const checkbox = document.getElementById('chk-' + idx);
+    const btn = document.getElementById('btn-' + idx);
+    
+    if (checkbox.checked) {
+        checkbox.checked = false;
+        item.classList.remove('marked-del');
+        btn.innerHTML = '<i class="fas fa-trash"></i> Hapus';
+        btn.style.color = '#d32f2f';
+    } else {
+        checkbox.checked = true;
+        item.classList.add('marked-del');
+        btn.innerHTML = '<i class="fas fa-undo"></i> Batal';
+        btn.style.color = '#555';
+    }
+}
+</script>
+
 </body>
 </html>

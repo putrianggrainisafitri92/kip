@@ -24,6 +24,8 @@ if (isset($_GET['hapus'])) {
     header("Location: prestasi_list.php");
     exit;
 }
+
+include 'sidebar.php'; 
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -31,184 +33,379 @@ if (isset($_GET['hapus'])) {
     <meta charset="UTF-8">
     <title>Kelola Prestasi Mahasiswa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --bs-primary: #6f42c1;
-            --bs-primary-rgb: 111,66,193;
-        }
         body {
-            font-family: "Poppins", sans-serif;
-            margin:0;
-            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
-            background-size: cover;
-            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
             color: #333;
         }
-        .btn-primary { background-color: #6f42c1; border-color: #6f42c1; }
-        .btn-primary:hover { background-color: #59359a; border-color: #59359a; }
-        .text-primary { color: #6f42c1 !important; }
-        .bg-primary { background-color: #6f42c1 !important; }
 
-        .gallery-thumbnail {
-            width: 60px; height: 60px; object-fit: cover; border-radius: 8px; cursor: pointer;
-            transition: transform 0.2s;
+        /* ===== Content Wrapper ===== */
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
         }
-        .gallery-thumbnail:hover { transform: scale(1.1); }
-        .carousel-img { height: 70vh; object-fit: contain; background: black; }
+
+        /* ===== Title ===== */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .header-section h2 { font-size: 22px; }
+        }
+
+        /* ===== Table Container ===== */
+        .table-responsive {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+            border: none;
+        }
+
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbf9ff; }
+
+        /* ===== Badges ===== */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .pending { background: #fff8e1; color: #ffa000; }
+        .approved { background: #e8f5e9; color: #2e7d32; }
+        .revisi, .rejected { background: #ffebee; color: #c62828; }
+
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-edit { background: #f3e8ff; color: #7b35d4; }
+        .btn-edit:hover { background: #7b35d4; color: white; }
+
+        .btn-hapus { background: #fff0f0; color: #d32f2f; }
+        .btn-hapus:hover { background: #d32f2f; color: white; }
+
+        .btn-detail { background: #e0f2f1; color: #00897b; }
+        .btn-detail:hover { background: #00897b; color: white; }
+
+        .btn-view { background: #e1f5fe; color: #0288d1; }
+        .btn-view:hover { background: #0288d1; color: white; }
+
+        .btn-add-news {
+            background: #4e0a8a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(78, 10, 138, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-add-news:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(78, 10, 138, 0.3);
+            color: white;
+            background: #5a189a;
+        }
+
+        /* ===== Gallery Thumbnail ===== */
+        .gallery-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .gallery-thumbnail:hover {transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+
+        /* ===== Modal ===== */
+        .modal {
+            display:none;
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5vh auto;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 1;
+        }
+        .close:hover { color: #4e0a8a; }
+
+        /* Carousel Custom */
+        .carousel-view {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .carousel-view img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>
 
-<?php include 'sidebar.php'; ?>
+<div class="content">
+    <div class="header-section">
+        <h2>Kelola Mahasiswa Berprestasi</h2>
+        <a href="prestasi_form.php" class="btn-add-news">
+            <i class="fas fa-plus"></i> Tambah Prestasi
+        </a>
+    </div>
 
-<div class="main-content" style="margin-left: 260px; padding: 20px;">
-    <div class="container-fluid">
-        <!-- Judul -->
-        <h2 class="mb-4 fw-bold text-white px-4 py-2 rounded" style="background-color: rgba(111,66,193,0.8); display: inline-block;">
-            <i class="fas fa-trophy me-2"></i>Kelola Prestasi Mahasiswa
-        </h2>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Mahasiswa</th>
+                    <th>Judul Prestasi</th>
+                    <th>Deskripsi</th>
+                    <th>Status</th>
+                    <th>Catatan Revisi</th>
+                    <th>Galeri</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $no = 1;
+                $query = $koneksi->query("SELECT * FROM mahasiswa_prestasi ORDER BY id_prestasi DESC");
+                while ($row = $query->fetch_assoc()) {
+                    $statusClass = strtolower($row['status']);
+                    $catatan = !empty($row['catatan_revisi']) ? htmlspecialchars($row['catatan_revisi']) : "-";
+                    
+                    // Process Images
+                    $imgRaw = $row['file_gambar'];
+                    $imgArr = json_decode($imgRaw, true);
+                    if(!is_array($imgArr)) $imgArr = !empty($imgRaw) ? [$imgRaw] : [];
+                    $imgJson = htmlspecialchars(json_encode($imgArr), ENT_QUOTES, 'UTF-8');
+                ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td style="font-weight: 600; color: #4e0a8a;">
+                        <i class="fas fa-user-graduate mr-2"></i>
+                        <?= htmlspecialchars($row['nama_mahasiswa']) ?>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600;"><?= htmlspecialchars($row['judul_prestasi']) ?></div>
+                        <small class="text-muted"><i class="far fa-calendar-alt"></i> <?= date('d M Y', strtotime($row['tanggal_prestasi'])) ?></small>
+                    </td>
+                    <td>
+                        <?php if(!empty($row['deskripsi'])): ?>
+                            <button class="btn btn-detail" onclick="showTextModal('Deskripsi Prestasi', `<?= addslashes($row['deskripsi']) ?>`)">
+                                <i class="fas fa-file-alt"></i> Detail
+                            </button>
+                        <?php else: ?>
+                            <span class="text-muted small">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <span class="status-badge <?= $statusClass ?>">
+                            <?= strtoupper(htmlspecialchars($row['status'])) ?>
+                        </span>
+                    </td>
+                    <td>
+                        <?php if(!empty($row['catatan_revisi'])): ?>
+                            <button class="btn btn-detail" style="color:#d32f2f; background:#fff0f0;" onclick="showTextModal('Catatan Revisi', `<?= addslashes($row['catatan_revisi']) ?>`)">
+                                <i class="fas fa-comment-dots"></i> Lihat
+                            </button>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if(!empty($imgArr)): ?>
+                            <div style="position:relative; display:inline-block;" onclick='openGallery(<?= $imgJson ?>, "<?= htmlspecialchars($row["judul_prestasi"], ENT_QUOTES) ?>")'>
+                                <img src="../uploads/prestasi/<?= $imgArr[0] ?>" class="gallery-thumbnail">
+                                <?php if(count($imgArr) > 1): ?>
+                                    <span style="position:absolute; bottom:2px; right:2px; background:rgba(0,0,0,0.7); color:white; font-size:10px; padding:2px 5px; border-radius:4px;">+<?= count($imgArr)-1 ?></span>
+                                <?php endif; ?>
+                            </div>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <a class="btn btn-edit" href="prestasi_form.php?id=<?= $row['id_prestasi'] ?>" title="Edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a class="btn btn-hapus" href="prestasi_list.php?hapus=<?= $row['id_prestasi'] ?>" onclick="return confirm('Hapus prestasi ini?')" title="Hapus">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        <!-- Tombol Tambah Prestasi di bawah judul -->
-            <div class="mb-4">
-                <a href="prestasi_form.php" class="btn btn-primary shadow-sm">
-                    <i class="fas fa-plus me-1"></i> Tambah Prestasi
-                </a>
-            </div>
-        </div>
-
-        <!-- Tabel prestasi -->
-        <div class="card shadow-sm border-0 rounded-3">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No</th>
-                                <th>Mahasiswa</th>
-                                <th>Judul Prestasi</th>
-                                <th>Status</th>
-                                <th>Galeri</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $no = 1;
-                            $query = $koneksi->query("SELECT * FROM mahasiswa_prestasi ORDER BY id_prestasi DESC");
-                            while ($row = $query->fetch_assoc()) {
-                                $statusBadge = '';
-                                if ($row['status'] == 'pending') $statusBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Pending</span>';
-                                elseif ($row['status'] == 'approved') $statusBadge = '<span class="badge bg-success"><i class="fas fa-check"></i> Approved</span>';
-                                elseif ($row['status'] == 'rejected') $statusBadge = '<span class="badge bg-danger"><i class="fas fa-times"></i> Rejected</span>';
-                                
-                                // Process Images
-                                $imgRaw = $row['file_gambar'];
-                                $imgArr = json_decode($imgRaw, true);
-                                if(!is_array($imgArr)) $imgArr = !empty($imgRaw) ? [$imgRaw] : [];
-                                $imgJson = htmlspecialchars(json_encode($imgArr), ENT_QUOTES, 'UTF-8');
-                            ?>
-                            <tr>
-                                <td><?= $no++ ?></td>
-                                <td><?= htmlspecialchars($row['nama_mahasiswa']) ?></td>
-                                <td>
-                                    <div class="fw-bold"><?= htmlspecialchars($row['judul_prestasi']) ?></div>
-                                    <small class="text-muted"><i class="fas fa-calendar"></i> <?= date('d M Y', strtotime($row['tanggal_prestasi'])) ?></small>
-                                </td>
-                                <td>
-                                    <?= $statusBadge ?>
-                                    <?php if($row['status'] == 'rejected' && !empty($row['catatan_revisi'])): ?>
-                                        <div class="text-danger small mt-1 fst-italic">
-                                            revisi: <?= htmlspecialchars($row['catatan_revisi']) ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if(!empty($imgArr)): ?>
-                                        <div class="position-relative d-inline-block" onclick='openGallery(<?= $imgJson ?>, "<?= htmlspecialchars($row["judul_prestasi"], ENT_QUOTES) ?>")'>
-                                            <img src="../uploads/prestasi/<?= $imgArr[0] ?>" class="gallery-thumbnail border">
-                                            <?php if(count($imgArr) > 1): ?>
-                                                <span class="position-absolute bottom-0 end-0 badge bg-dark opacity-75" style="font-size: 0.6rem;">+<?= count($imgArr)-1 ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php else: ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="prestasi_form.php?id=<?= $row['id_prestasi'] ?>" class="btn btn-warning text-white" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-info text-white" title="Lihat Full" onclick='openGallery(<?= $imgJson ?>, "<?= htmlspecialchars($row["judul_prestasi"], ENT_QUOTES) ?>")'>
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <a href="prestasi_list.php?hapus=<?= $row['id_prestasi'] ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- Modal Text -->
+<div id="textModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('textModal')">&times;</span>
+        <h3 id="textModalTitle" style="color:#4e0a8a; margin-top:0;">Detail</h3>
+        <div id="textModalBody" style="background:#f8f2ff; padding:20px; border-radius:15px; margin-top:15px; border-left:4px solid #7b35d4; line-height:1.6; color:#444;">
         </div>
     </div>
 </div>
 
-<!-- Modal Gallery Bootstrap -->
-<div class="modal fade" id="galleryModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-transparent border-0 shadow-none">
-            <div class="modal-header border-0 p-0 mb-2">
-                <h5 class="modal-title text-white" id="galleryTitle"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-0">
-                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="false">
-                    <div class="carousel-inner rounded" id="carouselInner"></div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
+<!-- Modal Gallery -->
+<div id="galleryModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close" onclick="closeModal('galleryModal')">&times;</span>
+        <h3 id="galleryTitle" style="color:#4e0a8a; margin-top:0;">Galeri Foto</h3>
+        <div id="galleryContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center;">
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+function showTextModal(title, content) {
+    document.getElementById('textModalTitle').innerText = title;
+    document.getElementById('textModalBody').innerHTML = content.replace(/\n/g, '<br>');
+    document.getElementById('textModal').style.display = "block";
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
 function openGallery(images, title) {
-    const carouselInner = document.getElementById('carouselInner');
-    carouselInner.innerHTML = '';
     document.getElementById('galleryTitle').innerText = title;
+    const container = document.getElementById('galleryContainer');
+    container.innerHTML = '';
     
-    if(images.length === 0) return;
-
-    images.forEach((img, index) => {
-        const div = document.createElement('div');
-        div.className = `carousel-item ${index === 0 ? 'active' : ''}`;
-        div.innerHTML = `<img src="../uploads/prestasi/${img}" class="d-block w-100 carousel-img" alt="Prestasi">`;
-        carouselInner.appendChild(div);
+    images.forEach(img => {
+        const item = document.createElement('div');
+        item.style.width = "calc(33.33% - 10px)";
+        item.style.minWidth = "150px";
+        item.innerHTML = `<img src="../uploads/prestasi/${img}" style="width:100%; height:150px; object-fit:cover; border-radius:10px; border:2px solid #eee;">`;
+        container.appendChild(item);
     });
+    
+    document.getElementById('galleryModal').style.display = "block";
+}
 
-    const prev = document.querySelector('.carousel-control-prev');
-    const next = document.querySelector('.carousel-control-next');
-    if(images.length > 1) {
-        prev.style.display = 'flex'; next.style.display = 'flex';
-    } else {
-        prev.style.display = 'none'; next.style.display = 'none';
+window.onclick = function(event) {
+    if (event.target.className === 'modal') {
+        event.target.style.display = "none";
     }
-
-    const myModal = new bootstrap.Modal(document.getElementById('galleryModal'));
-    myModal.show();
 }
 </script>
+
 </body>
 </html>

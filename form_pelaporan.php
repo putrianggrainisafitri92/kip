@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $target_dir = "uploads/";
     if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
 
-    $allowed = ['jpg','jpeg','png','pdf','doc','docx','jpg','jpeg','png','pdf','doc','docx','mp4','mov','mkv'];
+    $allowed = ['jpg','jpeg','png','pdf','doc','docx','mp4','mov','mkv','webp'];
 
     foreach ($_FILES['bukti']['tmp_name'] as $index => $tmp_name) {
         $original_name = basename($_FILES['bukti']['name'][$index]);
@@ -142,6 +142,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     margin-top: 5px;
     font-size: 0.9rem;
     color: #4B0082;
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    70% { transform: scale(1.02); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .animate-pop {
+    animation: popIn 0.3s ease-out both;
   }
 
   /* ========== RESPONSIVE DESIGN ========== */
@@ -319,17 +327,38 @@ function renderFileList() {
     filePreviewContainer.innerHTML = '';
     selectedFiles.forEach((file, index) => {
         const div = document.createElement('div');
-        div.className = 'file-preview flex justify-between items-center';
-        let icon = '';
-        if(file.type.startsWith('image/')){
-            icon = '🖼️';
-        } else if(file.type.startsWith('video/')){
-            icon = '🎥';
+        div.className = 'file-preview flex items-center gap-3 bg-purple-50 p-3 rounded-xl border border-purple-100 shadow-sm animate-pop';
+        
+        let preview = '';
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            const imgId = `img-preview-${index}`;
+            reader.onload = function(e) {
+                const img = document.getElementById(imgId);
+                if(img) img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+            preview = `<img id="${imgId}" class="w-12 h-12 object-cover rounded-lg border border-purple-200">`;
+        } else if (file.type.startsWith('video/')) {
+            preview = `<div class="w-12 h-12 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-lg text-xl">🎥</div>`;
+        } else if (file.type === 'application/pdf') {
+            preview = `<div class="w-12 h-12 flex items-center justify-center bg-red-100 text-red-600 rounded-lg text-xl">📄</div>`;
         } else {
-            icon = '📄';
+            preview = `<div class="w-12 h-12 flex items-center justify-center bg-gray-100 text-gray-600 rounded-lg text-xl">📁</div>`;
         }
-        div.innerHTML = `<span>${icon} ${file.name}</span> 
-                         <button type="button" class="text-red-500 font-bold" onclick="removeFile(${index})">X</button>`;
+
+        div.innerHTML = `
+            ${preview}
+            <div class="flex-grow min-w-0">
+                <p class="text-sm font-semibold text-purple-800 truncate">${file.name}</p>
+                <p class="text-xs text-purple-500">${(file.size / 1024).toFixed(1)} KB</p>
+            </div>
+            <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-500 hover:bg-red-200 transition-colors" onclick="removeFile(${index})">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        `;
         filePreviewContainer.appendChild(div);
     });
 }

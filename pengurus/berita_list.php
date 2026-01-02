@@ -12,208 +12,268 @@ $q = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
 <!DOCTYPE html>
 <html>
 <head>
-<title>Daftar Berita Pengurus</title>
+    <title>Daftar Berita Pengurus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-<style>
-body {
-    font-family: "Poppins", sans-serif;
-    background: #f3e8ff; /* ungu soft */
-    margin: 0;
-}
+        /* ===== Content Wrapper ===== */
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
 
-/* ===== Content Wrapper ===== */
-.content {
-    margin-left: 230px;
-    padding: 25px;
-    min-height: 100vh;
-}
+        /* ===== Title ===== */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-/* ===== Title ===== */
-.content h2 {
-    color: #5a189a;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
 
-/* ===== Table ===== */
-table {
-    width: 95%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+        /* Responsif Mobile */
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .header-section h2 { font-size: 22px; }
+        }
 
-th {
-    background: linear-gradient(90deg, #5a189a, #7b2cbf);
-    color: white;
-    padding: 14px;
-    font-size: 15px;
-    text-transform: uppercase;
-}
+        /* ===== Table Container ===== */
+        .table-responsive {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    background: #fff;
-    vertical-align: top;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
 
-/* Hover row */
-tr:hover td {
-    background: #f3e8ff;
-    transition: 0.2s;
-}
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+            border: none;
+        }
 
-/* ===== Status Colors ===== */
-.pending { color: #ff9800; font-weight:bold; }
-.revisi, .rejected { color: #e63946; font-weight:bold; }
-.approved { color: #2a9d8f; font-weight:bold; }
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
 
-/* ===== Buttons ===== */
-.btn {
-    padding: 7px 12px;
-    border-radius: 6px;
-    text-decoration:none;
-    font-size: 13px;
-    font-weight: 600;
-    color:white;
-    display: inline-block;
-    transition: 0.2s;
-}
+        tr:last-child td { border-bottom: none; }
 
-.btn-edit {
-    background: #7b2cbf;
-}
-.btn-edit:hover {
-    background: #5a189a;
-}
+        tr:hover td {
+            background: #fbf9ff;
+        }
 
-.btn-hapus {
-    background:#d00000;
-}
-.btn-hapus:hover {
-    background:#9b0000;
-}
+        /* ===== Badges ===== */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .pending { background: #fff8e1; color: #ffa000; }
+        .approved { background: #e8f5e9; color: #2e7d32; }
+        .revisi, .rejected { background: #ffebee; color: #c62828; }
 
-.btn-detail {
-    background:#5a189a;
-}
-.btn-detail:hover {
-    background:#3d0f69;
-}
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            cursor: pointer;
+        }
 
-/* ===== Modal ===== */
-.modal {
-    display:none;
-    position: fixed;
-    z-index: 9999;
-    left:0; top:0;
-    width:100%; height:100%;
-    overflow:auto;
-    background: rgba(0,0,0,0.6);
-    animation: fadeIn 0.3s ease-out;
-}
+        .btn-edit { background: #f3e8ff; color: #7b35d4; }
+        .btn-edit:hover { background: #7b35d4; color: white; }
 
-.modal-content {
-    background:white;
-    margin:10% auto;
-    padding:25px;
-    border-radius:12px;
-    width:45%;
-    box-shadow:0 5px 20px rgba(0,0,0,0.2);
-    animation: scaleIn 0.25s ease-out;
-}
+        .btn-hapus { background: #fff0f0; color: #d32f2f; }
+        .btn-hapus:hover { background: #d32f2f; color: white; }
 
-@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-@keyframes scaleIn { 
-    from {transform:scale(0.8); opacity:0;} 
-    to {transform:scale(1); opacity:1;} 
-}
+        .btn-detail { background: #e0f2f1; color: #00897b; }
+        .btn-detail:hover { background: #00897b; color: white; }
 
-.close {
-    float:right;
-    font-size:22px;
-    font-weight:bold;
-    cursor:pointer;
-    color:#7b2cbf;
-}
-.close:hover {
-    color:#5a189a;
-}
+        .btn-add-news {
+            background: #4e0a8a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(78, 10, 138, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-add-news:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(78, 10, 138, 0.3);
+            color: white;
+            background: #5a189a;
+        }
 
-.btn-kembali {
-    display: inline-block;
-    padding: 10px 18px;
-    margin-bottom: 18px;
-    background: #5a189a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.25s;
-}
+        /* ===== Modal ===== */
+        .modal {
+            display:none;
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 20px;
+        }
 
-.btn-kembali:hover {
-    background: #3d0f69;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(90, 24, 154, 0.3);
-}
+        .modal-content {
+            background: white;
+            margin: 10vh auto;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease-out;
+        }
 
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-</style>
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 1;
+        }
+        .close:hover { color: #4e0a8a; }
+    </style>
 </head>
 
 <body>
 
 <div class="content">
-    <h2>Daftar Berita Anda</h2>
+    <div class="header-section">
+        <h2>Daftar Berita Anda</h2>
+        <a href="berita_add.php" class="btn-add-news">
+            <i class="fas fa-plus"></i> Tambah Berita
+        </a>
+    </div>
     
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Judul Berita</th>
+                    <th>Tanggal Kegiatan</th>
+                    <th>Status</th>
+                    <th>Catatan Revisi</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while($row = mysqli_fetch_assoc($q)) { 
+                    $statusClass = strtolower($row['status']);
+                    $catatan = !empty($row['catatan_revisi']) ? htmlspecialchars($row['catatan_revisi']) : "-";
+                ?>
+                <tr>
+                    <td style="font-weight: 600; color: #4e0a8a;"><?= htmlspecialchars($row['judul']) ?></td>
+                    <td>
+                        <i class="far fa-calendar-alt text-muted mr-1"></i>
+                        <?= !empty($row['tanggal_kegiatan']) ? date('d M Y', strtotime($row['tanggal_kegiatan'])) : "-" ?>
+                    </td>
+                    <td>
+                        <span class="status-badge <?= $statusClass ?>">
+                            <?= strtoupper(htmlspecialchars($row['status'])) ?>
+                        </span>
+                    </td>
+                    <td>
+                        <?php if(!empty($row['catatan_revisi'])): ?>
+                            <button class="btn btn-detail" onclick="showModal('modal-<?= $row['id_berita'] ?>')">
+                                <i class="fas fa-comment-dots"></i> Lihat
+                            </button>
 
-    <table>
-        <tr>
-            <th>Judul</th>
-            <th>Status</th>
-            <th>Catatan Revisi</th>
-            <th>Aksi</th>
-        </tr>
-        <button onclick="history.back()" class="btn-kembali">← Kembali</button>
-
-
-        <?php while($row = mysqli_fetch_assoc($q)) { 
-            $statusClass = strtolower($row['status']);
-            $catatan = !empty($row['catatan_revisi']) ? htmlspecialchars($row['catatan_revisi']) : "-";
-        ?>
-        <tr>
-            <td><?= htmlspecialchars($row['judul']) ?></td>
-            <td class="<?= $statusClass ?>"><?= strtoupper(htmlspecialchars($row['status'])) ?></td>
-            <td>
-                <?php if(!empty($row['catatan_revisi'])): ?>
-                    <button class="btn btn-detail" onclick="showModal('modal-<?= $row['id_berita'] ?>')">Lihat</button>
-
-                    <!-- Modal -->
-                    <div id="modal-<?= $row['id_berita'] ?>" class="modal">
-                        <div class="modal-content">
-                            <span class="close" onclick="closeModal('modal-<?= $row['id_berita'] ?>')">&times;</span>
-                            <h3 style="color:#5a189a;">Catatan Revisi</h3>
-                            <p><?= nl2br($catatan) ?></p>
+                            <!-- Modal -->
+                            <div id="modal-<?= $row['id_berita'] ?>" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" onclick="closeModal('modal-<?= $row['id_berita'] ?>')">&times;</span>
+                                    <h3 style="color:#4e0a8a; margin-top:0;">Catatan Revisi</h3>
+                                    <div style="background:#f8f2ff; padding:15px; border-radius:12px; margin-top:15px; border-left:4px solid #7b35d4;">
+                                        <?= nl2br($catatan) ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <a class="btn btn-edit" href="berita_edit.php?id=<?= $row['id_berita'] ?>">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a class="btn btn-hapus" href="berita_hapus.php?id=<?= $row['id_berita'] ?>" onclick="return confirm('Hapus berita ini?')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
                         </div>
-                    </div>
-                <?php else: ?>
-                    -
-                <?php endif; ?>
-            </td>
-            <td>
-                <a class="btn btn-edit" href="berita_edit.php?id=<?= $row['id_berita'] ?>">Edit</a>
-                <a class="btn btn-hapus" href="berita_hapus.php?id=<?= $row['id_berita'] ?>" onclick="return confirm('Hapus berita ini?')">Hapus</a>
-            </td>
-        </tr>
-        <?php } ?>
-    </table>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>

@@ -1,12 +1,11 @@
 <?php
-include "../koneksi.php";          // koneksi DB admin2
-include "protect.php";             // agar hanya admin2 yang bisa akses
-include "sidebar.php";             // sidebar admin2
+include "../koneksi.php";          
+include "protect.php";             
+include "sidebar.php";             
 
 require '../composer-test/vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-// ================== MAPPING PRODI → JURUSAN ==================
 $jurusanMap = [
     'D3 Hortikultura' => 'JURUSAN BUDIDAYA TANAMAN PANGAN',
     'D4 Teknologi Produksi Tanaman Pangan' => 'JURUSAN BUDIDAYA TANAMAN PANGAN',
@@ -45,26 +44,23 @@ $jurusanMap = [
     'D4 Teknologi Rekayasa Perangkat Lunak' => 'JURUSAN TEKNOLOGI INFORMASI'
 ];
 
-$logInsert = [];
-$logDuplicate = [];
-$insertCount = 0;
-$duplicateCount = 0;
+$logUpdated = [];
+$logNew = [];
+$updateCount = 0;
+$newCount = 0;
+$msg = "";
 
-// ================== UPDATE FILE ==================
 if (isset($_POST['submit'])) {
-
     $file = $_FILES['excel']['tmp_name'];
 
     if (!file_exists($file)) {
-        $msg = "⚠️ File Excel tidak ditemukan.";
+        $msg = "<div class='alert alert-warning'>⚠️ File Excel tidak ditemukan.</div>";
     } else {
-
         $spreadsheet = IOFactory::load($file);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
         for ($i = 1; $i < count($rows); $i++) {
-
             $npm   = trim($rows[$i][0]);
             $nama  = trim($rows[$i][1]);
             $prodi = trim($rows[$i][2]);
@@ -75,220 +71,240 @@ if (isset($_POST['submit'])) {
 
             $jurusan = $jurusanMap[$prodi] ?? 'JURUSAN TIDAK DIKETAHUI';
 
-            // CEK DUPLIKAT
-            $cek = $koneksi->prepare("SELECT npm FROM mahasiswa_kip WHERE npm = ?");
+            $cek = $koneksi->prepare("SELECT id_mahasiswa_kip FROM mahasiswa_kip WHERE npm = ?");
             $cek->bind_param("s", $npm);
             $cek->execute();
             $result = $cek->get_result();
 
             if ($result->num_rows > 0) {
-                $duplicateCount++;
-                $logDuplicate[] = "NPM $npm ($nama) dilewati (sudah ada).";
-                continue;
+                // UPDATE EXISTING
+                $stmt = $koneksi->prepare("
+                    UPDATE mahasiswa_kip 
+                    SET nama_mahasiswa=?, program_studi=?, jurusan=?, tahun=?, skema=?, status='pending'
+                    WHERE npm=?
+                ");
+                $stmt->bind_param("ssssss", $nama, $prodi, $jurusan, $tahun, $skema, $npm);
+                $stmt->execute();
+                $updateCount++;
+                $logUpdated[] = "NPM $npm ($nama) diperbarui.";
+            } else {
+                // INSERT NEW
+                $stmt = $koneksi->prepare("
+                    INSERT INTO mahasiswa_kip
+                    (npm, nama_mahasiswa, program_studi, jurusan, tahun, skema, id_admin, status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+                ");
+                $stmt->bind_param("ssssssi", $npm, $nama, $prodi, $jurusan, $tahun, $skema, $_SESSION['id_admin']);
+                $stmt->execute();
+                $newCount++;
+                $logNew[] = "NPM $npm ($nama) data baru ditambahkan.";
             }
-
-            // INSERT BARU (STATUS = PENDING)
-            $stmt = $koneksi->prepare("
-                INSERT INTO mahasiswa_kip
-                (npm, nama_mahasiswa, program_studi, jurusan, tahun, skema, id_admin, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
-            ");
-
-            $stmt->bind_param(
-                "ssssssi",
-                $npm,
-                $nama,
-                $prodi,
-                $jurusan,
-                $tahun,
-                $skema,
-                $_SESSION['id_admin']
-            );
-
-            $stmt->execute();
             $stmt->close();
-
-            $insertCount++;
-            $logInsert[] = "NPM $npm ($nama) berhasil ditambahkan (menunggu verifikasi admin 3).";
         }
-
-        $msg = "✅ Update selesai!<br>• $insertCount data baru<br>• $duplicateCount data duplikat dilewati";
+        $msg = "<div class='alert alert-info'>✅ Proses selesai! • $updateCount data diperbarui • $newCount data baru ditambahkan.</div>";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Update Data Mahasiswa KIP</title>
+    <meta charset="UTF-8">
+    <title>Update Masal Mahasiswa KIP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
+        }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-<style>
-    body {
-        background: linear-gradient(to bottom right, #ede7ff, #f7f5ff);
-        font-family: "Segoe UI", sans-serif;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 45px;
-    }
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-    /* CARD UTAMA */
-    .main-card {
-        width: 65%;
-        background: #ffffff;
-        border-radius: 18px;
-        padding: 40px 45px;
-        border-left: 10px solid #6a0dad;
-        box-shadow: 0 10px 32px rgba(106, 13, 173, 0.18);
-    }
+        .form-card {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    .main-card h2 {
-        font-weight: 800;
-        color: #4c0a88;
-        margin-bottom: 20px;
-    }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-    /* UPLOAD BOX */
-    .upload-box {
-        border: 2px dashed #6a0dad;
-        padding: 35px;
-        border-radius: 14px;
-        text-align: center;
-        cursor: pointer;
-        background: #faf5ff;
-        transition: 0.2s;
-    }
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .alert-info { background: rgba(37, 117, 252, 0.2); border: 1px solid #2575fc; color: #fff; }
+        .alert-warning { background: rgba(255, 193, 7, 0.2); border: 1px solid #ffc107; color: #ffeb3b; }
 
-    .upload-box:hover {
-        background: #f3e7ff;
-        transform: scale(1.02);
-    }
+        .upload-area {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 18px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            transition: 0.3s;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .upload-area:hover { background: rgba(255,255,255,0.1); border-color: #ba68ff; }
+        .upload-area i { font-size: 40px; color: #ba68ff; margin-bottom: 15px; }
 
-    .upload-box i {
-        font-size: 50px;
-        color: #6a0dad;
-        margin-bottom: 10px;
-    }
+        .btn-upload {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.3);
+            transition: 0.3s;
+        }
+        .btn-upload:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
-    /* BUTTON UNGU */
-    .btn-purple {
-        background: #6a0dad;
-        color: white;
-        padding: 12px 28px;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: 0.2s;
-    }
+        .format-info {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .format-info h4 { margin-top: 0; color: #ba68ff; }
+        .format-info ul { padding-left: 20px; margin-bottom: 0; }
 
-    .btn-purple:hover {
-        background: #580a9d;
-        transform: translateY(-2px);
-    }
+        .log-section {
+            margin-top: 30px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+        .log-item { margin-bottom: 5px; display: flex; gap: 10px; }
 
-    .section-title {
-        font-size: 20px;
-        font-weight: bold;
-        color: #4c0a88;
-        margin-top: 25px;
-        margin-bottom: 10px;
-    }
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
 
-    /* LOG BOX */
-    .log-box {
-        background: #fafafa;
-        border-radius: 12px;
-        padding: 18px 22px;
-        border: 1px solid #e4d7ff;
-    }
-
-    .log-box ul {
-        max-height: 200px;
-        overflow-y: auto;
-        padding-left: 25px;
-    }
-
-    .log-box ul li {
-        margin-bottom: 7px;
-        font-size: 15px;
-    }
-</style>
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="main-card">
+<div class="content">
+    <div class="form-card">
+        <h2>Update Masal Mahasiswa KIP</h2>
 
-    <h2>🔄 Update Data Mahasiswa KIP</h2>
+        <?= $msg; ?>
 
-    <?php if(isset($msg)): ?>
-        <div class="alert alert-info shadow-sm"><?= $msg ?></div>
-    <?php endif; ?>
+        <form method="POST" enctype="multipart/form-data">
+            <label class="upload-area" for="excelFile">
+                <i class="fas fa-sync-alt"></i>
+                <div style="font-weight:600;">Klik untuk pilih file Excel Update (.xlsx)</div>
+                <div style="font-size:12px; opacity:0.7; margin-top:5px;">Sistem akan mencocokkan NPM dan memperbarui data</div>
+                <input type="file" name="excel" id="excelFile" accept=".xlsx" style="display:none;" onchange="showFileName(this)">
+                <div id="fileNameBox" style="margin-top:10px; font-weight:bold; color:#ba68ff; display:none;"></div>
+            </label>
 
-    <!-- FORM UPLOAD -->
-    <form method="post" enctype="multipart/form-data">
+            <button type="submit" name="submit" class="btn-upload">
+                <i class="fas fa-sync-alt"></i> Proses Update Sekarang
+            </button>
+        </form>
 
-        <label class="form-label fw-bold">Upload File Excel (.xlsx)</label>
-
-        <label class="upload-box">
-            <i class="bi bi-cloud-arrow-up"></i><br>
-            <span class="fw-semibold">Klik area ini untuk memilih file Excel</span>
-
-            <input type="file" name="excel" accept=".xlsx" class="form-control mt-3" required>
-        </label>
-
-        <button type="submit" name="submit" class="btn-purple mt-3">
-            Update Sekarang
-        </button>
-
-    </form>
-
-    <hr>
-
-    <div class="section-title">📄 Format Excel</div>
-
-    <p>Kolom harus berurutan:</p>
-    <ul>
-        <li>NPM</li>
-        <li>Nama Mahasiswa</li>
-        <li>Program Studi</li>
-        <li>Tahun</li>
-        <li>Skema</li>
-    </ul>
-
-    <p><b>Jurusan otomatis</b> terisi berdasarkan Program Studi.</p>
-
-    <a href="mahasiswa_kip.php" class="btn btn-secondary mt-2">← Kembali</a>
-
-    <!-- LOG INSERTED -->
-    <?php if(!empty($logInsert)): ?>
-        <div class="section-title">✅ Data Ditambahkan</div>
-        <div class="log-box">
+        <div class="format-info">
+            <h4><i class="fas fa-info-circle"></i> Catatan Update</h4>
+            <p style="font-size: 13px; opacity: 0.8;">Sistem akan mendeteksi data berdasarkan <b>NPM</b>:</p>
             <ul>
-                <?php foreach($logInsert as $l): ?>
-                    <li><?= $l ?></li>
-                <?php endforeach; ?>
+                <li>Jika NPM sudah ada: Data (Nama, Prodi, Thn, Skema) akan <b>diperbarui</b>.</li>
+                <li>Jika NPM belum ada: Data akan dianggap sebagai <b>mahasiswa baru</b> dan ditambahkan.</li>
+                <li>Status semua data yang masuk akan menjadi <b>Pending</b> menunggu verifikasi ulang.</li>
             </ul>
         </div>
-    <?php endif; ?>
 
-    <!-- LOG DUPLIKAT -->
-    <?php if(!empty($logDuplicate)): ?>
-        <div class="section-title">⚠️ Data Duplikat (Dilewati)</div>
-        <div class="log-box">
-            <ul>
-                <?php foreach($logDuplicate as $l): ?>
-                    <li><?= $l ?></li>
-                <?php endforeach; ?>
-            </ul>
+        <?php if(!empty($logUpdated) || !empty($logNew)): ?>
+        <div class="log-section">
+            <h5 style="color:#ba68ff; margin-bottom:10px;">Riwayat Proses Terakhir:</h5>
+            <?php foreach($logUpdated as $log): ?>
+                <div class="log-item" style="color:#2ecc71;"><i class="fas fa-sync"></i> <?= $log ?></div>
+            <?php endforeach; ?>
+            <?php foreach($logNew as $log): ?>
+                <div class="log-item" style="color:#fff;"><i class="fas fa-plus-circle"></i> <?= $log ?></div>
+            <?php endforeach; ?>
         </div>
-    <?php endif; ?>
+        <?php endif; ?>
 
+        <a href="mahasiswa_kip.php" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali ke Daftar Mahasiswa
+        </a>
+    </div>
 </div>
+
+<script>
+function showFileName(input) {
+    const fileName = input.files[0].name;
+    const box = document.getElementById('fileNameBox');
+    box.innerText = "Selesai: " + fileName;
+    box.style.display = "block";
+}
+</script>
 
 </body>
 </html>
-

@@ -196,18 +196,28 @@
                     }
                     $jsonImgUrls = htmlspecialchars(json_encode($imgUrls), ENT_QUOTES, 'UTF-8');
 
-                    // Data Safety
-                    $judulSafe = htmlspecialchars($row['judul_prestasi'], ENT_QUOTES);
-                    $namaSafe = htmlspecialchars($row['nama_mahasiswa'], ENT_QUOTES);
-                    $descSafe = htmlspecialchars($row['deskripsi'], ENT_QUOTES);
+                    // Data for JS (Raw is better for json_encode)
+                    $judulRaw = $row['judul_prestasi'];
+                    $namaRaw = $row['nama_mahasiswa'];
+                    $descRaw = $row['deskripsi'];
                     $tglSafe = date('d M Y', strtotime($row['tanggal_prestasi']));
                     $uploadSafe = date('d/m/Y', strtotime($row['tanggal_upload']));
+                    
+                    // JSON for JS
+                    $jsonJudul = htmlspecialchars(json_encode($judulRaw), ENT_QUOTES, 'UTF-8');
+                    $jsonNama = htmlspecialchars(json_encode($namaRaw), ENT_QUOTES, 'UTF-8');
+                    $jsonDesc = htmlspecialchars(json_encode($descRaw), ENT_QUOTES, 'UTF-8');
+                    
+                    // Display Safe Txt
+                    $judulSafe = htmlspecialchars($judulRaw);
+                    $namaSafe = htmlspecialchars($namaRaw);
+                    $descSafe = htmlspecialchars($descRaw);
                     ?>
                     <div class="card-animate rounded-2xl shadow-xl prestasi-card flex flex-col h-full group relative overflow-hidden" 
                          style="--i:<?= $cardDelay ?>">
                         
                         <!-- Slider Thumbnail -->
-                        <div class="img-container" onclick='openDetail(<?= json_encode($judulSafe) ?>, <?= json_encode($namaSafe) ?>, "<?= $tglSafe ?>", "<?= $uploadSafe ?>", <?= json_encode($descSafe) ?>, <?= $jsonImgUrls ?>)'>
+                        <div class="img-container" onclick='openDetail(<?= $jsonJudul ?>, <?= $jsonNama ?>, "<?= $tglSafe ?>", "<?= $uploadSafe ?>", <?= $jsonDesc ?>, <?= $jsonImgUrls ?>)'>
                             <div class="slider-wrapper">
                                 <?php foreach($imgUrls as $idx => $url): ?>
                                     <img src="<?= $url ?>" class="slider-img <?= $idx==0?'active':'' ?>">
@@ -236,7 +246,7 @@
                             <p class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3">
                                 <?= $descSafe ?>
                             </p>
-                            <button onclick='openDetail(<?= json_encode($judulSafe) ?>, <?= json_encode($namaSafe) ?>, "<?= $tglSafe ?>", "<?= $uploadSafe ?>", <?= json_encode($descSafe) ?>, <?= $jsonImgUrls ?>)' 
+                            <button onclick='openDetail(<?= $jsonJudul ?>, <?= $jsonNama ?>, "<?= $tglSafe ?>", "<?= $uploadSafe ?>", <?= $jsonDesc ?>, <?= $jsonImgUrls ?>)' 
                                 class="mt-auto w-full text-center py-2 rounded-lg border border-purple-200 text-purple-600 font-bold hover:bg-purple-600 hover:text-white transition-all duration-300">
                                 Lihat Galeri & Detail <i class="fas fa-arrow-right ms-1 text-xs"></i>
                             </button>

@@ -142,6 +142,36 @@ $nama = $_SESSION['nama_mahasiswa'] ?? '';
       margin-left: 125px;
     }
 
+    /* Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.5); }
+      70% { transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes pulse-purple {
+      0% { box-shadow: 0 0 0 0 rgba(106, 27, 154, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(106, 27, 154, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(106, 27, 154, 0); }
+    }
+    @keyframes growLine {
+      from { width: 0; opacity: 0; }
+      to { width: 2.5rem; opacity: 1; }
+    }
+
+    .animate-fade-down { animation: fadeInDown 0.8s ease-out both; }
+    .animate-fade-up { animation: fadeInUp 0.8s ease-out both; }
+    .animate-pop { animation: popIn 0.6s cubic-bezier(0.26, 0.53, 0.74, 1.48) both; }
+    .animate-pulse-purple { animation: pulse-purple 2s infinite; }
+    .animate-line { animation: growLine 0.5s ease-out both; }
+
     /* Container putih */
     .content-box {
       background: white;
@@ -281,10 +311,10 @@ $nama = $_SESSION['nama_mahasiswa'] ?? '';
   <div class="main-content" id="main-content">
     <div class="content-box">
 
-      <h1 class="text-3xl md:text-4xl font-extrabold mb-6 text-white"> Monitoring dan Evaluasi Penerima KIP Kuliah Merdeka dan Bantuan Biaya Pendidikan (BBP) Polinela </h1>
-      <p class="mb-4"> Berdasarkan Peraturan Sekretaris Jenderal (Persesjen) Kemendikbudristek Nomor 13 Tahun 2023 tentang Petunjuk Pelaksanaan Program Indonesia Pintar Pendidikan Tinggi yang merupakan revisi atas Persesjen Nomor 10 Tahun 2022, mahasiswa penerima KIP Kuliah Merdeka dan BBP dapat dibatalkan bantuannya bila kondisi ekonomi keluarganya meningkat serta tidak memenuhi standar minimum IP/IPK yang ditetapkan perguruan tinggi masing-masing. </p> 
-      <p class="mb-4"> Sehubungan dengan peraturan tersebut, Polinela akan mengevaluasi secara berkala kondisi ekonomi dan prestasi akademik mahasiswa agar penyaluran KIP Kuliah Merdeka dan BBP tepat sasaran. </p> 
-      <p class="mb-4"> Mohon kerja sama mahasiswa/mahasiswi penerima KIP Kuliah Merdeka dan BBP Polinela untuk melengkapi data evaluasi dan melampirkan dokumen yang dibutuhkan dengan ketentuan sebagai berikut: </p> 
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-6 text-white bg-purple-700 p-6 rounded-2xl shadow-xl animate-fade-down"> Monitoring dan Evaluasi Penerima KIP Kuliah Merdeka dan Bantuan Biaya Pendidikan (BBP) Polinela </h1>
+      <p class="mb-4 animate-fade-up" style="animation-delay: 0.2s;"> Berdasarkan Peraturan Sekretaris Jenderal (Persesjen) Kemendikbudristek Nomor 13 Tahun 2023 tentang Petunjuk Pelaksanaan Program Indonesia Pintar Pendidikan Tinggi yang merupakan revisi atas Persesjen Nomor 10 Tahun 2022, mahasiswa penerima KIP Kuliah Merdeka dan BBP dapat dibatalkan bantuannya bila kondisi ekonomi keluarganya meningkat serta tidak memenuhi standar minimum IP/IPK yang ditetapkan perguruan tinggi masing-masing. </p> 
+      <p class="mb-4 animate-fade-up" style="animation-delay: 0.3s;"> Sehubungan dengan peraturan tersebut, Polinela akan mengevaluasi secara berkala kondisi ekonomi dan prestasi akademik mahasiswa agar penyaluran KIP Kuliah Merdeka dan BBP tepat sasaran. </p> 
+      <p class="mb-4 animate-fade-up" style="animation-delay: 0.4s;"> Mohon kerja sama mahasiswa/mahasiswi penerima KIP Kuliah Merdeka dan BBP Polinela untuk melengkapi data evaluasi dan melampirkan dokumen yang dibutuhkan dengan ketentuan sebagai berikut: </p> 
       <p class="mb-2 font-semibold">A. Dokumen yang disiapkan:</p> 
       <ul class="list-decimal list-inside mb-4 text-sm md:text-base"> 
         <li>Slip gaji orang tua 1 bulan terakhir (terbaru). Jika tidak ada slip gaji buat surat pernyataan penghasilan ditandatangani RT/RW/Pejabat Desa.</li> 
@@ -343,23 +373,23 @@ Verifikasi & Lanjutkan Evaluasi
       <!-- Step Indicator -->
       <div class="mt-10 flex flex-wrap justify-center gap-6">
         <div class="flex flex-col items-center">
-          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50">1</div>
-          <span class="mt-2 text-sm font-semibold text-purple-800">Persetujuan<br>Pengisian</span>
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50 animate-pop animate-pulse-purple" style="animation-delay: 0.1s;">1</div>
+          <span class="mt-2 text-sm font-semibold text-purple-800 animate-fade-up" style="animation-delay: 0.2s;">Persetujuan<br>Pengisian</span>
         </div>
-        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7"></div>
+        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7 animate-line" style="animation-delay: 0.3s;"></div>
         <div class="flex flex-col items-center">
-          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50">2</div>
-          <span class="mt-2 text-sm font-semibold text-purple-800">Data<br>Mahasiswa</span>
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50 animate-pop" style="animation-delay: 0.4s;">2</div>
+          <span class="mt-2 text-sm font-semibold text-purple-800 animate-fade-up" style="animation-delay: 0.5s;">Data<br>Mahasiswa</span>
         </div>
-        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7"></div>
+        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7 animate-line" style="animation-delay: 0.6s;"></div>
         <div class="flex flex-col items-center">
-          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50">3</div>
-          <span class="mt-2 text-sm font-semibold text-purple-800">Kondisi<br>Ekonomi</span>
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50 animate-pop" style="animation-delay: 0.7s;">3</div>
+          <span class="mt-2 text-sm font-semibold text-purple-800 animate-fade-up" style="animation-delay: 0.8s;">Kondisi<br>Ekonomi</span>
         </div>
-        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7"></div>
+        <div class="w-10 h-1 bg-purple-400 rounded-full mt-7 animate-line" style="animation-delay: 0.9s;"></div>
         <div class="flex flex-col items-center">
-          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50">4</div>
-          <span class="mt-2 text-sm font-semibold text-purple-800">Unggah<br>Dokumen</span>
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white text-xl font-bold shadow-lg ring-4 ring-purple-400/50 animate-pop" style="animation-delay: 1.0s;">4</div>
+          <span class="mt-2 text-sm font-semibold text-purple-800 animate-fade-up" style="animation-delay: 1.1s;">Unggah<br>Dokumen</span>
         </div>
       </div>
 

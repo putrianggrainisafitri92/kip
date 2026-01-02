@@ -7,7 +7,7 @@ include 'koneksi.php';
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pedoman KIP-Kuliah 2025</title>
+  <title>Pedoman KIP-Kuliah 202</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -73,24 +73,60 @@ include 'koneksi.php';
       background: rgba(255,255,255,0.15);
     }
 
-    /* Main content */
-    .main-content {
-      transition: margin-left 0.3s ease;
-      margin-top: 100px;
-      padding: 25px;
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .main-content.shifted {
-      margin-left: 260px;
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Card global */
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .animate-fade-up { animation: fadeInUp 0.8s ease-out fill-mode: both; }
+    .animate-slide-left { animation: slideInLeft 0.8s ease-out fill-mode: both; }
+    .animate-zoom { animation: zoomIn 0.8s ease-out fill-mode: both; }
+
     .card-section {
       background: white;
       border-radius: 20px;
       padding: 40px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       margin-bottom: 40px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-section:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(106, 27, 154, 0.2);
+    }
+
+    .benefit-card {
+      transition: all 0.3s ease;
+    }
+    .benefit-card:hover {
+      transform: scale(1.03);
+      background: white;
+    }
+
+    .step-card {
+      transition: all 0.3s ease;
+    }
+    .step-card:hover {
+      transform: translateX(10px);
+      background: #f3e8ff;
+    }
+
+    .main-content {
+      transition: margin-left 0.3s ease;
+      margin-top: 100px;
+      padding: 25px;
     }
 
     /* ========== RESPONSIVE DESIGN ========== */
@@ -189,7 +225,7 @@ include 'koneksi.php';
     <div class="w-full max-w-6xl mx-auto">
 
       <!-- Title Card -->
-      <div class="card-section text-center bg-purple-700 text-white shadow-xl">
+      <div class="card-section animate-zoom text-center bg-purple-700 text-white shadow-xl">
         <h1 class="text-4xl font-extrabold mb-2">Pedoman KIP-Kuliah 2025</h1>
         <p class="text-lg opacity-90">Pahami syarat, tahapan, dan dokumen resmi program KIP-K.</p>
       </div>
@@ -197,7 +233,7 @@ include 'koneksi.php';
       <!-- Informasi -->
       <div class="grid md:grid-cols-2 gap-8">
 
-        <div class="card-section">
+        <div class="card-section animate-fade-up">
           <h3 class="text-2xl font-bold text-purple-700 mb-3">
             <i class="fas fa-bullseye text-purple-700"></i> Tujuan Program
           </h3>
@@ -206,7 +242,7 @@ include 'koneksi.php';
           </p>
         </div>
 
-        <div class="card-section">
+        <div class="card-section animate-fade-up" style="animation-delay: 0.1s;">
   <h3 class="text-2xl font-bold text-purple-700 mb-3">
     <i class="fas fa-check-circle text-purple-700"></i> Persyaratan
   </h3>
@@ -221,7 +257,7 @@ include 'koneksi.php';
       </div>
 
       <!-- Persyaratan Ekonomi -->
-      <div class="card-section">
+      <div class="card-section animate-fade-up" style="animation-delay: 0.2s;">
         <h3 class="text-2xl font-bold text-purple-700 mb-4">
           <i class="fas fa-users"></i> Persyaratan Ekonomi Penerima
         </h3>
@@ -242,7 +278,7 @@ include 'koneksi.php';
       </div>
 
       <!-- Keunggulan Penerima KIP Kuliah -->
-<div class="card-section">
+<div class="card-section animate-fade-up" style="animation-delay: 0.3s;">
 
   <div class="text-center mb-8">
   <h3 class="text-3xl font-extrabold text-purple-700">
@@ -258,7 +294,7 @@ include 'koneksi.php';
   <div class="grid md:grid-cols-2 gap-8">
 
     <!-- Pembebasan Biaya Pendaftaran -->
-    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200">
+    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-purple-50 to-white border border-purple-200 benefit-card">
       <h4 class="text-xl font-bold text-purple-700 mb-3 flex items-center gap-2">
         <i class="fas fa-ticket-alt text-purple-600 text-2xl"></i>
         Pembebasan Biaya UTBK–SNBT
@@ -276,7 +312,7 @@ include 'koneksi.php';
     </div>
 
     <!-- Pembebasan Biaya Kuliah -->
-    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200">
+    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-blue-50 to-white border border-blue-200 benefit-card">
       <h4 class="text-xl font-bold text-blue-700 mb-3 flex items-center gap-2">
         <i class="fas fa-university text-blue-700 text-2xl"></i>
         Bebas Biaya Kuliah (UKT/SPP)
@@ -288,7 +324,7 @@ include 'koneksi.php';
     </div>
 
     <!-- Bantuan Biaya Hidup -->
-    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-green-50 to-white border border-green-200 md:col-span-2">
+    <div class="p-6 rounded-2xl shadow-lg bg-gradient-to-br from-green-50 to-white border border-green-200 md:col-span-2 benefit-card">
       <h4 class="text-xl font-bold text-green-700 mb-3 flex items-center gap-2">
         <i class="fas fa-hand-holding-usd text-green-700 text-2xl"></i>
         Bantuan Biaya Hidup Mahasiswa
@@ -344,7 +380,7 @@ include 'koneksi.php';
     </div>
 
     <h3 class="text-3xl font-bold text-purple-700">
-      Jadwal & Tahapan KIP Kuliah 2025
+      Jadwal & Tahapan KIP Kuliah 2026
     </h3>
 
   </div>
@@ -353,25 +389,25 @@ include 'koneksi.php';
 
 
 <!-- ===================== CARD 1 — TAHAPAN UMUM ===================== -->
-<div class="card-section mb-10">
+<div class="card-section mb-10 animate-fade-up">
   <h4 class="text-2xl font-bold text-purple-700 flex items-center gap-2 mb-5">
-    <i class="fas fa-stream text-purple-600"></i> Tahapan Umum 2025
+    <i class="fas fa-stream text-purple-600"></i> Tahapan Umum 2026
   </h4>
 
   <div class="space-y-5">
     <?php
     $steps = [
-      ["Pendaftaran Akun", "4 Februari – 31 Oktober 2025"],
-      ["Seleksi SNBP", "4 – 18 Februari 2025"],
-      ["Seleksi SNBT", "11 – 27 Maret 2025"],
-      ["Mandiri PTN", "4 Juni – 30 September 2025"],
-      ["Mandiri PTS", "4 Juni – 31 Oktober 2025"],
+      ["Pendaftaran Akun", "4 Februari – 31 Oktober 2026"],
+      ["Seleksi SNBP", "4 – 18 Februari 2026"],
+      ["Seleksi SNBT", "11 – 27 Maret 2026"],
+      ["Mandiri PTN", "4 Juni – 30 September 2026"],
+      ["Mandiri PTS", "4 Juni – 31 Oktober 2026"],
     ];
 
     $no = 1;
     foreach ($steps as $s) {
       echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition'>
+      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
         <div class=\"bg-purple-600 text-white w-12 h-12 flex items-center justify-center rounded-full font-bold\">
           {$no}
         </div>
@@ -394,7 +430,7 @@ include 'koneksi.php';
 
 
 <!-- ===================== CARD 2 — SNBP ===================== -->
-<div class="card-section mb-10">
+<div class="card-section mb-10 animate-fade-up">
   <h4 class="text-2xl font-bold text-purple-700 flex items-center gap-2 mb-5">
     <i class="fas fa-graduation-cap text-purple-600"></i> Proses Seleksi Masuk SNBP
   </h4>
@@ -402,15 +438,15 @@ include 'koneksi.php';
   <div class="space-y-5">
     <?php
     $snbp = [
-      ["Registrasi Akun SNBP Siswa", "13 Januari – 18 Februari 2025"],
-      ["Pendaftaran SNBP", "4 – 18 Februari 2025"],
-      ["Pengumuman Hasil SNBP", "18 Maret 2025"],
-      ["Masa Unduh Kartu Peserta SNBP", "4 Februari – 30 April 2025"],
+      ["Registrasi Akun SNBP Siswa", "13 Januari – 18 Februari 2026"],
+      ["Pendaftaran SNBP", "4 – 18 Februari 2026"],
+      ["Pengumuman Hasil SNBP", "18 Maret 2026"],
+      ["Masa Unduh Kartu Peserta SNBP", "4 Februari – 30 April 2026"],
     ];
 
     foreach ($snbp as $step) {
       echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition'>
+      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
         <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
           <i class=\"fas fa-check\"></i>
         </div>
@@ -432,7 +468,7 @@ include 'koneksi.php';
 
 
 <!-- ===================== CARD 3 — UTBK SNBT ===================== -->
-<div class="card-section mb-10">
+<div class="card-section mb-10 animate-fade-up">
   <h4 class="text-2xl font-bold text-purple-700 flex items-center gap-2 mb-5">
     <i class="fas fa-file-signature text-purple-600"></i> Proses Seleksi Masuk UTBK–SNBT
   </h4>
@@ -440,17 +476,17 @@ include 'koneksi.php';
   <div class="space-y-5">
     <?php
     $utbk = [
-      ["Registrasi Akun SNPMB Siswa", "13 Januari – 27 Maret 2025"],
-      ["Pendaftaran UTBK-SNBT", "11 – 27 Maret 2025"],
-      ["Pembayaran Biaya UTBK", "11 – 28 Maret 2025"],
-      ["Pelaksanaan UTBK", "23 April – 3 Mei 2025"],
-      ["Pengumuman Hasil SNBT", "28 Mei 2025"],
-      ["Masa Unduh Sertifikat UTBK", "3 Juni – 31 Juli 2025"],
+      ["Registrasi Akun SNPMB Siswa", "13 Januari – 27 Maret 2026"],
+      ["Pendaftaran UTBK-SNBT", "11 – 27 Maret 2026"],
+      ["Pembayaran Biaya UTBK", "11 – 28 Maret 2026"],
+      ["Pelaksanaan UTBK", "23 April – 3 Mei 2026"],
+      ["Pengumuman Hasil SNBT", "28 Mei 2026"],
+      ["Masa Unduh Sertifikat UTBK", "3 Juni – 31 Juli 2026"],
     ];
 
     foreach ($utbk as $step) {
       echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition'>
+      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
         <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
           <i class=\"fas fa-check\"></i>
         </div>
@@ -472,7 +508,7 @@ include 'koneksi.php';
 
 
 <!-- ===================== CARD 4 — KIP-KULIAH ===================== -->
-<div class="card-section mb-10">
+<div class="card-section mb-10 animate-fade-up">
   <h4 class="text-2xl font-bold text-purple-700 flex items-center gap-2 mb-5">
     <i class="fas fa-id-card text-purple-600"></i> Proses KIP Kuliah
   </h4>
@@ -508,7 +544,7 @@ include 'koneksi.php';
 
 
       <!-- Tabel -->
-      <div class="card-section mt-10">
+      <div class="card-section mt-10 animate-fade-up">
         <h3 class="text-2xl font-bold text-purple-700 mb-6">
           <i class="fas fa-file-alt"></i> Daftar Pedoman Resmi
         </h3>
@@ -562,13 +598,26 @@ include 'koneksi.php';
                     $download = "";
                   }
 
+                  // Cleaning Filename for display
+                  $rawName = $row['nama_file'];
+                  // Remove extension
+                  $cleanName = pathinfo($rawName, PATHINFO_FILENAME);
+                  // Remove date prefix if matches YYYYMMDD-
+                  $cleanName = preg_replace('/^\d{8}-/', '', $cleanName);
+                  // Remove potential hash suffix like _abc123
+                  $cleanName = preg_replace('/_[a-f0-9]{6,}$/i', '', $cleanName);
+                  // Replace dashes/underscores with spaces
+                  $cleanName = str_replace(['-', '_'], ' ', $cleanName);
+                  // Capitalize first letters
+                  $displayName = ucwords($cleanName);
+
                   echo "
                     <tr class='border-b hover:bg-purple-50'>
                       <td class='py-3 px-4 text-center font-semibold'>{$no}</td>
-                      <td class='py-3 px-4'>{$row['nama_file']}</td>
+                      <td class='py-3 px-4 font-medium text-gray-700'>{$displayName}</td>
                       <td class='py-3 px-4 text-center'>
                         <a href='{$href}' {$download}
-                           class='text-white font-medium px-4 py-2 rounded-lg shadow {$btn_class}'>
+                           class='text-white font-medium px-4 py-2 rounded-lg shadow {$btn_class} transition duration-300'>
                           {$btn_text}
                         </a>
                       </td>

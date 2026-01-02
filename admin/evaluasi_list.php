@@ -40,14 +40,12 @@ if (isset($_GET['batalkan'])) {
     exit;
 }
 
-
 if (isset($_GET['hapus'])) {
     $id = intval($_GET['hapus']);
 
     mysqli_begin_transaction($koneksi);
 
     try {
-        // Ambil id_mahasiswa_kip
         $q = mysqli_query($koneksi, "SELECT id_mahasiswa_kip FROM evaluasi WHERE id_eval=$id");
         $row = mysqli_fetch_assoc($q);
 
@@ -57,7 +55,6 @@ if (isset($_GET['hapus'])) {
 
         $idm = (int)$row['id_mahasiswa_kip'];
 
-        // Hapus file fisik
         $qf = mysqli_query($koneksi, "SELECT file_eval FROM file_eval WHERE id_mahasiswa_kip=$idm");
         while ($f = mysqli_fetch_assoc($qf)) {
             $path = __DIR__ . '/../uploads/evaluasi/' . $f['file_eval'];
@@ -66,12 +63,9 @@ if (isset($_GET['hapus'])) {
             }
         }
 
-        // Hapus tabel turunan
         mysqli_query($koneksi, "DELETE FROM file_eval WHERE id_mahasiswa_kip=$idm");
         mysqli_query($koneksi, "DELETE FROM keluarga WHERE id_mahasiswa_kip=$idm");
         mysqli_query($koneksi, "DELETE FROM transportasi WHERE id_mahasiswa_kip=$idm");
-
-        // Terakhir hapus evaluasi
         mysqli_query($koneksi, "DELETE FROM evaluasi WHERE id_eval=$id");
 
         mysqli_commit($koneksi);
@@ -85,221 +79,290 @@ if (isset($_GET['hapus'])) {
     }
 }
 
-
-// ==== AMBIL SEMUA DATA LIST ====
 $where = "";
-
 if (isset($_GET['keyword']) && $_GET['keyword'] !== '') {
     $keyword = mysqli_real_escape_string($koneksi, $_GET['keyword']);
-    $where = "WHERE m.nama_mahasiswa LIKE '%$keyword%' 
-              OR m.npm LIKE '%$keyword%'";
+    $where = "WHERE m.nama_mahasiswa LIKE '%$keyword%' OR m.npm LIKE '%$keyword%'";
 }
 
-$sql = "SELECT e.*, m.nama_mahasiswa, m.npm, m.program_studi, m.jurusan,
-               fe.file_eval
+$sql = "SELECT e.*, m.nama_mahasiswa, m.npm, m.program_studi, m.jurusan, fe.file_eval
         FROM evaluasi e
         JOIN mahasiswa_kip m ON e.id_mahasiswa_kip = m.id_mahasiswa_kip
         LEFT JOIN file_eval fe ON e.id_mahasiswa_kip = fe.id_mahasiswa_kip
         $where
         ORDER BY e.submitted_at DESC";
 
-
 $result = mysqli_query($koneksi, $sql);
+
+include 'sidebar.php'; 
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Admin - Data Evaluasi</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <title>Manajemen Evaluasi Mahasiswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-<style>
-    body {
-        background: #efeaff; /* Background lembut tanpa gambar */
-    }
-</style>
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-verify-all { background: #4caf50; }
+        .btn-delete-all { background: #f44336; }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* Search Area */
+        .search-area {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-family: inherit;
+        }
+        .btn-search { background: #4e0a8a; color: white; padding: 10px 25px; }
+
+        /* Table */
+        .table-responsive {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        tr:hover td { background: #fbf9ff; }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .v-verified { background: #e8f5e9; color: #2e7d32; }
+        .v-unverified { background: #ffebee; color: #c62828; }
+        .v-none { background: #f5f5f5; color: #777; }
+
+        .btn-action-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .bg-verify { background: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; }
+        .bg-unverify { background: #ffebee; color: #c62828; border: 1px solid #c62828; }
+        .bg-cancel { background: #f5f5f5; color: #666; border: 1px solid #ccc; }
+        .bg-pdf { background: #e3f2fd; color: #1976d2; border: 1px solid #1976d2; }
+        .bg-view { background: #fff8e1; color: #ffa000; border: 1px solid #ffa000; }
+        .bg-hapus { background: #f44336; color: white; }
+
+        .btn-action-sm:hover { filter: brightness(0.9); transform: scale(1.05); }
+
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .top-actions { flex-direction: column; align-items: stretch; }
+        }
+    </style>
 </head>
+<body>
 
-<body class="min-h-screen">
+<div class="content">
+    <div class="header-section">
+        <h2>Data Evaluasi Mahasiswa</h2>
+    </div>
 
-<?php include 'sidebar.php'; ?>
-
-<div class="ml-64 mt-10 p-8">
-
-<?php if(isset($_GET['verified'])): ?>
-  <div class="bg-green-100 text-green-800 p-3 rounded mb-4">Data berhasil diverifikasi ✅</div>
-<?php endif; ?>
-
-<?php if(isset($_GET['deleted'])): ?>
-  <div class="bg-red-100 text-red-800 p-3 rounded mb-4">Data berhasil dihapus ✅</div>
-<?php endif; ?>
-
-<div class="flex gap-3 mb-5">
-
-    <a href="verifikasi_all.php" 
-        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold shadow">
-        Verifikasi Semua
-    </a>
-
-    <a href="hapus_all.php" 
-        onclick="return confirm('Yakin ingin menghapus semua data?')"
-        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold shadow">
-        Hapus Semua
-    </a>
-
-</div>
-
-
-<div class="bg-white shadow-xl p-6 rounded-2xl">
-<h1 class="text-3xl font-bold text-purple-800 mb-5">📑 Data Evaluasi Mahasiswa</h1>
-
-<form method="GET" class="mb-4 flex gap-3">
-    <input type="text"
-           name="keyword"
-           value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
-           placeholder="Cari Nama atau NPM..."
-           class="border px-4 py-2 rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-purple-500">
-
-    <button type="submit"
-            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold">
-        Cari
-    </button>
-
-    <?php if (isset($_GET['keyword']) && $_GET['keyword'] !== ''): ?>
-        <a href="evaluasi_list.php"
-           class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold">
-            Reset
-        </a>
-    <?php endif; ?>
-</form>
-
-
-<div class="overflow-x-auto">
-<table class="w-full border text-sm rounded-lg overflow-hidden">
-  <thead class="bg-purple-800 text-white">
-    <tr>
-      <th class="p-3 text-left">No</th>
-      <th class="p-3 text-left">Nama</th>
-      <th class="p-3 text-left">Prodi / Jurusan</th>
-      <th class="p-3 text-center">File Evaluasi</th>
-      <th class="p-3 text-center">Generate PDF</th>
-      <th class="p-3 text-center">Status</th>
-      <th class="p-3 text-center">Aksi</th>
-    </tr>
-  </thead>
-
-  <tbody>
-
-<?php
-if ($result && mysqli_num_rows($result) > 0) {
-  $no = 1;
-
-  while ($row = mysqli_fetch_assoc($result)) {
-
-    $pathEvaluasi  = '../uploads/evaluasi/' . ($row['file_eval'] ?? '');
- 
-
-    echo "<tr class='border-b hover:bg-purple-50 transition'>";
-    echo "<td class='p-3'>$no</td>";
-
-    echo "<td class='p-3 font-semibold'>" . htmlspecialchars($row['nama_mahasiswa']) . "<br>
-            <span class='text-xs text-gray-500'>NPM: " . htmlspecialchars($row['npm']) . "</span>
-          </td>";
-
-    echo "<td class='p-3'>" . htmlspecialchars($row['program_studi']) . "<br>
-            <span class='text-xs'>" . htmlspecialchars($row['jurusan']) . "</span>
-          </td>";
-
-    // FILE EVALUASI
-    echo "<td class='p-3 text-center'>";
-    echo (!empty($row['file_eval']))
-          ? "<a href='$pathEvaluasi' target='_blank'  class='bg-yellow-300 hover:bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold'>Lihat</a>"
-          : "-";
-    echo "</td>";
-
-    // PDF
-    echo "<td class='p-3 text-center'>
-            <a href='generate_pdf.php?id={$row['id_eval']}' 
-               class='bg-blue-300 hover:bg-blue-400 text-white-900 px-3 py-1 rounded-full text-xs font-bold'>
-               Generate
+    <div class="top-actions">
+        <div class="btn-group">
+            <a href="verifikasi_all.php" class="btn btn-verify-all" onclick="return confirm('Verifikasi semua data yang ada?')">
+                <i class="fas fa-check-double"></i> Verifikasi Semua
             </a>
-          </td>";
-
-    echo "<td class='p-3 text-center'>";
-
-if ($row['status_verifikasi'] === 'Diterima') {
-
-    // VERIFIED
-    echo "
-        <span class='bg-green-500 text-white px-3 py-1 rounded-full text-xs block mb-2 font-semibold'>
-            Verified
-        </span>
-        <a href='?batalkan={$row['id_eval']}'
-           class='inline-block bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-full text-xs'>
-            Batalkan
-        </a>
-    ";
-
-} elseif ($row['status_verifikasi'] === 'Belum Diverifikasi') {
-
-    // UNVERIFIED
-    echo "
-        <span class='bg-red-500 text-white px-3 py-1 rounded-full text-xs block mb-2 font-semibold'>
-            Unverified
-        </span>
-        <a href='?batalkan={$row['id_eval']}'
-           class='inline-block bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-full text-xs'>
-            Batalkan
-        </a>
-    ";
-
-} else {
-
-    // KONDISI AWAL (BELUM DIPILIH)
-    echo "
-        <a href='?unverified={$row['id_eval']}'
-           class='inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs mr-1'>
-            Unverified
-        </a>
-        <a href='?verifikasi={$row['id_eval']}'
-           class='inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-xs'>
-            Verified
-        </a>
-    ";
-}
-
-echo "</td>";
-
-
-
-
-
-
-
-    // AKSI
-    echo "<td class='p-3 text-center'>
-            <a href='?hapus={$row['id_eval']}' 
-               onclick='return confirm(\"Yakin hapus data?\")'
-               class='bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-semibold'>
-               Hapus
+            <a href="hapus_all.php" class="btn btn-delete-all" onclick="return confirm('Lanjutkan menghapus SEMUA data evaluasi?')">
+                <i class="fas fa-trash-alt"></i> Hapus Semua
             </a>
-          </td>";
+        </div>
+        <form method="GET" style="display:flex; gap:10px; flex:1; max-width: 400px;">
+            <input type="text" name="keyword" class="search-input" placeholder="Cari Nama atau NPM..." value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>">
+            <button type="submit" class="btn btn-search">Cari</button>
+        </form>
+    </div>
 
-    echo "</tr>";
-    $no++;
-  }
-
-} else {
-  echo "<tr><td colspan='10' class='text-center p-4 text-gray-500 italic'>Belum ada data evaluasi</td></tr>";
-}
-?>
-
-  </tbody>
-</table>
-</div>
-
-</div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Mahasiswa</th>
+                    <th>Prodi / Jurusan</th>
+                    <th>File Dokumen</th>
+                    <th>Form Evaluasi</th>
+                    <th>Status Verifikasi</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $no = 1;
+                    while ($row = mysqli_fetch_assoc($result)):
+                        $pathEvaluasi  = '../uploads/evaluasi/' . ($row['file_eval'] ?? '');
+                ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td>
+                        <div style="font-weight: 600; color: #4e0a8a;"><?= htmlspecialchars($row['nama_mahasiswa']) ?></div>
+                        <small class="text-muted"><?= htmlspecialchars($row['npm']) ?></small>
+                    </td>
+                    <td>
+                        <small><?= htmlspecialchars($row['program_studi']) ?></small><br>
+                        <small class="text-muted"><?= htmlspecialchars($row['jurusan']) ?></small>
+                    </td>
+                    <td>
+                        <?php if(!empty($row['file_eval'])): ?>
+                            <a href="<?= $pathEvaluasi ?>" target="_blank" class="btn-action-sm bg-view">
+                                <i class="fas fa-file-pdf"></i> Lihat PDF
+                            </a>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <a href="generate_pdf.php?id=<?= $row['id_eval'] ?>" class="btn-action-sm bg-pdf">
+                            <i class="fas fa-print"></i> Generate Form
+                        </a>
+                    </td>
+                    <td>
+                        <?php if ($row['status_verifikasi'] === 'Diterima'): ?>
+                            <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-start;">
+                                <span class="status-badge v-verified">VERIFIED</span>
+                                <a href="?batalkan=<?= $row['id_eval'] ?>" class="btn-action-sm bg-cancel">Batalkan</a>
+                            </div>
+                        <?php elseif ($row['status_verifikasi'] === 'Belum Diverifikasi'): ?>
+                            <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-start;">
+                                <span class="status-badge v-unverified">UNVERIFIED</span>
+                                <a href="?batalkan=<?= $row['id_eval'] ?>" class="btn-action-sm bg-cancel">Batalkan</a>
+                            </div>
+                        <?php else: ?>
+                            <div style="display:flex; gap:5px;">
+                                <a href="?verifikasi=<?= $row['id_eval'] ?>" class="btn-action-sm bg-verify">Verify</a>
+                                <a href="?unverified=<?= $row['id_eval'] ?>" class="btn-action-sm bg-unverify">Unverify</a>
+                            </div>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <a href="?hapus=<?= $row['id_eval'] ?>" class="btn-action-sm bg-hapus" onclick="return confirm('Hapus data evaluasi mahasiswa ini?')">
+                            <i class="fas fa-trash"></i> Hapus
+                        </a>
+                    </td>
+                </tr>
+                <?php 
+                    endwhile;
+                } else {
+                    echo "<tr><td colspan='7' style='text-align:center; padding:40px; color:#999;'>Belum ada data evaluasi.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 </body>

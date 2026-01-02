@@ -1,16 +1,14 @@
 <?php
 include "../koneksi.php";     
 include "protect.php";        
-include "sidebar.php";         
 
 $msg = "";
 
-// ============== Fungsi Hapus Aman ==================
 function hapus_mahasiswa_aman($koneksi, $whereColumn, $value) {
     $stmt1 = $koneksi->prepare("DELETE fe FROM file_eval fe 
-                               INNER JOIN mahasiswa_kip mk 
-                               ON fe.id_mahasiswa_kip = mk.id_mahasiswa_kip 
-                               WHERE mk.$whereColumn = ?");
+                                INNER JOIN mahasiswa_kip mk 
+                                ON fe.id_mahasiswa_kip = mk.id_mahasiswa_kip 
+                                WHERE mk.$whereColumn = ?");
     $stmt1->bind_param("s", $value);
     $stmt1->execute();
     $stmt1->close();
@@ -21,20 +19,19 @@ function hapus_mahasiswa_aman($koneksi, $whereColumn, $value) {
     $stmt2->close();
 }
 
-// ============== HAPUS DATA ==================
 if (isset($_POST['hapus_tahun'])) {
     hapus_mahasiswa_aman($koneksi, 'tahun', $_POST['tahun_hapus']);
-    $msg = "✅ Data tahun <b>{$_POST['tahun_hapus']}</b> berhasil dihapus!";
+    $msg = "✅ Data mahasiswa tahun {$_POST['tahun_hapus']} berhasil dihapus!";
 }
 
 if (isset($_POST['hapus_jurusan'])) {
     hapus_mahasiswa_aman($koneksi, 'jurusan', $_POST['jurusan_hapus']);
-    $msg = "✅ Data jurusan <b>{$_POST['jurusan_hapus']}</b> berhasil dihapus!";
+    $msg = "✅ Data jurusan {$_POST['jurusan_hapus']} berhasil dihapus!";
 }
 
 if (isset($_POST['hapus_prodi'])) {
     hapus_mahasiswa_aman($koneksi, 'program_studi', $_POST['prodi_hapus']);
-    $msg = "✅ Data program studi <b>{$_POST['prodi_hapus']}</b> berhasil dihapus!";
+    $msg = "✅ Data program studi {$_POST['prodi_hapus']} berhasil dihapus!";
 }
 
 if (isset($_POST['hapus_npm'])) {
@@ -46,170 +43,242 @@ if (isset($_POST['hapus_npm'])) {
 
     if ($result->num_rows > 0) {
         hapus_mahasiswa_aman($koneksi, 'npm', $npm);
-        $msg = "✅ Data mahasiswa dengan NPM <b>$npm</b> berhasil dihapus!";
+        $msg = "✅ Data mahasiswa dengan NPM $npm berhasil dihapus!";
     } else {
-        $msg = "⚠️ NPM <b>$npm</b> tidak ditemukan!";
+        $msg = "⚠️ NPM $npm tidak ditemukan!";
     }
 }
 
-// ============== Dropdown ==============
 $tahunList   = $koneksi->query("SELECT DISTINCT tahun FROM mahasiswa_kip ORDER BY tahun ASC");
 $jurusanList = $koneksi->query("SELECT DISTINCT jurusan FROM mahasiswa_kip ORDER BY jurusan ASC");
 $prodiList   = $koneksi->query("SELECT DISTINCT program_studi FROM mahasiswa_kip ORDER BY program_studi ASC");
 
+include "sidebar.php";         
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Hapus Data Mahasiswa</title>
+    <meta charset="UTF-8">
+    <title>Hapus Data Mahasiswa KIP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
+        }
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-<style>
-    body {
-        background: #f3f1ff;
-        font-family: "Segoe UI", sans-serif;
-    }
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-    .main-content {
-        margin-left: 260px;
-        padding: 40px;
-    }
+        .form-card {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    .card-panel {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 18px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        border-left: 10px solid #6a0dad;
-        transition: .3s;
-    }
-    .card-panel:hover {
-        transform: scale(1.01);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-    .header-title {
-        font-size: 28px;
-        font-weight: 700;
-        color: #6a0dad;
-    }
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .alert-info { background: rgba(37, 117, 252, 0.2); border: 1px solid #2575fc; color: #fff; }
 
-    /* Ungu theme */
-    .btn-ungu {
-        background: #6a0dad;
-        color: white;
-        font-weight: 600;
-        border-radius: 8px;
-    }
-    .btn-ungu:hover {
-        background: #530a9e;
-        color: white;
-    }
+        .warning-box {
+            background: rgba(255, 77, 77, 0.2);
+            border: 1px solid #ff4d4d;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ffcccc;
+            font-size: 14px;
+        }
 
-    .danger-box {
-        background: #ffeaea;
-        border-left: 6px solid red;
-        padding: 12px 18px;
-        border-radius: 10px;
-    }
+        .deletion-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
 
-    .form-box {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 14px;
-        border: 1px solid #e0e0e0;
-        transition: .25s;
-    }
-    .form-box:hover {
-        transform: scale(1.02);
-        border-color: #6a0dad;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-    }
-</style>
+        .deletion-item {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+        .deletion-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: #ff4d4d;
+        }
+        .deletion-item h4 {
+            margin-top: 0;
+            color: #ba68ff;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+        .form-select option { color: #333; }
+
+        .btn-delete {
+            background: #d32f2f;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-delete:hover { background: #b71c1c; transform: translateY(-2px); }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: 0.3s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .deletion-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="main-content">
-
-    <div class="card-panel">
-
-        <h2 class="header-title">
-            <i class="fas fa-trash-alt"></i> Hapus Data Mahasiswa KIP-K
-        </h2>
+<div class="content">
+    <div class="form-card">
+        <h2>Hapus Data Mahasiswa</h2>
 
         <?php if ($msg): ?>
-            <div class="alert alert-info mt-3"><?= $msg ?></div>
+            <div class="alert alert-info shadow-lg"><?= $msg ?></div>
         <?php endif; ?>
 
-        <div class="danger-box mt-3">
-            <i class="fas fa-exclamation-circle"></i>
-            <b>Peringatan penting:</b> Penghapusan data bersifat permanen & tidak bisa dikembalikan.
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <b>Peringatan:</b> Penghapusan data ini bersifat permanen dan akan menghapus juga file evaluasi yang terkait dengan mahasiswa tersebut.
         </div>
 
-        <div class="row mt-4 g-4">
-
-            <!-- Tahun -->
-            <div class="col-md-6">
-                <form method="post" class="form-box">
-                    <h5><i class="fas fa-calendar-alt"></i> Hapus Berdasarkan Tahun</h5>
-                    <select name="tahun_hapus" class="form-select mt-2" required>
+        <div class="deletion-grid">
+            <!-- Berdasarkan Tahun -->
+            <div class="deletion-item">
+                <form method="post" onsubmit="return confirm('Hapus semua mahasiswa di tahun ini?')">
+                    <h4><i class="fas fa-calendar-alt"></i> Hapus Per Tahun</h4>
+                    <select name="tahun_hapus" class="form-select" required>
                         <option value="">-- Pilih Tahun --</option>
                         <?php while ($r = $tahunList->fetch_assoc()): ?>
-                            <option><?= $r['tahun'] ?></option>
+                            <option value="<?= $r['tahun'] ?>"><?= $r['tahun'] ?></option>
                         <?php endwhile; ?>
                     </select>
-                    <button class="btn btn-danger w-100 mt-3" name="hapus_tahun">Hapus Data</button>
+                    <button type="submit" name="hapus_tahun" class="btn-delete">Hapus Data Tahun</button>
                 </form>
             </div>
 
-            <!-- Jurusan -->
-            <div class="col-md-6">
-                <form method="post" class="form-box">
-                    <h5><i class="fas fa-graduation-cap"></i> Hapus Berdasarkan Jurusan</h5>
-                    <select name="jurusan_hapus" class="form-select mt-2" required>
+            <!-- Berdasarkan Jurusan -->
+            <div class="deletion-item">
+                <form method="post" onsubmit="return confirm('Hapus semua mahasiswa di jurusan ini?')">
+                    <h4><i class="fas fa-graduation-cap"></i> Hapus Per Jurusan</h4>
+                    <select name="jurusan_hapus" class="form-select" required>
                         <option value="">-- Pilih Jurusan --</option>
                         <?php while ($r = $jurusanList->fetch_assoc()): ?>
-                            <option><?= $r['jurusan'] ?></option>
+                            <option value="<?= $r['jurusan'] ?>"><?= $r['jurusan'] ?></option>
                         <?php endwhile; ?>
                     </select>
-                    <button class="btn btn-danger w-100 mt-3" name="hapus_jurusan">Hapus Data</button>
+                    <button type="submit" name="hapus_jurusan" class="btn-delete">Hapus Data Jurusan</button>
                 </form>
             </div>
 
-            <!-- Prodi -->
-            <div class="col-md-6">
-                <form method="post" class="form-box">
-                    <h5><i class="fas fa-book"></i> Hapus Berdasarkan Prodi</h5>
-                    <select name="prodi_hapus" class="form-select mt-2" required>
+            <!-- Berdasarkan Prodi -->
+            <div class="deletion-item">
+                <form method="post" onsubmit="return confirm('Hapus semua mahasiswa di prodi ini?')">
+                    <h4><i class="fas fa-book"></i> Hapus Per Prodi</h4>
+                    <select name="prodi_hapus" class="form-select" required>
                         <option value="">-- Pilih Program Studi --</option>
                         <?php while ($r = $prodiList->fetch_assoc()): ?>
-                            <option><?= $r['program_studi'] ?></option>
+                            <option value="<?= $r['program_studi'] ?>"><?= $r['program_studi'] ?></option>
                         <?php endwhile; ?>
                     </select>
-                    <button class="btn btn-danger w-100 mt-3" name="hapus_prodi">Hapus Data</button>
+                    <button type="submit" name="hapus_prodi" class="btn-delete">Hapus Data Prodi</button>
                 </form>
             </div>
 
-            <!-- NPM -->
-            <div class="col-md-6">
-                <form method="post" class="form-box">
-                    <h5><i class="fas fa-id-card"></i> Hapus Berdasarkan NPM</h5>
-                    <input type="text" name="npm_hapus" class="form-control mt-2" placeholder="Masukkan NPM...">
-                    <button class="btn btn-danger w-100 mt-3" name="hapus_npm">Hapus Data</button>
+            <!-- Berdasarkan NPM -->
+            <div class="deletion-item">
+                <form method="post">
+                    <h4><i class="fas fa-id-card"></i> Hapus Per NPM</h4>
+                    <input type="text" name="npm_hapus" class="form-input" placeholder="Masukkan NPM Mahasiswa..." required>
+                    <button type="submit" name="hapus_npm" class="btn-delete">Hapus Data NPM</button>
                 </form>
             </div>
-
         </div>
 
-        <div class="text-center mt-4">
-            <a href="mahasiswa_kip.php" class="btn btn-secondary btn-back mt-2">← Kembali</a>
-        </div>
-
+        <a href="mahasiswa_kip.php" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali ke Dashboard Mahasiswa
+        </a>
     </div>
 </div>
 

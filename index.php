@@ -575,7 +575,7 @@ $skList=[]; while($r=$qS->fetch_assoc()) $skList[]=$r['tahun'];
 <section class="py-12 px-2 md:px-4">
  <div class="w-[95%] mx-auto container-statistik">
   <h2 class="text-2xl md:text-4xl font-extrabold text-center mb-10 animated-gradient-text tracking-tight drop-shadow-sm transform hover:scale-105 transition duration-500">
-    Grafik Penerimaan KIP-K Tahun 2021-2025
+    Grafik Penerimaan KIP-K diPoliteknik Negeri Lampung Tahun 2021-2025
   </h2>
   <div class="mb-6 max-w-md mx-auto text-center">
    <label class="block font-bold mb-2 text-gray-700">Pilih Jurusan:</label>
@@ -590,7 +590,7 @@ $skList=[]; while($r=$qS->fetch_assoc()) $skList[]=$r['tahun'];
    </div>
    <div class="lg:col-span-3 flex flex-col gap-3">
     <div class="info-box" onclick="tampilkanTotal()">
-     <span class="text-sm text-gray-500 font-bold uppercase">Total Keseluruhan Mahasiswa Tahun 2021-2025</span>
+     <span class="text-sm text-gray-500 font-bold uppercase">Total Keseluruhan Mahasiswa di Politeknik Negeri Lampung Tahun 2021-2025</span>
      <span class="text-3xl font-extrabold text-blue-600 mt-1"><?=$totalMahasiswa?></span>
     </div>
     <div class="info-box">
@@ -770,6 +770,14 @@ $berita = mysqli_query($koneksi, "
                 <?= htmlspecialchars($b['judul']) ?>
               </h4>
 
+              <!-- TANGGAL KEGIATAN -->
+              <?php if (!empty($b['tanggal_kegiatan'])): ?>
+                <div class="flex items-center gap-2 text-purple-100 text-xs mb-4 opacity-90">
+                  <i class="bi bi-calendar-event"></i>
+                  <span>Kegiatan: <?= date('d M Y', strtotime($b['tanggal_kegiatan'])) ?></span>
+                </div>
+              <?php endif; ?>
+
               <!-- BUTTON -->
               <a href="berita_detail.php?id=<?= $b['id_berita'] ?>"
                  class="
@@ -926,7 +934,7 @@ $berita = mysqli_query($koneksi, "
 include 'koneksi.php';
 // Ambil 6 berita terbaru yang sudah disetujui beserta 1 gambar pertama (jika ada)
 $berita = mysqli_query($koneksi, "
-    SELECT b.id_berita, b.judul, bg.file AS gambar
+    SELECT b.id_berita, b.judul, b.tanggal_kegiatan, bg.file AS gambar
     FROM berita b
     LEFT JOIN berita_gambar bg ON b.id_berita = bg.id_berita
     AND bg.sortorder = (

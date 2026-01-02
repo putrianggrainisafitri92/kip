@@ -96,8 +96,8 @@ if (isset($_POST['reject'])) {
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="text-muted small" style="max-height: 80px; overflow-y: auto;">
-                                            <?= htmlspecialchars(substr($row['deskripsi'], 0, 150)) . (strlen($row['deskripsi']) > 150 ? '...' : '') ?>
+                                        <div class="text-muted small">
+                                            <?= nl2br(htmlspecialchars($row['deskripsi'])) ?>
                                         </div>
                                     </td>
                                     <td>

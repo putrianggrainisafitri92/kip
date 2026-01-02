@@ -156,6 +156,7 @@ body {
             <thead>
                 <tr>
                     <th>Judul</th>
+                    <th>Kegiatan</th>
                     <th>Status</th>
                     <th>Catatan Revisi</th>
                     <th>Aksi</th>
@@ -178,6 +179,7 @@ body {
             ?>
             <tr>
                 <td style="text-align:left;"><?= htmlspecialchars($d['judul']) ?></td>
+                <td><?= !empty($d['tanggal_kegiatan']) ? date('d/m/Y', strtotime($d['tanggal_kegiatan'])) : "-" ?></td>
                 <td><?= $badge ?></td>
 
                 <td>

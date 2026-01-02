@@ -18,177 +18,211 @@ if(isset($_GET['hapus'])){
 }
 ?>
 
-<style>
-body {
-    background: #efeaff;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar SK KIP-K</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-.content-wrapper {
-    margin-left: 260px;
-    padding: 35px;
-}
+        /* ===== Content Wrapper ===== */
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
 
-/* HEADER CARD */
-.header-card {
-    background: #ffffff;
-    padding: 28px;
-    border-radius: 18px;
-    border-left: 10px solid #6a0dad;
-    box-shadow: 0 6px 22px rgba(106, 13, 173, 0.18);
-    margin-bottom: 25px;
-}
+        /* ===== Title ===== */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-.header-card h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 800;
-    color: #4e0a8a;
-}
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
 
-/* BUTTON */
-.btn-add {
-    background: #4CAF50;
-    padding: 12px 20px;
-    border-radius: 12px;
-    color: white !important;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.25s;
-}
-.btn-add:hover { background: #3e8e41; }
+        /* Responsif Mobile */
+        @media (max-width: 992px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .header-section h2 { font-size: 22px; }
+        }
 
-/* TABLE CARD */
-.table-card {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    margin-top: 25px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
+        /* ===== Table Container ===== */
+        .table-responsive {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
 
-/* TABLE */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
 
-.styled-table thead tr {
-    background: #6a0dad;
-    color: white;
-}
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+            border: none;
+        }
 
-.styled-table th,
-.styled-table td {
-    padding: 14px 16px;
-    text-align: center;
-    font-size: 14px;
-}
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
 
-.styled-table tbody tr {
-    background: #fbf7ff;
-    border-bottom: 8px solid #ffffff;
-    transition: 0.2s;
-}
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fbf9ff; }
 
-.styled-table tbody tr:hover {
-    background: #f0e4ff;
-    transform: scale(1.002);
-}
+        /* ===== Badges ===== */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .pending { background: #fff8e1; color: #ffa000; }
+        .approved { background: #e8f5e9; color: #2e7d32; }
+        .rejected { background: #ffebee; color: #c62828; }
 
-/* BADGES */
-.badge {
-    padding: 7px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-}
+        /* ===== Buttons ===== */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            cursor: pointer;
+        }
 
-.success { background: #2ecc71; }
-.danger  { background: #e74c3c; }
-.pending { background: #f1c40f; color: #4a3d00; }
+        .btn-edit { background: #f3e8ff; color: #7b35d4; }
+        .btn-edit:hover { background: #7b35d4; color: white; }
 
-/* MODAL */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 999;
-}
+        .btn-hapus { background: #fff0f0; color: #d32f2f; }
+        .btn-hapus:hover { background: #d32f2f; color: white; }
 
-.modal-box {
-    background: white;
-    width: 40%;
-    margin: 8% auto;
-    padding: 25px;
-    border-radius: 18px;
-    border-top: 6px solid #6a0dad;
-    position: relative;
-    animation: fadeIn 0.25s ease;
-}
+        .btn-detail { background: #e0f2f1; color: #00897b; }
+        .btn-detail:hover { background: #00897b; color: white; }
 
-.close {
-    position: absolute;
-    right: 18px;
-    top: 10px;
-    font-size: 22px;
-    cursor: pointer;
-    color: #6a0dad;
-}
+        .btn-add-news {
+            background: #4e0a8a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(78, 10, 138, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-add-news:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(78, 10, 138, 0.3);
+            color: white;
+            background: #5a189a;
+        }
 
-/* ANIMATION */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
+        /* ===== Modal ===== */
+        .modal {
+            display:none;
+            position: fixed;
+            z-index: 9999;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 20px;
+        }
 
-.btn-warning {
-    background: #ff9f1c;
-    padding: 7px 14px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-}
+        .modal-content {
+            background: white;
+            margin: 10vh auto;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s ease-out;
+        }
 
-.btn-delete {
-    background: #e63946;
-    padding: 7px 14px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-}
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
 
-.btn-warning:hover { background: #ffb347; }
-.btn-delete:hover { background: #ff6b6b; }
-.aksi-btn {
-    display: flex;
-    gap: 8px;
-    justify-content: center; /* opsional */
-}
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 1;
+        }
+        .close:hover { color: #4e0a8a; }
+    </style>
+</head>
 
-.btn-info {
-    background: #6a0dad;
-    padding: 7px 14px;
-    border-radius: 8px;
-    color: white;
-}
-</style>
+<body>
 
-<div class="content-wrapper">
-
-    <div class="header-card">
-        <h2>📄 Daftar SK KIP-K</h2>
-        <a href="sk_add.php" class="btn-add" style="margin-top:15px; display:inline-block;">
-            + Tambah SK
+<div class="content">
+    <div class="header-section">
+        <h2>Daftar SK KIP-K</h2>
+        <a href="sk_add.php" class="btn-add-news">
+            <i class="fas fa-plus"></i> Tambah SK
         </a>
     </div>
 
-    <div class="table-card">
-
-        <table class="styled-table">
+    <div class="table-responsive">
+        <table>
             <thead>
                 <tr>
                     <th>No</th>
@@ -200,68 +234,55 @@ body {
                     <th>Aksi</th>
                 </tr>
             </thead>
-
             <tbody>
-<?php
-$q = $koneksi->query("SELECT * FROM sk_kipk ORDER BY id_sk_kipk DESC");
-$no = 1;
+                <?php
+                $q = $koneksi->query("SELECT * FROM sk_kipk ORDER BY id_sk_kipk DESC");
+                $no = 1;
+                while($d = $q->fetch_assoc()):
+                    $id = intval($d['id_sk_kipk']);
+                    $status = strtolower(trim($d['status']));
+                ?>
+                <tr>
+                    <td><?= $no++; ?></td>
+                    <td style="font-weight: 600; color: #4e0a8a;"><?= htmlspecialchars($d['nama_sk']); ?></td>
+                    <td><?= htmlspecialchars($d['tahun']); ?></td>
+                    <td><?= htmlspecialchars($d['nomor_sk']); ?></td>
+                    <td>
+                        <span class="status-badge <?= $status ?>"><?= strtoupper($status) ?></span>
+                    </td>
+                    <td>
+                        <?php if($status == 'rejected' && (!empty($d['catatan_revisi']))): ?>
+                            <button class="btn btn-detail" onclick="openModal('modal-<?= $id ?>')">
+                                <i class="fas fa-comment-dots"></i> Lihat
+                            </button>
 
-while($d = $q->fetch_assoc()):
-    $id = intval($d['id_sk_kipk']);
-    $status = strtolower(trim($d['status']));
-
-    switch($status){
-        case 'approved':
-            $badge = '<span class="badge success">Approved</span>';
-            $catatan_text = '-';
-            break;
-        case 'rejected':
-            $badge = '<span class="badge danger">Rejected</span>';
-            $catatan_text = !empty($d['catatan_revisi']) ? htmlspecialchars($d['catatan_revisi']) : 'Belum ada catatan';
-            break;
-        default:
-            $badge = '<span class="badge pending">Pending</span>';
-            $catatan_text = '-';
-    }
-?>
-<tr>
-    <td><?= $no++; ?></td>
-    <td style="text-align:left;"><?= htmlspecialchars($d['nama_sk']); ?></td>
-    <td><?= htmlspecialchars($d['tahun']); ?></td>
-    <td><?= htmlspecialchars($d['nomor_sk']); ?></td>
-    <td><?= $badge; ?></td>
-
-    <td>
-        <?php if($status == 'rejected'): ?>
-            <button class="btn-info" onclick="openModal('modal-<?= $id ?>')">Lihat</button>
-
-            <div id="modal-<?= $id ?>" class="modal-overlay">
-                <div class="modal-box">
-                    <span class="close" onclick="closeModal('modal-<?= $id ?>')">&times;</span>
-                    <h3>Catatan Revisi</h3>
-                    <p><?= nl2br($catatan_text) ?></p>
-                </div>
-            </div>
-        <?php else: ?>
-            -
-        <?php endif; ?>
-    </td>
-
-   <td>
-    <div class="aksi-btn">
-        <a href="sk_edit.php?id=<?= $id; ?>" class="btn-warning">Edit</a>
-        <a href="sk_list.php?hapus=<?= $id; ?>" 
-           class="btn-delete" 
-           onclick="return confirm('Hapus SK ini?')">Hapus</a>
-    </div>
-</td>
-
-</tr>
-
-<?php endwhile; ?>
+                            <div id="modal-<?= $id ?>" class="modal">
+                                <div class="modal-content">
+                                    <span class="close" onclick="closeModal('modal-<?= $id ?>')">&times;</span>
+                                    <h3 style="color:#4e0a8a; margin-top:0;">Catatan Revisi</h3>
+                                    <div style="background:#f8f2ff; padding:15px; border-radius:12px; margin-top:15px; border-left:4px solid #7b35d4;">
+                                        <?= nl2br(htmlspecialchars($d['catatan_revisi'])) ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <a href="sk_edit.php?id=<?= $id; ?>" class="btn btn-edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="sk_list.php?hapus=<?= $id; ?>" class="btn btn-hapus" onclick="return confirm('Hapus SK ini?')">
+                                <i class="fas fa-trash"></i> Hapus
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
             </tbody>
         </table>
-
     </div>
 </div>
 
@@ -272,6 +293,12 @@ function openModal(id){
 function closeModal(id){
     document.getElementById(id).style.display = "none";
 }
+window.onclick = function(event) {
+    if (event.target.className === 'modal') {
+        event.target.style.display = "none";
+    }
+}
 </script>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</body>
+</html>

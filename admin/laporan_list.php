@@ -9,22 +9,148 @@ $aktif   = $koneksi->query("SELECT * FROM laporan WHERE status_tindak!='selesai'
 $riwayat = $koneksi->query("SELECT * FROM laporan WHERE status_tindak='selesai' ORDER BY created_at DESC");
 ?>
 
-<!-- ======================= MAIN WRAPPER ======================= -->
-<div class="content-wrapper">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Laporan Mahasiswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f2ff;
+            margin: 0;
+            color: #333;
+        }
 
-    <!-- ==== HEADER CARD ==== -->
-    <div class="header-card">
-        <h2>📑 Daftar Laporan Mahasiswa</h2>
+        .content {
+            margin-left: 230px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s ease;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+
+        .header-section h2 {
+            color: #4e0a8a;
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            position: relative;
+        }
+        .header-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 4px;
+            background: #7b35d4;
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4e0a8a;
+            margin: 40px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ===== Table ===== */
+        .table-responsive {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: #4e0a8a;
+            color: white;
+            padding: 18px 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+            vertical-align: middle;
+        }
+
+        tr:hover td { background: #fbf9ff; }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .pending { background: #fff8e1; color: #ffa000; }
+        .diproses { background: #e3f2fd; color: #1976d2; }
+        .selesai { background: #e8f5e9; color: #2e7d32; }
+
+        .btn-detail {
+            background: #f3e8ff;
+            color: #7b35d4;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-detail:hover { background: #7b35d4; color: white; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+            .header-section h2 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <div class="header-section">
+        <h2>Data Laporan Mahasiswa</h2>
     </div>
 
-    <!-- =================  TABEL LAPORAN AKTIF  ================= -->
-    <div class="table-card">
-        <h3 style="margin-bottom:15px;">📌 Laporan Mahasiswa</h3>
-
-        <table class="styled-table">
+    <!-- Tampilkan Daftar Laporan Aktif -->
+    <div class="section-title">
+        <i class="fas fa-exclamation-circle"></i> Laporan Aktif (Perlu Tindak Lanjut)
+    </div>
+    <div class="table-responsive">
+        <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style="width: 50px;">ID</th>
                     <th>Pelapor</th>
                     <th>Terlapor</th>
                     <th>Jurusan / Prodi</th>
@@ -33,56 +159,50 @@ $riwayat = $koneksi->query("SELECT * FROM laporan WHERE status_tindak='selesai' 
                     <th>Aksi</th>
                 </tr>
             </thead>
-
             <tbody>
-            <?php while($d = $aktif->fetch_assoc()): ?>
+                <?php while($d = $aktif->fetch_assoc()): ?>
                 <tr>
                     <td><?= $d['id_laporan'] ?></td>
-                    <td><?= htmlspecialchars($d['nama_pelapor']) ?></td>
-
+                    <td><div style="font-weight: 600; color: #4e0a8a;"><?= htmlspecialchars($d['nama_pelapor']) ?></div></td>
                     <td>
-                        <?= htmlspecialchars($d['nama_terlapor']) ?>
-                        <br><small style="color:gray">(<?= $d['npm_terlapor'] ?>)</small>
+                        <div style="font-weight: 600;"><?= htmlspecialchars($d['nama_terlapor']) ?></div>
+                        <small class="text-muted"><?= $d['npm_terlapor'] ?></small>
                     </td>
-
-                    <td><?= htmlspecialchars($d['jurusan']) ?> / <?= htmlspecialchars($d['prodi']) ?></td>
-                    <td><?= htmlspecialchars($d['alasan']) ?></td>
-
+                    <td><small><?= htmlspecialchars($d['jurusan']) ?></small><br><small class="text-muted"><?= htmlspecialchars($d['prodi']) ?></small></td>
+                    <td><div style="max-width: 200px; font-size: 13px; line-height: 1.4;"><?= htmlspecialchars($d['alasan']) ?></div></td>
                     <td>
                         <?php 
                         $status = strtolower(trim($d['status_tindak']));
-
                         if ($status === "" || $status === "pending") {
-                            echo "<span class='badge pending'>Pending</span>";
-                        } 
-                        else if ($status === "diproses") {
-                            echo "<span class='badge info'>Diproses</span>";
+                            echo "<span class='status-badge pending'>PENDING</span>";
+                        } else {
+                            echo "<span class='status-badge diproses'>DIPROSES</span>";
                         }
-                        else if ($status === "selesai") {
-                            echo "<span class='badge success'>Selesai</span>";
-                        } 
                         ?>
                     </td>
-
                     <td>
-                        <a href="laporan_tindak.php?id=<?= $d['id_laporan'] ?>" class="btn-info">Detail</a>
+                        <a href="laporan_tindak.php?id=<?= $d['id_laporan'] ?>" class="btn-detail">
+                            <i class="fas fa-eye"></i> Detail
+                        </a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
+                <?php if($aktif->num_rows == 0): ?>
+                    <tr><td colspan="7" style="text-align:center; padding: 30px; color: #999;">Tidak ada laporan aktif.</td></tr>
+                <?php endif; ?>
             </tbody>
-
         </table>
     </div>
 
-
-    <!-- =================  TABEL RIWAYAT LAPORAN  ================= -->
-    <div class="table-card" style="margin-top:35px;">
-        <h3 style="margin-bottom:15px;">📚 Riwayat Laporan </h3>
-
-        <table class="styled-table">
+    <!-- Tampilkan Riwayat Laporan Selesai -->
+    <div class="section-title">
+        <i class="fas fa-history"></i> Riwayat Laporan (Selesai)
+    </div>
+    <div class="table-responsive">
+        <table>
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th style="width: 50px;">ID</th>
                     <th>Pelapor</th>
                     <th>Terlapor</th>
                     <th>Jurusan / Prodi</th>
@@ -91,117 +211,34 @@ $riwayat = $koneksi->query("SELECT * FROM laporan WHERE status_tindak='selesai' 
                     <th>Aksi</th>
                 </tr>
             </thead>
-
             <tbody>
-            <?php while($d = $riwayat->fetch_assoc()): ?>
+                <?php while($d = $riwayat->fetch_assoc()): ?>
                 <tr>
                     <td><?= $d['id_laporan'] ?></td>
-                    <td><?= htmlspecialchars($d['nama_pelapor']) ?></td>
-
+                    <td><div style="font-weight: 600;"><?= htmlspecialchars($d['nama_pelapor']) ?></div></td>
                     <td>
-                        <?= htmlspecialchars($d['nama_terlapor']) ?>
-                        <br><small style="color:gray">(<?= $d['npm_terlapor'] ?>)</small>
+                        <div style="font-weight: 600;"><?= htmlspecialchars($d['nama_terlapor']) ?></div>
+                        <small class="text-muted"><?= $d['npm_terlapor'] ?></small>
                     </td>
-
-                    <td><?= htmlspecialchars($d['jurusan']) ?> / <?= htmlspecialchars($d['prodi']) ?></td>
-                    <td><?= htmlspecialchars($d['alasan']) ?></td>
-
+                    <td><small><?= htmlspecialchars($d['jurusan']) ?></small><br><small class="text-muted"><?= htmlspecialchars($d['prodi']) ?></small></td>
+                    <td><div style="max-width: 200px; font-size: 13px;"><?= htmlspecialchars($d['alasan']) ?></div></td>
                     <td>
-                        <span class='badge success'>Selesai</span>
+                        <span class='status-badge selesai'>SELESAI</span>
                     </td>
-
                     <td>
-                        <a href="laporan_tindak.php?id=<?= $d['id_laporan'] ?>" class="btn-info">Detail</a>
+                        <a href="laporan_tindak.php?id=<?= $d['id_laporan'] ?>" class="btn-detail">
+                            <i class="fas fa-search"></i> Lihat
+                        </a>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
+                <?php if($riwayat->num_rows == 0): ?>
+                    <tr><td colspan="7" style="text-align:center; padding: 30px; color: #999;">Belum ada riwayat laporan.</td></tr>
+                <?php endif; ?>
             </tbody>
-
         </table>
     </div>
-
 </div>
 
-
-<!-- ======================= STYLE ======================= -->
-<style>
-.content-wrapper {
-    margin-left: 260px;
-    padding: 35px;
-    background: #efeaff;
-    min-height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.header-card {
-    background: white;
-    padding: 28px;
-    border-radius: 18px;
-    border-left: 10px solid #6a0dad;
-    margin-bottom: 25px;
-    box-shadow: 0 6px 22px rgba(106, 13, 173, .18);
-}
-
-.header-card h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 800;
-    color: #4e0a8a;
-}
-
-.table-card {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    margin-top: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.styled-table thead tr {
-    background: #6a0dad;
-    color: white;
-}
-
-.styled-table th,
-.styled-table td {
-    padding: 14px 16px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.styled-table tbody tr {
-    background: #fbf7ff;
-    border-bottom: 8px solid white;
-    transition: 0.2s;
-}
-
-.styled-table tbody tr:hover {
-    background: #f0e4ff;
-    transform: scale(1.002);
-}
-
-.badge {
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-}
-
-.success { background: #2ecc71; }
-.info    { background: #3498db; }
-.pending { background: #f1c40f; color: #4a3d00; }
-
-.btn-info {
-    background: #6a0dad;
-    padding: 7px 12px;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-}
-</style>
+</body>
+</html>

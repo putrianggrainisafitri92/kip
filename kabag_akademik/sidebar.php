@@ -14,6 +14,19 @@
     padding-top: 25px;
     box-shadow: 4px 0 18px rgba(0,0,0,0.35);
     border-right: 2px solid rgba(255,255,255,0.1);
+    overflow-y: auto;
+}
+
+/* Scrollbar Custom */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
 }
 
 /* Judul */

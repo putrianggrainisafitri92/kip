@@ -18,13 +18,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_name = time() . "_" . basename($_FILES['file_pedoman']['name']);
         $file_tmp = $_FILES['file_pedoman']['tmp_name'];
 
-        $target_dir = "uploads/";
+        $target_dir = "../uploads/pedoman/";
         if(!is_dir($target_dir)) mkdir($target_dir, 0777, true);
 
         $target_file = $target_dir . $file_name;
         move_uploaded_file($file_tmp, $target_file);
+        
+        $file_path_db = "uploads/pedoman/" . $file_name;
     } else {
-        $target_file = $pedoman['file_path']; 
+        $file_path_db = $pedoman['file_path']; 
     }
 
     // Update pedoman
@@ -33,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         SET nama_file=?, file_path=?, status='pending', catatan_revisi=NULL, updated_at=NOW() 
         WHERE id_pedoman=?
     ");
-    $stmt->bind_param("ssi", $nama_file, $target_file, $id);
+    $stmt->bind_param("ssi", $nama_file, $file_path_db, $id);
     $stmt->execute();
 
     echo "<script>
@@ -44,147 +46,184 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Edit Pedoman</title>
+    <meta charset="UTF-8">
+    <title>Edit Pedoman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #6a11cb;
+            --secondary-purple: #2575fc;
+            --deep-purple: #4e0a8a;
+            --glass-purple: rgba(78, 10, 138, 0.9);
+        }
 
-<style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma;
-        background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
-        background-size: cover;
-    }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-    .content {
-        margin-left: 230px;
-        padding: 40px 20px;
-        min-height: 100vh;
-    }
+        .content {
+            margin-left: 230px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
 
-    .form-card {
-        width: 90%;
-        max-width: 700px;
-        margin: auto;
-        padding: 35px;
-        border-radius: 18px;
-        background: rgba(123, 31, 162, 0.92);
-        color: white;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.40);
-        backdrop-filter: blur(3px);
-        animation: fadeIn 0.4s ease-out;
-    }
+        .form-card {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding: 40px;
+            border-radius: 24px;
+            background: var(--glass-purple);
+            backdrop-filter: blur(12px);
+            color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
 
-    h2 {
-        text-align: center;
-        margin-bottom: 25px;
-        font-size: 28px;
-        color: white;
-    }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #f1e4ff;
+        }
 
-    label {
-        font-weight: bold;
-        color: white;
-        font-size: 14px;
-    }
+        input[type=text], input[type=file] {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
 
-    input[type=text], input[type=file] {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        margin-top: 6px;
-        margin-bottom: 18px;
-        font-size: 14px;
-        background: #f8f2ff;
-        color: #3a0063;
-        box-shadow: inset 0 0 5px rgba(0,0,0,0.15);
-    }
+        input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.2);
+            border-color: #ba68ff;
+            box-shadow: 0 0 15px rgba(186, 104, 255, 0.3);
+        }
 
-    button {
-        width: 100%;
-        padding: 12px;
-        background: white;
-        border: none;
-        color: #5e1780;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.25s;
-    }
+        .file-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    button:hover {
-        background: #f2dfff;
-        transform: scale(1.02);
-    }
+        .btn-save {
+            background: linear-gradient(135deg, #ba68ff, #7b35d4);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(123, 53, 212, 0.3);
+            margin-top: 30px;
+            transition: 0.3s;
+        }
 
-    .back-btn {
-        display: inline-flex;
-        align-items: center;
-        padding: 10px 18px;
-        background: #7b1fa2;
-        color: white;
-        border-radius: 10px;
-        font-size: 15px;
-        margin-bottom: 25px;
-        text-decoration: none;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-        transition: 0.3s;
-    }
+        .btn-save:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(123, 53, 212, 0.4);
+        }
 
-    .back-btn:hover {
-        background: #5e1780;
-        transform: translateY(-3px);
-    }
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
 
-    .file-info {
-        background: white;
-        padding: 10px;
-        border-radius: 8px;
-        color: #5e1780;
-        margin-bottom: 15px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-</style>
+        .btn-back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
 
+        @media (max-width: 1024px) {
+            .content {
+                margin-left: 0;
+                padding: 80px 15px 40px 15px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="content">
-
-    <div style="max-width: 700px; margin: 0 auto;">
-        <a href="pedoman_list.php" class="back-btn">
-             <span style="margin-left:8px;">⬅ Kembali</span>
-        </a>
-    </div>
-
     <div class="form-card">
         <h2>Edit Pedoman</h2>
 
         <form method="POST" enctype="multipart/form-data">
-
-            <label>Nama File:</label>
+            <label>Nama File Pedoman</label>
             <input type="text" name="nama_file" 
                    value="<?= htmlspecialchars($pedoman['nama_file']) ?>" required>
 
-            <label>File Lama:</label>
-            <div class="file-info"><?= basename($pedoman['file_path']) ?></div>
+            <label>File Saat Ini</label>
+            <div class="file-info">
+                <i class="fas fa-file-pdf" style="color:#ff4d4d; font-size:1.2rem;"></i>
+                <?= basename($pedoman['file_path']) ?>
+            </div>
 
-            <label>Upload File Baru (opsional):</label>
-            <input type="file" name="file_pedoman">
+            <label>Upload File Baru (Hanya jika ingin mengganti)</label>
+            <input type="file" name="file_pedoman" accept="application/pdf">
 
-            <button type="submit">Simpan & Ajukan Kembali</button>
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save"></i> Simpan & Ajukan Kembali
+            </button>
+
+            <a href="pedoman_list.php" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
         </form>
     </div>
-
 </div>
 
 </body>

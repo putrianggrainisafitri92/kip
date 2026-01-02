@@ -93,6 +93,21 @@
         padding-bottom: 0.75rem !important;
       }
     }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-down { animation: fadeInDown 0.8s ease-out both; }
+    .animate-fade-up { animation: fadeInUp 0.8s ease-out both; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
   </style>
 </head>
 
@@ -104,11 +119,11 @@
 
   <div class="w-full max-w-4xl backdrop-blur-xl bg-white bg-opacity-10 rounded-3xl shadow-2xl p-10">
 
-    <h1 class="text-4xl font-extrabold text-white text-center mb-4 drop-shadow-xl">
+    <h1 class="text-4xl font-extrabold text-white text-center mb-4 drop-shadow-xl animate-fade-down">
       Pusat Layanan KIP Kuliah
     </h1>
 
-    <p class="text-center text-gray-200 text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
+    <p class="text-center text-gray-200 text-lg max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-down delay-100">
       Pusat layanan ini disediakan untuk memudahkan mahasiswa dalam menyampaikan 
       <span class="font-semibold text-purple-300">saran & pertanyaan</span>, serta 
       melakukan <span class="font-semibold text-red-300">pelaporan mahasiswa tidak layak</span> 
@@ -121,7 +136,7 @@
       <a href="form_saran_pertanyaan.php"
         class="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl 
                p-6 border border-white/20 hover:border-purple-500 transition transform
-               hover:scale-[1.03] duration-300 block">
+               hover:scale-[1.05] duration-300 block animate-fade-up delay-200">
         <h2 class="text-2xl font-bold text-purple-300 mb-3 drop-shadow-sm">
           Kotak Saran & Pertanyaan
         </h2>
@@ -133,7 +148,7 @@
       <a href="form_pelaporan.php"
         class="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl 
                p-6 border border-white/20 hover:border-red-500 transition transform
-               hover:scale-[1.03] duration-300 block">
+               hover:scale-[1.05] duration-300 block animate-fade-up delay-300">
         <h2 class="text-2xl font-bold text-red-300 mb-3 drop-shadow-sm">
           Pelaporan Mahasiswa Tidak Layak
         </h2>

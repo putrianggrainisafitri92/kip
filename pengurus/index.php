@@ -46,51 +46,89 @@ while ($row = mysqli_fetch_assoc($q_pedoman)) {
             font-family: "Segoe UI", sans-serif;
             background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
             background-size: cover;
+            overflow-x: hidden;
         }
 
         /* HEADER */
         .header-bar {
             margin-left: 240px;
-            background: linear-gradient(90deg, #5e00b8, #8b2be2);
-            padding: 18px 32px;
+            background: linear-gradient(90deg, #4e0a8a, #7b35d4);
+            padding: 20px 32px;
             color: white;
-            font-size: 19px;
+            font-size: 20px;
             font-weight: 600;
             letter-spacing: .5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: 0.3s ease;
+        }
+
+        /* MAIN CONTENT WRAPPER */
+        .main-container {
+            margin-left: 240px;
+            padding: 30px;
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: center;
         }
 
         /* CARD GRAFIK */
         .chart-card {
-            margin-left: 260px;
-            width: 60%;
+            width: 100%;
+            max-width: 900px;
             background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
             padding: 25px;
-            border-radius: 16px;
-            margin-top: 25px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            transition: .2s;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: .3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
         }
+
         .chart-card:hover {
-            transform: scale(1.01);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
         .chart-card h3 {
-            margin: 0 0 16px 0;
-            font-size: 18px;
-            color: #3a0066;
-            font-weight: 600;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+            color: #4e0a8a;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        canvas {
-            width: 100% !important;
-            height: 260px !important; /* LEBIH KECIL */
-            background: white;
-            border-radius: 12px;
-            padding: 12px;
-            border: 1px solid #ccc;
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        /* Responsive Media Queries */
+        /* Responsive Media Queries */
+        @media (max-width: 1024px) {
+            .header-bar {
+                margin-left: 0;
+                padding: 18px 20px 18px 75px; /* Space for mobile menu btn */
+                font-size: 16px;
+                text-align: center;
+            }
+            .main-container {
+                margin-left: 0;
+                padding: 20px 15px;
+            }
+            .chart-card {
+                padding: 15px;
+            }
+            .chart-container {
+                height: 300px;
+            }
+        }
+        @media (max-width: 600px) {
+             .header-bar { font-size: 13px; padding-left: 65px; }
         }
     </style>
 </head>
@@ -100,75 +138,116 @@ while ($row = mysqli_fetch_assoc($q_pedoman)) {
 <?php include "sidebar.php"; ?>
 
 <div class="header-bar">
-    Selamat Datang, <?= htmlspecialchars($_SESSION['username']) ?> — Dashboard Pengurus
+    <i class="fas fa-desktop mr-2"></i> Dashboard Pengurus — Selamat Datang, <?= htmlspecialchars($_SESSION['username']) ?>
 </div>
 
-<!-- GRAFIK BERITA -->
-<div class="chart-card">
-    <h3>📊 Grafik Status Berita</h3>
-    <canvas id="grafikBerita"></canvas>
-</div>
+<div class="main-container">
 
-<!-- GRAFIK PEDOMAN -->
-<div class="chart-card">
-    <h3>📊 Grafik Status Pedoman</h3>
-    <canvas id="grafikPedoman"></canvas>
+    <!-- GRAFIK BERITA -->
+    <div class="chart-card">
+        <h3>Grafik Status Berita</h3>
+        <div class="chart-container">
+            <canvas id="grafikBerita"></canvas>
+        </div>
+    </div>
+
+    <!-- GRAFIK PEDOMAN -->
+    <div class="chart-card">
+        <h3>Grafik Status Pedoman</h3>
+        <div class="chart-container">
+            <canvas id="grafikPedoman"></canvas>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-/* ====== STYLE CHART ====== */
-const purpleStyle = {
-    backgroundColor: "rgba(140, 0, 255, 0.75)",
-    borderColor: "#5e00b8",
-    borderWidth: 2,
-    borderRadius: 10,
-    hoverBackgroundColor: "rgba(140, 0, 255, 0.95)",
+/* ====== CONFIG CHART ====== */
+function createGradient(ctx, area) {
+    const gradient = ctx.createLinearGradient(0, area.bottom, 0, area.top);
+    gradient.addColorStop(0, 'rgba(123, 31, 162, 0.8)');   // Purple Dark
+    gradient.addColorStop(1, 'rgba(186, 104, 200, 0.8)'); // Purple Light
+    return gradient;
+}
+
+const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: true,
+            position: 'top',
+            labels: {
+                font: { size: 14, weight: '600' },
+                color: '#4e0a8a',
+                padding: 20
+            }
+        },
+        tooltip: {
+            backgroundColor: 'rgba(78, 10, 138, 0.9)',
+            padding: 12,
+            titleFont: { size: 14 },
+            bodyFont: { size: 14 },
+            cornerRadius: 10
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { color: '#4e0a8a', stepSize: 1 }
+        },
+        x: {
+            grid: { display: false },
+            ticks: { color: '#4e0a8a', font: { weight: '600' } }
+        }
+    }
 };
 
 /* ========= Grafik Berita ========= */
-new Chart(document.getElementById('grafikBerita'), {
+const ctxBerita = document.getElementById('grafikBerita').getContext('2d');
+new Chart(ctxBerita, {
     type: 'bar',
     data: {
         labels: <?= json_encode($status_berita); ?>,
         datasets: [{
             label: "Jumlah Berita",
             data: <?= json_encode($jumlah_berita); ?>,
-            ...purpleStyle
+            backgroundColor: (context) => {
+                const chart = context.chart;
+                const {ctx, chartArea} = chart;
+                if (!chartArea) return null;
+                return createGradient(ctx, chartArea);
+            },
+            borderRadius: 8,
+            hoverBackgroundColor: '#4e0a8a'
         }]
     },
-    options: {
-        plugins: {
-            legend: { labels: { color: "#444" } }
-        },
-        scales: {
-            y: { beginAtZero: true, ticks: { color: "#444" } },
-            x: { ticks: { color: "#444" } }
-        }
-    }
+    options: commonOptions
 });
 
 /* ========= Grafik Pedoman ========= */
-new Chart(document.getElementById('grafikPedoman'), {
+const ctxPedoman = document.getElementById('grafikPedoman').getContext('2d');
+new Chart(ctxPedoman, {
     type: 'bar',
     data: {
         labels: <?= json_encode($status_pedoman); ?>,
         datasets: [{
             label: "Jumlah Pedoman",
             data: <?= json_encode($jumlah_pedoman); ?>,
-            ...purpleStyle
+            backgroundColor: (context) => {
+                const chart = context.chart;
+                const {ctx, chartArea} = chart;
+                if (!chartArea) return null;
+                return createGradient(ctx, chartArea);
+            },
+            borderRadius: 8,
+            hoverBackgroundColor: '#4e0a8a'
         }]
     },
-    options: {
-        plugins: {
-            legend: { labels: { color: "#444" } }
-        },
-        scales: {
-            y: { beginAtZero: true, ticks: { color: "#444" } },
-            x: { ticks: { color: "#444" } }
-        }
-    }
+    options: commonOptions
 });
 </script>
 

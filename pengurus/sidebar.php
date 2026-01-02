@@ -3,106 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Pengurus</title>
 
-    <!-- WAJIB: FONT AWESOME ICON -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+        :root {
+            --sidebar-width: 240px;
+            --primary-purple: #4e0a8a;
+            --secondary-purple: #7b35d4;
+        }
+
         .sidebar {
-            width: 230px;
+            width: var(--sidebar-width);
             height: 100vh;
-            background: linear-gradient(180deg, #4e0a8a, #7b35d4);
+            background: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple));
             color: white;
             position: fixed;
             left: 0;
             top: 0;
             padding-top: 25px;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
-            border-right: 2px solid rgba(255,255,255,0.1);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10000;
+            overflow-y: auto;
         }
 
-        .sidebar .logo-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        .sidebar .logo-box img {
-            width: 75px;
-            filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
-        }
+        .sidebar .logo-box { text-align: center; margin-bottom: 20px; position: relative; }
+        .sidebar .logo-box img { width: 70px; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3)); }
 
         .sidebar h3 {
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 20px;
+            margin: 0 0 25px 0;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 1px;
-            font-weight: 600;
-            text-shadow: 0 0 6px rgba(0,0,0,0.25);
         }
 
         .sidebar a {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: white;
-            padding: 14px 22px;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 15px;
             transition: 0.3s;
-            border-radius: 8px;
-            margin: 5px 10px;
+            margin: 4px 15px;
+            border-radius: 10px;
             font-weight: 500;
         }
 
-        .sidebar a:hover {
-            background: rgba(255,255,255,0.20);
+        .sidebar a i { width: 20px; text-align: center; font-size: 18px; }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
             transform: translateX(5px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
 
         .logout-btn {
-            background: #d32f2f !important;
-            margin-top: 20px;
-            text-align: center;
+            background: #ff4d4d !important;
+            color: white !important;
+            margin-top: 30px !important;
             justify-content: center;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
         }
 
-        .logout-btn:hover {
-            background: #b71c1c !important;
-            transform: scale(1.03);
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 45px;
+            height: 45px;
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 11000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .close-sidebar {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Overlay Background */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            z-index: 9999;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                left: -260px;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .close-sidebar {
+                display: block;
+            }
+            .sidebar.show ~ .sidebar-overlay {
+                display: block;
+                opacity: 1;
+            }
         }
     </style>
-
 </head>
 <body>
 
-<div class="sidebar">
+<button class="mobile-toggle" id="btnToggle">
+    <i class="fa-solid fa-bars"></i>
+</button>
+
+<div class="sidebar-overlay" id="overlay"></div>
+
+<div class="sidebar" id="sidebarMenu">
+    <button class="close-sidebar" id="btnClose">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
 
     <div class="logo-box">
-        <img src="../assets/logo-polinela.png" width="80" alt="Logo Polinela">
+        <img src="../assets/logo-polinela.png" alt="Logo Polinela">
     </div>
 
     <h3>Admin Pengurus</h3>
 
-    <!-- MENU DENGAN ICON -->
     <a href="index.php">
-        <i class="fa-solid fa-gauge"></i> Dashboard
+        <i class="fa-solid fa-gauge-high"></i> Dashboard
     </a>
 
-    <a href="berita_add.php">
-        <i class="fa-solid fa-newspaper"></i> Upload Berita
+    <a href="berita_list.php">
+        <i class="fa-solid fa-newspaper"></i> Kelola Berita
     </a>
 
-    <a href="pedoman_upload.php">
-        <i class="fa-solid fa-book"></i> Upload Pedoman
+    <a href="pedoman_list.php">
+        <i class="fa-solid fa-book"></i> Kelola Pedoman
     </a>
 
     <a href="prestasi_list.php">
-        <i class="fa-solid fa-user-graduate"></i> Upload Mahasiswa Berprestasi
+        <i class="fa-solid fa-trophy"></i> Mahasiswa Berprestasi
     </a>
 
     <a href="bantuan.php">
@@ -110,10 +182,33 @@
     </a>
 
     <a href="../logout.php" class="logout-btn">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
+        <i class="fa-solid fa-power-off"></i> Logout
     </a>
-
 </div>
+
+<script>
+    const btnToggle = document.getElementById('btnToggle');
+    const btnClose = document.getElementById('btnClose');
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('overlay');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('show');
+    }
+
+    btnToggle.addEventListener('click', toggleSidebar);
+    btnClose.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+
+    // Auto active link
+    const currentUrl = window.location.pathname.split('/').pop();
+    const links = document.querySelectorAll('.sidebar a');
+    links.forEach(link => {
+        if (link.getAttribute('href') === currentUrl) {
+            link.classList.add('active');
+        }
+    });
+</script>
 
 </body>
 </html>

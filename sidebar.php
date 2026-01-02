@@ -1,182 +1,13 @@
-<!-- ========== HEADER / TOPBAR ========== -->
-<?php
-// Deteksi direktori saat ini untuk menentukan base url
-if (file_exists('index.php')) {
-    $base_url = '';
-} elseif (file_exists('../index.php')) {
-    $base_url = '../';
-} else {
-    $base_url = ''; // Default fallback
-}
-?>
-<header class="topbar">
-  <button id="toggle-btn" class="toggle-btn">
-    <i class="bi bi-list"></i>
-  </button>
-
-  <div class="topbar-brand">
-    <img src="<?= $base_url ?>assets/logo-polinela.png" class="logo-img">
-    <h1 class="topbar-title">Sistem Informasi KIP-Kuliah</h1>
-  </div>
-
-  <!-- LOGIN BUTTON -->
-  <div class="topbar-login">
-    <button class="login-btn" id="openLogin">
-  <i class="bi bi-box-arrow-in-right"></i> Login
-  </button>
-  </div>
-</header>
-
-
-
-<!-- ===== LOGIN MODAL ===== -->
-<div id="loginModal" class="login-modal">
-  <div class="login-box">
-    <span id="closeLogin" class="close-login">&times;</span>
-
-    <h2 class="login-title">LOGIN ADMIN</h2>
-    <p class="login-note">
-      ⚠ Akses login <strong>khusus Admin</strong>. Mahasiswa tidak dapat login.
-    </p>
-
-    <!-- ERROR LOGIN SAJA -->
-    <?php if(isset($_GET['login_error'])): ?>
-      <div class="login-alert">
-        <?php 
-          if($_GET['login_error'] === 'user'){
-              echo "❌ Username tidak ditemukan!";
-          } elseif($_GET['login_error'] === 'pass'){
-              echo "❌ Password salah!";
-          } elseif($_GET['login_error'] === 'empty'){
-              echo "⚠ Semua field wajib diisi!";
-          }
-        ?>
-      </div>
-    <?php endif; ?>
-
-    <form action="<?= $base_url ?>cek_login.php" method="POST">
-      <div class="input-wrap">
-        <label>Username</label>
-        <input type="text" name="username" required>
-      </div>
-
-      <div class="input-wrap">
-        <label>Password</label>
-        <input type="password" name="password" required>
-      </div>
-
-      <button type="submit" class="btn-login">Login</button>
-    </form>
-
-    <!-- LINK KE RESET -->
-    <div style="text-align:center; margin:10px 0;">
-      <a href="#" id="openReset" style="color:#6a0dad;font-weight:600;">
-        Lupa password?
-      </a>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-<!-- ===== RESET PASSWORD MODAL ===== -->
-<div id="resetModal" class="login-modal">
-  <div class="login-box">
-    <span id="closeReset" class="close-login">&times;</span>
-
-    <h2 class="login-title">Reset Password</h2>
-
-    <!-- ERROR RESET SAJA -->
-    <?php if(isset($_GET['reset_error'])): ?>
-      <div class="login-alert">
-        <?php
-          if($_GET['reset_error']=='empty'){
-            echo "⚠ Semua field wajib diisi!";
-          } elseif($_GET['reset_error']=='user'){
-            echo "❌ Username tidak ditemukan!";
-          }
-        ?>
-      </div>
-    <?php endif; ?>
-
- <?php if(isset($_GET['reset_success'])): ?>
-  <div class="login-alert alert-purple">
-     Password berhasil diubah
-  </div>
-<?php endif; ?>
-
-
-    <form action="<?= $base_url ?>reset_password.php" method="POST">
-      <div class="input-wrap">
-        <label>Username</label>
-        <input type="text" name="username" required>
-      </div>
-
-      <div class="input-wrap">
-        <label>Password Baru</label>
-        <input type="password" name="new_password" required>
-      </div>
-
-      <button type="submit" class="btn-login">
-        Ubah Password
-      </button>
-    </form>
-
-    <!-- KEMBALI LOGIN -->
-    <div style="text-align:center;margin-top:10px;">
-      <a href="#" id="backLogin" style="font-weight:600;">
-        ← Kembali ke Login
-      </a>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-<!-- ========== SIDEBAR ========== -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <h2 class="sidebar-title">KIP-Kuliah<br>POLINELA</h2>
-  </div>
-
-  <nav class="nav-links">
-    <a href="<?= $base_url ?>index.php">
-      <i class="bi bi-house-door"></i> Beranda
-    </a>
-
-    <a href="<?= $base_url ?>pedoman.php">
-      <i class="bi bi-book"></i> Pedoman 2025
-    </a>
-
-    <a href="<?= $base_url ?>berprestasi.php">
-      <i class="bi bi-mortarboard-fill"></i> Mahasiswa Berprestasi
-    </a>
-
-    <a href="<?= $base_url ?>pusat_layanan.php">
-      <i class="bi bi-pencil-square"></i> Pusat Layanan
-    </a>
-
-    <a href="<?= $base_url ?>form_evaluasi.php">
-      <i class="bi bi-clipboard-check"></i> Evaluasi Mahasiswa
-    </a>
-    
-    <a href="#" onclick="toggleChat(); return false;">
-      <i class="bi bi-chat-dots-fill"></i> Bantuan
-    </a>
-  </nav>
-</aside>
-
-<div class="overlay" id="overlay"></div>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-
 <!-- ========== CSS FIXED, RAPIH & PRO ========== -->
 <style>
+/* PREVENT FOUC (Flash of Unstyled Content) */
+.sidebar { 
+  visibility: hidden; /* Hide initially to prevent flicker */
+}
+.sidebar.active, .sidebar { 
+  visibility: visible; 
+}
+
 /* ===== TOPBAR ===== */
 .topbar {
   width: 100%;
@@ -552,7 +383,7 @@ main, .content {
 /* ========== RESPONSIVE DESIGN (HP & TABLET) ========== */
 @media (max-width: 1024px) {
   .topbar-title { font-size: 1.1rem; }
-  .logo-img { height: 38px; }
+  .logo-img { height: 45px; }
 }
 
 @media (max-width: 768px) {
@@ -584,7 +415,7 @@ main, .content {
   
   /* Sidebar full screen width hampir penuh di HP */
   .sidebar { width: 260px; left: -270px; padding-top: 70px; }
-  .sidebarui-header .sidebar-title { font-size: 1rem; }
+  .sidebar-header .sidebar-title { font-size: 1rem; }
   
   main, .content { padding-top: 70px; }
   
@@ -595,6 +426,184 @@ main, .content {
 }
 
 </style>
+
+<!-- ========== HEADER / TOPBAR ========== -->
+<?php
+// Deteksi direktori saat ini untuk menentukan base url
+if (file_exists('index.php')) {
+    $base_url = '';
+} elseif (file_exists('../index.php')) {
+    $base_url = '../';
+} else {
+    $base_url = ''; // Default fallback
+}
+?>
+<header class="topbar">
+  <button id="toggle-btn" class="toggle-btn">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <div class="topbar-brand">
+    <img src="<?= $base_url ?>assets/logo-polinela.png" class="logo-img">
+    <h1 class="topbar-title">Sistem Informasi KIP-Kuliah</h1>
+  </div>
+
+  <!-- LOGIN BUTTON -->
+  <div class="topbar-login">
+    <button class="login-btn" id="openLogin">
+  <i class="bi bi-box-arrow-in-right"></i> Login
+  </button>
+  </div>
+</header>
+
+
+
+<!-- ===== LOGIN MODAL ===== -->
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <span id="closeLogin" class="close-login">&times;</span>
+
+    <h2 class="login-title">LOGIN ADMIN</h2>
+    <p class="login-note">
+      ⚠ Akses login <strong>khusus Admin</strong>. Mahasiswa tidak dapat login.
+    </p>
+
+    <!-- ERROR LOGIN SAJA -->
+    <?php if(isset($_GET['login_error'])): ?>
+      <div class="login-alert">
+        <?php 
+          if($_GET['login_error'] === 'user'){
+              echo "❌ Username tidak ditemukan!";
+          } elseif($_GET['login_error'] === 'pass'){
+              echo "❌ Password salah!";
+          } elseif($_GET['login_error'] === 'empty'){
+              echo "⚠ Semua field wajib diisi!";
+          }
+        ?>
+      </div>
+    <?php endif; ?>
+
+    <form action="<?= $base_url ?>cek_login.php" method="POST">
+      <div class="input-wrap">
+        <label>Username</label>
+        <input type="text" name="username" required>
+      </div>
+
+      <div class="input-wrap">
+        <label>Password</label>
+        <input type="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <!-- LINK KE RESET -->
+    <div style="text-align:center; margin:10px 0;">
+      <a href="#" id="openReset" style="color:#6a0dad;font-weight:600;">
+        Lupa password?
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- ===== RESET PASSWORD MODAL ===== -->
+<div id="resetModal" class="login-modal">
+  <div class="login-box">
+    <span id="closeReset" class="close-login">&times;</span>
+
+    <h2 class="login-title">Reset Password</h2>
+
+    <!-- ERROR RESET SAJA -->
+    <?php if(isset($_GET['reset_error'])): ?>
+      <div class="login-alert">
+        <?php
+          if($_GET['reset_error']=='empty'){
+            echo "⚠ Semua field wajib diisi!";
+          } elseif($_GET['reset_error']=='user'){
+            echo "❌ Username tidak ditemukan!";
+          }
+        ?>
+      </div>
+    <?php endif; ?>
+
+ <?php if(isset($_GET['reset_success'])): ?>
+  <div class="login-alert alert-purple">
+     Password berhasil diubah
+  </div>
+<?php endif; ?>
+
+
+    <form action="<?= $base_url ?>reset_password.php" method="POST">
+      <div class="input-wrap">
+        <label>Username</label>
+        <input type="text" name="username" required>
+      </div>
+
+      <div class="input-wrap">
+        <label>Password Baru</label>
+        <input type="password" name="new_password" required>
+      </div>
+
+      <button type="submit" class="btn-login">
+        Ubah Password
+      </button>
+    </form>
+
+    <!-- KEMBALI LOGIN -->
+    <div style="text-align:center;margin-top:10px;">
+      <a href="#" id="backLogin" style="font-weight:600;">
+        ← Kembali ke Login
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2 class="sidebar-title">KIP-Kuliah<br>POLINELA</h2>
+  </div>
+
+  <nav class="nav-links">
+    <a href="<?= $base_url ?>index.php">
+      <i class="bi bi-house-door"></i> Beranda
+    </a>
+
+    <a href="<?= $base_url ?>pedoman.php">
+      <i class="bi bi-book"></i> Pedoman 
+    </a>
+
+    <a href="<?= $base_url ?>berprestasi.php">
+      <i class="bi bi-mortarboard-fill"></i> Mahasiswa Berprestasi
+    </a>
+
+    <a href="<?= $base_url ?>pusat_layanan.php">
+      <i class="bi bi-pencil-square"></i> Pusat Layanan
+    </a>
+
+    <a href="<?= $base_url ?>form_evaluasi.php">
+      <i class="bi bi-clipboard-check"></i> Evaluasi Mahasiswa
+    </a>
+    
+    <a href="#" onclick="toggleChat(); return false;">
+      <i class="bi bi-chat-dots-fill"></i> Bantuan
+    </a>
+  </nav>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+
 
 
 <!-- ========== JAVASCRIPT ========== -->
