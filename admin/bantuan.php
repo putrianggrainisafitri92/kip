@@ -13,356 +13,336 @@ include "../koneksi.php";
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Bantuan Admin - KIP Kuliah Polinela</title>
+    <title>Tatacara Penggunaan - Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-purple: #6a11cb;
-            --secondary-purple: #2575fc;
-            --deep-purple: #4e0a8a;
-            --glass-purple: rgba(78, 10, 138, 0.9);
+            --primary-purple: #4e0a8a;
             --accent-purple: #7b35d4;
+            --bg-light: #f8f2ff;
+            --glass-white: rgba(255, 255, 255, 0.85);
         }
 
         body {
-            margin: 0;
-            padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
-            background-size: cover;       
-            background-attachment: fixed; 
-            color: white;
+            background: var(--bg-light);
+            margin: 0;
+            color: #333;
             overflow-x: hidden;
         }
 
-        .main-content {
-            margin-left: 230px;
-            padding: 40px 20px;
-            transition: 0.3s ease;
+        /* ===== BACKGROUND ANIMATIONS ===== */
+        .animated-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8f2ff 0%, #e0d0ff 100%);
+        }
+
+        .bg-circle {
+            position: absolute;
+            background: rgba(123, 53, 212, 0.05);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .c1 { width: 400px; height: 400px; top: -100px; right: -100px; }
+        .c2 { width: 300px; height: 300px; bottom: -50px; left: -50px; animation-delay: -5s; }
+        .c3 { width: 200px; height: 200px; top: 40%; left: 10%; animation-delay: -10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* ===== CONTENT WRAPPER ===== */
+        .content {
+            margin-left: 240px;
+            padding: 60px 40px;
             min-height: 100vh;
+            transition: 0.3s ease;
+            position: relative;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--glass-purple);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeInPage 1s cubic-bezier(0.4, 0, 0.2, 1);
+        /* ===== HEADER SECTION ===== */
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(50px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h2 {
-            color: #fff;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-size: 2.5rem;
+        .header-section h2 {
+            color: var(--primary-purple);
+            font-size: 38px;
             font-weight: 800;
-            text-transform: uppercase;
+            margin: 0;
+            display: inline-block;
+            position: relative;
+        }
+
+        .header-section h2 span {
+            color: var(--accent-purple);
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
             letter-spacing: 2px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border-bottom: 2px dashed rgba(255,255,255,0.2);
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
-        .guide-section {
-            margin-bottom: 40px;
-            opacity: 0;
-            transform: translateX(-30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .guide-section.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .guide-section h3 {
-            font-size: 1.5rem;
-            color: #f1e4ff;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-            font-weight: 700;
-        }
-
-        .icon-box {
-            width: 55px;
-            height: 55px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        .guide-section:hover .icon-box {
-            background: #fff;
-            color: var(--deep-purple);
-            transform: rotate(360deg) scale(1.1);
-        }
-
-        .guide-content {
-            background: rgba(255,255,255,0.05);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            line-height: 1.8;
-            transition: 0.4s;
+        .header-section .line {
+            width: 100px;
+            height: 6px;
+            background: var(--accent-purple);
+            margin: 20px auto;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
         }
 
-        .guide-content::before {
+        .header-section .line::after {
             content: '';
             position: absolute;
-            top: 0; left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, #ba68ff, #7b35d4);
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: white;
+            animation: sweep 2s infinite;
         }
 
-        .guide-section:hover .guide-content {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            border-color: rgba(255,255,255,0.2);
+        @keyframes sweep {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
         }
 
-        .guide-content p {
-            margin-top: 0;
-            font-weight: 500;
-            color: #f8f2ff;
+        /* ===== GUIDE GRID ===== */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
         }
 
-        .guide-content ul {
-            padding-left: 0;
-            list-style: none;
-            margin-bottom: 0;
+        .guide-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            padding: 35px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(123, 53, 212, 0.1);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .guide-content li {
-            margin-bottom: 15px;
+        .guide-card.show { opacity: 1; transform: translateY(0); }
+
+        .guide-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(123, 53, 212, 0.12);
+            border-color: var(--accent-purple);
+            background: white;
+        }
+
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: #f0e6ff;
+            color: var(--accent-purple);
+            border-radius: 18px;
             display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            font-size: 0.95rem;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: 0.4s ease;
         }
 
-        .step-badge {
-            background: linear-gradient(135deg, #ba68ff, #7b35d4);
-            color: #fff;
-            padding: 5px 14px;
-            border-radius: 10px;
-            font-size: 0.75rem;
+        .guide-card:hover .icon-box {
+            background: var(--accent-purple);
+            color: white;
+            transform: rotateY(360deg);
+        }
+
+        .guide-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.25rem;
+            color: var(--primary-purple);
             font-weight: 800;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(123, 53, 212, 0.3);
-            text-transform: uppercase;
         }
 
-        .tip-box {
-            background: rgba(37, 117, 252, 0.2);
-            border: 1px solid rgba(37, 117, 252, 0.3);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            font-size: 0.85rem;
+        /* ===== STEP STYLING ===== */
+        .steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .steps li {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #555;
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            gap: 12px;
+            line-height: 1.5;
         }
 
-        /* Float Animation */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .float-anim {
-            animation: float 3s ease-in-out infinite;
-            display: inline-block;
-        }
-
-        /* Pulse Animation */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .pulse-anim:hover {
-            animation: pulse 1.5s infinite;
+        .step-num {
+            background: #eee;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: var(--primary-purple);
         }
 
-        /* Responsive Improvements */
+        .guide-card:hover .step-num {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .important-box {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.75rem;
+            color: #5d4037;
+        }
+
+        .pop-dot {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            top: 20px; right: 20px;
+            opacity: 0.2;
+        }
+
+        .guide-card:hover .pop-dot { animation: ping 1s infinite; opacity: 0.5; }
+
+        @keyframes ping {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 0;
-                padding: 80px 15px 40px 15px;
-            }
-            .container {
-                padding: 30px 20px;
-                border-radius: 20px;
-            }
-            h2 { font-size: 1.8rem; }
+            .content { margin-left: 0; padding: 100px 20px 40px 20px; }
+            .header-section h2 { font-size: 28px; }
         }
 
-        @media (max-width: 600px) {
-            h2 { 
-                font-size: 1.4rem; 
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .guide-section h3 { font-size: 1.2rem; }
-            .guide-content { padding: 20px; }
-            .step-badge { padding: 4px 10px; font-size: 0.7rem; }
-        }
-
-        .footer-info {
-            margin-top: 60px;
-            text-align: center;
-            opacity: 0.7;
-            font-style: italic;
-            animation: fadeIn 2s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 0.7; }
+        @media (max-width: 480px) {
+            .guide-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div class="animated-bg">
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+    <div class="bg-circle c3"></div>
+</div>
+
 <?php include "sidebar.php"; ?>
 
-<div class="main-content">
-    <div class="container">
-        <h2><i class="fas fa-user-shield float-anim"></i> Bantuan Admin Level 2</h2>
+<div class="content">
+    <div class="header-section">
+        <h2>Tatacara Penggunaan Web <span>Panduan Administratif Level 2</span></h2>
+        <div class="line"></div>
+    </div>
 
-        <!-- SECTION 1: DASHBOARD -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-chart-line"></i></div> 1. Dashboard Statistik</h3>
-            <div class="guide-content">
-                <p>Pusat kendali admin untuk melihat ringkasan statistik terkini:</p>
-                <ul>
-                    <li><i class="fas fa-chart-pie" style="color:#ba68ff; margin-right:10px;"></i> <b>Visualisasi Data:</b> Pantau grafik laporan masuk per bulan dan statistik mahasiswa secara real-time.</li>
-                    <li><i class="fas fa-clock" style="color:#ba68ff; margin-right:10px;"></i> <b>Quick Stats:</b> Lihat total laporan, berita, mahasiswa, dan pedoman dalam satu tampilan dashboard.</li>
-                </ul>
+    <div class="guide-grid" id="guideGrid">
+        <!-- Kelola SK -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-file-invoice"></i></div>
+            <h3>1. Pengelolaan Dokumen SK</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Klik menu <b>SK KIP</b> -> <b>Tambah SK</b>.</li>
+                <li><div class="step-num">2</div> Isi Nama, Tahun, dan nomor SK.</li>
+                <li><div class="step-num">3</div> Unggah file format <b>PDF/Excel</b>.</li>
+                <li><div class="step-num">4</div> Tunggu validasi pimpinan (Kabag).</li>
+            </ul>
+        </div>
+
+        <!-- Manajemen Mahasiswa -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-users"></i></div>
+            <h3>2. Manajemen Mahasiswa</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Gunakan menu <b>Import Excel</b> untuk data massal.</li>
+                <li><div class="step-num">2</div> Gunakan menu <b>Cari</b> untuk edit data satuan.</li>
+                <li><div class="step-num">3</div> Sinkronisasi NIM data kolektif tiap angkatan.</li>
+            </ul>
+            <div class="important-box">
+                <b>Aturan Excel:</b><br>
+                Kolom harus urut: NPM | Nama | Prodi | Tahun | Skema. Ganti nama Sheet menjadi "Sheet1".
             </div>
         </div>
 
-        <!-- SECTION 2: PENGELOLAAN SK -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-file-invoice"></i></div> 2. Pengelolaan Data SK</h3>
-            <div class="guide-content">
-                <p>Kelola dokumen Surat Keputusan (SK) penetapan penerima KIP-Kuliah:</p>
-                <ul>
-                    <li><span class="step-badge">Tambah SK</span> Unggah dokumen SK baru (PDF/Excel) dengan mengisi nama, tahun, dan nomor SK.</li>
-                    <li><span class="step-badge">Validasi</span> Setiap SK yang diunggah akan berstatus <i>Pending</i> menunggu verifikasi dari Kabag Akademik.</li>
-                    <li><span class="step-badge">Revisi</span> Jika ditolak, cek catatan revisi dan unggah kembali file yang sudah diperbaiki.</li>
-                </ul>
-            </div>
+        <!-- Pelaporan -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-flag"></i></div>
+            <h3>3. Menangani Laporan</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Buka menu <b>Monitoring Laporan</b>.</li>
+                <li><div class="step-num">2</div> Tinjau bukti lampiran aduan mahasiswa.</li>
+                <li><div class="step-num">3</div> Klik <b>Proses</b> jika mulai ditangani.</li>
+                <li><div class="step-num">4</div> Klik <b>Selesai</b> setelah solusi tercapai.</li>
+            </ul>
         </div>
 
-        <!-- SECTION 3: MANAJEMEN MAHASISWA -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-users"></i></div> 3. Manajemen Mahasiswa</h3>
-            <div class="guide-content">
-                <p>Kelola basis data mahasiswa penerima KIP-Kuliah secara efisien:</p>
-                <ul>
-                    <li><span class="step-badge">Import Excel</span> Masukkan data mahasiswa secara massal menggunakan file .xlsx.</li>
-                    <li><span class="step-badge">Update Data</span> Lakukan sinkronisasi data NIM dan Program Studi secara kolektif.</li>
-                    <li><span class="step-badge">Hapus Data</span> Hapus data secara selektif berdasarkan Tahun, Jurusan, atau Prodi pada menu Hapus Semua.</li>
-                </ul>
-                <div class="tip-box">
-                    <i class="fas fa-info-circle" style="font-size: 1.5rem; color: #ba68ff;"></i>
-                    <div>
-                        <b>Agar sistem dapat membaca data dengan benar, silakan atur urutan kolom Excel Anda sebagai berikut:</b><br><br>
-                        • <b>Kolom A:</b> NPM<br>
-                        • <b>Kolom B:</b> Nama Mahasiswa<br>
-                        • <b>Kolom C:</b> Program Studi (Harus Sesuai List Polinela)<br>
-                        • <b>Kolom D:</b> Tahun (Contoh: 2026)<br>
-                        • <b>Kolom E:</b> Skema (Contoh: Skema 1)
-                    </div>
-                </div>
-            </div>
+        <!-- Evaluasi -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-check-double"></i></div>
+            <h3>4. Evaluasi Kinerja</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Verifikasi berkas semesteran yang diunggah mahasiswa.</li>
+                <li><div class="step-num">2</div> Beri status <b>Verified</b> jika data sesuai.</li>
+                <li><div class="step-num">3</div> Cetak formulir fisik via tombol <b>Generate PDF</b>.</li>
+            </ul>
         </div>
+    </div>
 
-        <!-- SECTION 4: MONITORING LAPORAN -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-flag"></i></div> 4. Monitoring Laporan</h3>
-            <div class="guide-content">
-                <p>Pantau aduan atau laporan yang masuk dari mahasiswa:</p>
-                <ul>
-                    <li><span class="step-badge">Review</span> Cek detail identitas pelapor, terlapor, dan alasan pelaporan beserta bukti lampiran.</li>
-                    <li><span class="step-badge">Proses</span> Tandai laporan sebagai <b>Diproses</b> saat mulai ditangani oleh tim.</li>
-                    <li><span class="step-badge">Selesai</span> Tutup laporan setelah mediasi atau tindakan administratif selesai dilakukan.</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- SECTION 5: EVALUASI MAHASISWA -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-tasks"></i></div> 5. Evaluasi Kinerja</h3>
-            <div class="guide-content">
-                <p>Lakukan validasi kelayakan mahasiswa penerima bantuan:</p>
-                <ul>
-                    <li><span class="step-badge">Cek Dokumen</span> Verifikasi berkas evaluasi (PDF) yang diunggah oleh mahasiswa.</li>
-                    <li><span class="step-badge">Verifikasi</span> Tandai sebagai <b>Verified</b> untuk mahasiswa yang tetap layak menerima KIP-K.</li>
-                    <li><span class="step-badge">Generate PDF</span> Cetak formulir evaluasi resmi untuk keperluan administrasi fisik.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="footer-info">
-            <p><i class="fas fa-shield-alt"></i> Sistem Pengawasan Administratif KIP-Kuliah - Politeknik Negeri Lampung</p>
-        </div>
+    <div style="text-align:center; margin-top:50px; color:#aaa; font-size:0.85rem;">
+        <i class="fas fa-shield-alt"></i> Panel Administrator KIP-Kuliah Politeknik Negeri Lampung.
     </div>
 </div>
 
 <script>
-    // Reveal animations on scroll
-    document.addEventListener('DOMContentLoaded', function() {
-        const sections = document.querySelectorAll('.guide-section');
-        
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.guide-card');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('show');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
-        sections.forEach(section => {
-            observer.observe(section);
+        cards.forEach((card, i) => {
+            card.style.transitionDelay = (i * 0.1) + 's';
+            observer.observe(card);
         });
     });
 </script>
