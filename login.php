@@ -22,12 +22,33 @@ $redirect = $_GET['redirect'] ?? '';
     box-sizing: border-box;
     font-family: "Segoe UI", Arial, sans-serif;
 }
-body {
-    background: 
-        linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)),
-        url("assets/bgpolinela.jpeg") no-repeat center center fixed;
-    background-size: cover;
-}
+/* ANIMASI BACKGROUND */
+    body {
+        margin: 0;
+        position: relative;
+        overflow: hidden; /* Mencegah scrollbar saat zoom */
+    }
+
+    /* Pseudo-element untuk background agar bisa di-animate tanpa menggeser konten */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%;
+        z-index: -1;
+        background: 
+            linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
+            url("assets/bgpolinela.jpeg") no-repeat center center fixed;
+        background-size: cover;
+        animation: zoomBg 25s infinite alternate ease-in-out;
+    }
+
+    @keyframes zoomBg {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.15); }
+    }
 
 /* WRAPPER UTAMA */
 .page-wrapper {
@@ -36,51 +57,106 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    perspective: 1000px; /* Untuk efek 3D jika perlu */
 }
 
 /* CARD INFORMASI */
 .info-card {
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px); /* Efek kaca */
+    -webkit-backdrop-filter: blur(10px);
     max-width: 520px;
     width: 100%;
-    padding: 32px;
-    border-radius: 18px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.15);
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     text-align: center;
+    
+    /* ANIMASI MASUK */
+    animation: slideUpFade 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    opacity: 0; /* Mulai hidden */
+    transform: translateY(30px);
+}
+
+@keyframes slideUpFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* JUDUL */
 .info-card h1 {
-    margin: 0 0 12px;
-    font-size: 24px;
-    color: #333;
+    margin: 0 0 15px;
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #4B0082, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* SUBTEXT */
 .info-card p {
-    margin: 0 0 20px;
-    font-size: 15px;
-    color: #555;
+    margin: 0 0 25px;
+    font-size: 16px;
+    color: #4b5563;
     line-height: 1.6;
 }
 
 /* BUTTON LOGIN */
 .btn-login {
-    display: inline-block;
-    padding: 12px 22px;
-    background: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #fff;
     text-decoration: none;
-    border-radius: 10px;
-    font-size: 15px;
-    transition: background .2s;
+    border-radius: 50px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-login:hover {
-    background: #1e4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
 }
 
-/* MODAL LOGIN */
+.btn-login:active {
+    transform: translateY(0);
+}
+
+/* Efek kilauan pada tombol */
+.btn-login::after {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* Button close di modal (jika ada) */
+.close-modal {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
+}
+
+/* MODAL LOGIN & TEXT LAINNYA DI SIDEBAR.PHP */
 #loginModal {
     position: fixed;
     inset: 0;
@@ -145,14 +221,24 @@ include 'sidebar.php';
         <p>
             Silakan login kembali menggunakan akun Anda untuk melanjutkan ke sistem.
         </p>
-
-       
+        
+        <!-- BUTTON LOGIN DITAMBAHKAN -->
+        <button class="btn-login" onclick="openLogin()">
+            Login Administrator
+        </button>
     </div>
 </div>
 
 <script>
 function openLogin() {
-    document.getElementById('loginModal').classList.add('active');
+    // Memanggil modal yang ada di sidebar.php
+    // Pastikan ID modalnya sesuai, biasanya 'loginModal'
+    const modal = document.getElementById('loginModal');
+    if(modal) {
+        modal.classList.add('active');
+    } else {
+        alert('Modal login tidak ditemukan. Pastikan sidebar.php termuat.');
+    }
 }
 </script>
 
