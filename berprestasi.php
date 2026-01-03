@@ -208,10 +208,11 @@
                     $jsonNama = htmlspecialchars(json_encode($namaRaw), ENT_QUOTES, 'UTF-8');
                     $jsonDesc = htmlspecialchars(json_encode($descRaw), ENT_QUOTES, 'UTF-8');
                     
-                    // Display Safe Txt
+                    // Display Safe Txt (Clean up literal \n from DB for the sneak-peek)
+                    $descClean = str_replace(['\r\n', '\r', '\n'], ' ', $descRaw);
                     $judulSafe = htmlspecialchars($judulRaw);
                     $namaSafe = htmlspecialchars($namaRaw);
-                    $descSafe = htmlspecialchars($descRaw);
+                    $descSafe = htmlspecialchars($descClean);
                     ?>
                     <div class="card-animate rounded-2xl shadow-xl prestasi-card flex flex-col h-full group relative overflow-hidden" 
                          style="--i:<?= $cardDelay ?>">
@@ -290,7 +291,14 @@
         document.getElementById('modal-nama').innerText = nama;
         document.getElementById('modal-tgl').innerText = tgl;
         document.getElementById('modal-upload').innerText = upload;
-        document.getElementById('modal-desc').innerText = desc;
+        
+        // Bersihkan literal \n atau \r\n bawan database agar jadi line break asli
+        let cleanDesc = desc
+            .replace(/\\r\\n/g, '\n')
+            .replace(/\\n/g, '\n')
+            .replace(/\\r/g, '\n');
+            
+        document.getElementById('modal-desc').innerText = cleanDesc;
         
         // Setup Modal Gallery
         currentModalImages = imgArray;

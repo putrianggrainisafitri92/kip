@@ -29,10 +29,10 @@ function normalize_text($text) {
 
 // Logic Simpan
 if (isset($_POST['simpan'])) {
-    $nama = $koneksi->real_escape_string(normalize_text($_POST['nama_mahasiswa']));
-    $judul = $koneksi->real_escape_string(normalize_text($_POST['judul_prestasi']));
-    $tgl = $koneksi->real_escape_string($_POST['tanggal_prestasi']);
-    $deskripsi = $koneksi->real_escape_string(normalize_text($_POST['deskripsi']));
+    $nama = normalize_text($_POST['nama_mahasiswa']);
+    $judul = normalize_text($_POST['judul_prestasi']);
+    $tgl = $_POST['tanggal_prestasi'];
+    $deskripsi = normalize_text($_POST['deskripsi']);
 
     // Handle Gambar Lama & Hapus
     $gambarArr = json_decode($data['file_gambar'], true);
