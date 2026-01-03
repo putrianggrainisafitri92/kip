@@ -18,13 +18,22 @@ if ($id > 0) {
     }
 }
 
+function normalize_text($text) {
+    // Ubah semua \r\n dan \r jadi \n
+    $text = str_replace(["\r\n", "\r"], "\n", $text);
+    // Hilangkan line break berlebih (2 baris kosong berturut-turut jadi 1)
+    $text = preg_replace("/\n{3,}/", "\n\n", $text);
+    // Trim spasi di awal & akhir
+    return trim($text);
+}
+
 // Logic Simpan
 if (isset($_POST['simpan'])) {
-    $nama = $koneksi->real_escape_string($_POST['nama_mahasiswa']);
-    $judul = $koneksi->real_escape_string($_POST['judul_prestasi']);
+    $nama = $koneksi->real_escape_string(normalize_text($_POST['nama_mahasiswa']));
+    $judul = $koneksi->real_escape_string(normalize_text($_POST['judul_prestasi']));
     $tgl = $koneksi->real_escape_string($_POST['tanggal_prestasi']);
-    $deskripsi = $koneksi->real_escape_string($_POST['deskripsi']);
-    
+    $deskripsi = $koneksi->real_escape_string(normalize_text($_POST['deskripsi']));
+
     // Handle Gambar Lama & Hapus
     $gambarArr = json_decode($data['file_gambar'], true);
     if (!is_array($gambarArr)) {
@@ -84,7 +93,9 @@ if (isset($_POST['simpan'])) {
 }
 
 $currentImages = json_decode($data['file_gambar'], true);
-if(!is_array($currentImages)) $currentImages = !empty($data['file_gambar']) ? [$data['file_gambar']] : [];
+if(!is_array($currentImages) || empty($currentImages)) {
+    $currentImages = [];
+}
 
 include 'sidebar.php'; 
 ?>

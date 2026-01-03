@@ -303,7 +303,7 @@ include 'sidebar.php';
                     </td>
                     <td>
                         <?php if(!empty($row['deskripsi'])): ?>
-                            <button class="btn btn-detail" onclick="showTextModal('Deskripsi Prestasi', `<?= addslashes($row['deskripsi']) ?>`)">
+                            <button class="btn btn-detail" onclick="showTextModal('Deskripsi Prestasi', `<?= addslashes(str_replace(["\r\n","\r","\n"], "\\n", $row['deskripsi'])) ?>`)">
                                 <i class="fas fa-file-alt"></i> Detail
                             </button>
                         <?php else: ?>
@@ -318,7 +318,7 @@ include 'sidebar.php';
                     <td>
                         <?php if(!empty($row['catatan_revisi'])): ?>
                             <button class="btn btn-detail" style="color:#d32f2f; background:#fff0f0;" onclick="showTextModal('Catatan Revisi', `<?= addslashes($row['catatan_revisi']) ?>`)">
-                                <i class="fas fa-comment-dots"></i> Lihat
+                                <i class="fas fa-file-alt"></i> Lihat
                             </button>
                         <?php else: ?>
                             <span class="text-muted">-</span>

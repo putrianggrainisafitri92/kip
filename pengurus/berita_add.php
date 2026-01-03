@@ -22,7 +22,7 @@ if (isset($_POST['simpan'])) {
     $stmt->close();
 
     // Upload Gambar
-    if (!empty($_FILES['gambar_files'])) {
+    if (!empty($_FILES['gambar_files']['name'][0])) {
 
         $uploadDir = "../uploads/berita/";
         if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
