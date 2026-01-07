@@ -42,104 +42,130 @@ if ($koneksi) {
 
 ?>
 
-<div class="max-w-7xl mx-auto px-6 grid md:grid-cols-5 gap-8">
-
-  <!-- Kolom 1: Info Polinela -->
-  <div class="space-y-5">
-    <div class="flex items-center">
-      <img src="<?= isset($base_url) ? $base_url : '' ?>assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
-      <div>
-        <h4 class="font-bold text-lg text-white leading-tight">POLITEKNIK NEGERI LAMPUNG</h4>
-        <p class="text-sm italic text-indigo-200">Kampus Unggul, Profesional, dan Mandiri</p>
+<!-- FOOTER WRAPPER: Matches Main Content Shift -->
+<div class="footer-content transition-all duration-300 ease-in-out" id="footer-content" style="margin-top: auto;">
+  <footer class="bg-gradient-to-br from-[#1d0b33] to-[#2d0f4d] py-12 pb-6 text-indigo-100" style="background-color: #1d0b33;">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-5 gap-8">
+    
+      <!-- Kolom 1: Info Polinela -->
+      <div class="space-y-5">
+        <div class="flex items-center">
+          <img src="<?= isset($base_url) ? $base_url : '' ?>assets/logo-polinela.png" alt="Logo Polinela" class="w-14 mr-3 drop-shadow-lg">
+          <div>
+            <h4 class="font-bold text-lg text-white leading-tight">POLITEKNIK NEGERI LAMPUNG</h4>
+            <p class="text-sm italic text-indigo-200">Kampus Unggul, Profesional, dan Mandiri</p>
+          </div>
+        </div>
+        <p class="text-sm text-indigo-100 leading-relaxed">
+          Jl. Soekarno Hatta No.10, Rajabasa Raya, Kec. Rajabasa,<br>
+          Kota Bandar Lampung, Lampung 35144
+        </p>
+        <div class="space-y-1 text-sm text-indigo-100">
+          <p><span class="font-semibold text-white">Telp:</span> (0721) 703995</p>
+          <p><span class="font-semibold text-white">Email:</span> humas@polinela.ac.id</p>
+          <p><span class="font-semibold text-white">WA:</span> 0812 7893 3860</p>
+        </div>
       </div>
-    </div>
-    <p class="text-sm text-indigo-100 leading-relaxed">
-      Jl. Soekarno Hatta No.10, Rajabasa Raya, Kec. Rajabasa,<br>
-      Kota Bandar Lampung, Lampung 35144
-    </p>
-    <div class="space-y-1 text-sm text-indigo-100">
-      <p><span class="font-semibold text-white">Telp:</span> (0721) 703995</p>
-      <p><span class="font-semibold text-white">Email:</span> humas@polinela.ac.id</p>
-      <p><span class="font-semibold text-white">WA:</span> 0812 7893 3860</p>
-    </div>
-  </div>
 
-  <!-- Kolom 2: Laman Terkait -->
-  <div class="space-y-5">
-    <h4 class="font-semibold text-white text-lg">LAMAN TERKAIT</h4>
-    <ul class="space-y-2 text-sm text-indigo-100">
-      <li><a href="https://kip-kuliah.kemdikbud.go.id" target="_blank" class="hover:text-white hover:underline transition">Pendaftaran KIP-Kuliah</a></li>
-      <li><a href="https://www.polinela.ac.id" target="_blank" class="hover:text-white hover:underline transition">Website Polinela</a></li>
-      <li><a href="https://pddikti.kemdiktisaintek.go.id/" target="_blank" class="hover:text-white hover:underline transition">PDDIKTI</a></li>
-      <li><a href="https://dikti.kemdikbud.go.id" target="_blank" class="hover:text-white hover:underline transition">Kemdikbudristek</a></li>
-    </ul>
-  </div>
+      <!-- Kolom 2: Laman Terkait -->
+      <div class="space-y-5">
+        <h4 class="font-semibold text-white text-lg">LAMAN TERKAIT</h4>
+        <ul class="space-y-2 text-sm text-indigo-100">
+          <li><a href="https://kip-kuliah.kemdikbud.go.id" target="_blank" class="hover:text-white hover:underline transition">Pendaftaran KIP-Kuliah</a></li>
+          <li><a href="https://www.polinela.ac.id" target="_blank" class="hover:text-white hover:underline transition">Website Polinela</a></li>
+          <li><a href="https://pddikti.kemdiktisaintek.go.id/" target="_blank" class="hover:text-white hover:underline transition">PDDIKTI</a></li>
+          <li><a href="https://dikti.kemdikbud.go.id" target="_blank" class="hover:text-white hover:underline transition">Kemdikbudristek</a></li>
+        </ul>
+      </div>
 
-  <!-- Kolom 3: Sosial Media -->
-  <div class="space-y-5">
-    <h4 class="font-semibold text-white text-lg">SOSIAL MEDIA POLINELA</h4>
-    <ul class="space-y-2 text-sm text-indigo-100">
-      <li><a href="https://www.instagram.com/politeknik_negeri_lampung/" target="_blank" class="hover:text-white hover:underline transition">Instagram: <span class="text-white">@politeknik_negeri_lampung</span></a></li>
-      <li><a href="https://www.youtube.com/@politeknik_negeri_lampung" target="_blank" class="hover:text-white hover:underline transition">YouTube: <span class="text-white">Politeknik Negeri Lampung</span></a></li>
-      <li><a href="https://www.facebook.com/politekniknegerilampung/" target="_blank" class="hover:text-white hover:underline transition">Facebook: <span class="text-white">Politeknik Negeri Lampung</span></a></li>
-      <li><a href="https://www.facebook.com/humaspolinela/" target="_blank" class="hover:text-white hover:underline transition">Humas Polinela: <span class="text-white">facebook.com/humaspolinela</span></a></li>
-    </ul>
-  </div>
+      <!-- Kolom 3: Sosial Media -->
+      <div class="space-y-5">
+        <h4 class="font-semibold text-white text-lg">SOSIAL MEDIA POLINELA</h4>
+        <ul class="space-y-2 text-sm text-indigo-100">
+          <li><a href="https://www.instagram.com/politeknik_negeri_lampung/" target="_blank" class="hover:text-white hover:underline transition">Instagram: <span class="text-white">@politeknik_negeri_lampung</span></a></li>
+          <li><a href="https://www.youtube.com/@politeknik_negeri_lampung" target="_blank" class="hover:text-white hover:underline transition">YouTube: <span class="text-white">Politeknik Negeri Lampung</span></a></li>
+          <li><a href="https://www.facebook.com/politekniknegerilampung/" target="_blank" class="hover:text-white hover:underline transition">Facebook: <span class="text-white">Politeknik Negeri Lampung</span></a></li>
+          <li><a href="https://www.facebook.com/humaspolinela/" target="_blank" class="hover:text-white hover:underline transition">Humas Polinela: <span class="text-white">facebook.com/humaspolinela</span></a></li>
+        </ul>
+      </div>
 
-  <!-- Kolom 4: Tentang Web -->
-  <div class="space-y-5">
-    <h4 class="font-semibold text-white text-lg">TENTANG WEB</h4>
-    <p class="text-sm text-indigo-100 leading-relaxed">
-      Portal resmi informasi KIP-Kuliah yang menyediakan berita, pengumuman,
-      serta panduan lengkap bagi mahasiswa penerima KIP-K. Dikembangkan untuk
-      memberikan kemudahan akses informasi secara cepat dan terpercaya.
-    </p>
-  </div>
+      <!-- Kolom 4: Tentang Web -->
+      <div class="space-y-5">
+        <h4 class="font-semibold text-white text-lg">TENTANG WEB</h4>
+        <p class="text-sm text-indigo-100 leading-relaxed">
+          Portal resmi informasi KIP-Kuliah yang menyediakan berita, pengumuman,
+          serta panduan lengkap bagi mahasiswa penerima KIP-K. Dikembangkan untuk
+          memberikan kemudahan akses informasi secara cepat dan terpercaya.
+        </p>
+      </div>
 
-  <div class="footer-statistik">
- <h4 class="font-semibold text-white text-lg">VISITOR</h4>
-    <div class="stat-box">
-        <span>Pengunjung Hari Ini</span>
-        <strong><?= $pengunjung_hari_ini; ?></strong>
-    </div>
+      <!-- Kolom 5: Statistik -->
+      <div class="footer-statistik">
+     <h4 class="font-semibold text-white text-lg">VISITOR</h4>
+        <div class="stat-box">
+            <span>Pengunjung Hari Ini</span>
+            <strong><?= $pengunjung_hari_ini; ?></strong>
+        </div>
 
-    <div class="stat-box">
-        <span>Total Pengunjung <?= date('Y'); ?></span>
-        <strong><?= array_sum($pengunjung_bulanan); ?></strong>
-    </div>
+        <div class="stat-box">
+            <span>Total Pengunjung <?= date('Y'); ?></span>
+            <strong><?= array_sum($pengunjung_bulanan); ?></strong>
+        </div>
 
-    <div class="bulan-grid">
-        <?php
-        $nama_bulan = [
-            1=>'Jan', 2=>'Feb', 3=>'Mar', 4=>'Apr',
-            5=>'Mei', 6=>'Jun', 7=>'Jul', 8=>'Agu',
-            9=>'Sep', 10=>'Okt', 11=>'Nov', 12=>'Des'
-        ];
+        <div class="bulan-grid">
+            <?php
+            $nama_bulan = [
+                1=>'Jan', 2=>'Feb', 3=>'Mar', 4=>'Apr',
+                5=>'Mei', 6=>'Jun', 7=>'Jul', 8=>'Agu',
+                9=>'Sep', 10=>'Okt', 11=>'Nov', 12=>'Des'
+            ];
 
-        foreach ($pengunjung_bulanan as $bulan => $jumlah) {
-            echo "
-                <div class='bulan-item'>
-                    <span>{$nama_bulan[$bulan]}</span>
-                    <b>{$jumlah}</b>
-                </div>
-            ";
-        }
-        ?>
+            foreach ($pengunjung_bulanan as $bulan => $jumlah) {
+                echo "
+                    <div class='bulan-item'>
+                        <span>{$nama_bulan[$bulan]}</span>
+                        <b>{$jumlah}</b>
+                    </div>
+                ";
+            }
+            ?>
+        </div>
+      </div>
+
     </div>
 
+    <!-- Copyright -->
+    <div class="border-t border-white/20 pt-10 pb-6 text-center text-indigo-200 text-sm mt-8" style="background-color: #1d0b33;">
+      © <?= date('Y'); ?> Sistem Informasi KIP-Kuliah POLINELA. Semua hak cipta dilindungi.
+    </div>
+  </footer>
 </div>
 
+<script>
+  // Script untuk sinkronisasi footer dengan sidebar
+  document.addEventListener("DOMContentLoaded", function() {
+    const menuBtn = document.getElementById('menu-btn');
+    const footerContent = document.getElementById('footer-content');
+    
+    // Cek apakah footerContent ada (halaman ini include footer)
+    // dan apakah layar desktop (lebar > 1024px atau menyesuaikan breakpoint sidebar)
+    if (menuBtn && footerContent) {
+      menuBtn.addEventListener('click', () => {
+        // Toggle class shifted pada footer
+        footerContent.classList.toggle('shifted');
+      });
+    }
+  });
+</script>
 
-
-  </div>
-
-</div>
-
-<!-- Copyright -->
-<div class="border-t border-white/20 pt-10 pb-6 text-center text-indigo-200 text-sm" style="background-color: #1d0b33;">
-  © <?= date('Y'); ?> Sistem Informasi KIP-Kuliah POLINELA. Semua hak cipta dilindungi.
-</div>
-</footer>
+<style>
+/* Style tambahan agar footer bergeser saat sidebar aktif */
+@media (min-width: 1024px) {
+    .footer-content.shifted {
+        margin-left: 250px; /* Sesuaikan dengan lebar sidebar */
+    }
+}
+</style>
 
 <style>
 .footer-statistik {
