@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Custom Error Pages
+ErrorDocument 404 /KIPWEB/404.php
+ErrorDocument 403 /KIPWEB/403.php
+
+# Prevent listing directories
+Options -Indexes
