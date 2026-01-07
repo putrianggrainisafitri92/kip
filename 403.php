@@ -147,7 +147,7 @@
             <a href="javascript:history.back()" class="btn" style="background:#e0e0e0; color:#444; box-shadow:none;">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
-            <a href="login.php" class="btn">
+            <a href="index.php" class="btn">
                 <i class="fas fa-sign-in-alt"></i> Login Ulang
             </a>
         </div>

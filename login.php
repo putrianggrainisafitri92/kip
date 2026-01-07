@@ -1,246 +1,157 @@
-<?php
-session_start();
-
-// Kalau sudah login, langsung ke beranda
-if (isset($_SESSION['login'])) {
-    header("Location: index.php");
-    exit;
-}
-
-$redirect = $_GET['redirect'] ?? '';
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Administrator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Akses Ditolak</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8f2ff 0%, #eaddff 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
 
-<style>
-/* RESET & DASAR */
-* {
-    box-sizing: border-box;
-    font-family: "Segoe UI", Arial, sans-serif;
-}
-/* ANIMASI BACKGROUND */
-    body {
-        margin: 0;
-        position: relative;
-        overflow: hidden; /* Mencegah scrollbar saat zoom */
-    }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(78, 10, 138, 0.15);
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            z-index: 2;
+        }
 
-    /* Pseudo-element untuk background agar bisa di-animate tanpa menggeser konten */
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%;
-        z-index: -1;
-        background: 
-            linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
-            url("assets/bgpolinela.jpeg") no-repeat center center fixed;
-        background-size: cover;
-        animation: zoomBg 25s infinite alternate ease-in-out;
-    }
+        .icon-lock {
+            font-size: 60px;
+            color: #4e0a8a;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: shake 4s ease-in-out infinite;
+        }
 
-    @keyframes zoomBg {
-        0% { transform: scale(1); }
-        100% { transform: scale(1.15); }
-    }
+        h1 {
+            font-size: 80px;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(45deg, #4e0a8a, #d32f2f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
 
-/* WRAPPER UTAMA */
-.page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    perspective: 1000px; /* Untuk efek 3D jika perlu */
-}
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4e0a8a;
+            margin: 10px 0 15px;
+        }
 
-/* CARD INFORMASI */
-.info-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px); /* Efek kaca */
-    -webkit-backdrop-filter: blur(10px);
-    max-width: 520px;
-    width: 100%;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    
-    /* ANIMASI MASUK */
-    animation: slideUpFade 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    opacity: 0; /* Mulai hidden */
-    transform: translateY(30px);
-}
+        p {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
 
-@keyframes slideUpFade {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #4e0a8a;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(78, 10, 138, 0.3);
+        }
 
-/* JUDUL */
-.info-card h1 {
-    margin: 0 0 15px;
-    font-size: 28px;
-    font-weight: 800;
-    background: linear-gradient(135deg, #4B0082, #2563eb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        .btn:hover {
+            background: #7b35d4;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(123, 53, 212, 0.4);
+        }
 
-/* SUBTEXT */
-.info-card p {
-    margin: 0 0 25px;
-    font-size: 16px;
-    color: #4b5563;
-    line-height: 1.6;
-}
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* BUTTON LOGIN */
-.btn-login {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px 32px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 50px;
-    border: none;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-    position: relative;
-    overflow: hidden;
-}
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            2% { transform: rotate(-5deg); }
+            4% { transform: rotate(5deg); }
+            6% { transform: rotate(0deg); }
+        }
 
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
-}
+        /* Background Shapes */
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 1;
+            filter: blur(60px);
+            opacity: 0.6;
+        }
+        .shape-1 {
+            width: 300px; height: 300px;
+            background: #ffcdd2; /* Slight Red tint for 403 */
+            top: -100px; left: -100px;
+            animation: moveShape 8s infinite alternate;
+        }
+        .shape-2 {
+            width: 250px; height: 250px;
+            background: #e1bee7;
+            bottom: -50px; right: -50px;
+            animation: moveShape 10s infinite alternate-reverse;
+        }
 
-.btn-login:active {
-    transform: translateY(0);
-}
-
-/* Efek kilauan pada tombol */
-.btn-login::after {
-    content: "";
-    position: absolute;
-    top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-    0% { left: -100%; }
-    20% { left: 100%; }
-    100% { left: 100%; }
-}
-
-/* Button close di modal (jika ada) */
-.close-modal {
-    float: right;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #555;
-}
-
-/* MODAL LOGIN & TEXT LAINNYA DI SIDEBAR.PHP */
-#loginModal {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-
-    display: none;
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(0, 0, 0, 0.45);
-    padding: 20px;
-}
-
-/* AKTIF */
-#loginModal.active {
-    display: flex;
-}
-
-/* BOX LOGIN */
-#loginModal .login-box {
-    background: #fff;
-    width: 380px;
-    max-width: 100%;
-    padding: 32px;
-    border-radius: 18px;
-    box-shadow: 0 20px 45px rgba(0,0,0,.35);
-    animation: pop .25s ease;
-}
-
-/* ANIMASI */
-@keyframes pop {
-    from { transform: scale(.9); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-}
-
-/* RESPONSIVE */
-@media (max-height: 600px) {
-    #loginModal {
-        align-items: flex-start;
-        overflow-y: auto;
-    }
-}
-</style>
+        @keyframes moveShape {
+            from { transform: translate(0, 0); }
+            to { transform: translate(30px, 30px); }
+        }
+    </style>
 </head>
-
 <body>
 
-<?php
-$_GET['login'] = 'required';
-$_GET['redirect'] = $redirect;
-include 'sidebar.php';
-?>
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
 
-<div class="page-wrapper">
-    <div class="info-card">
-        <h1>Akses Administrator</h1>
-        <p>
-            Untuk menjaga keamanan dan integritas sistem,  
-            halaman ini hanya dapat diakses oleh pengguna yang memiliki
-            <strong>hak akses administrator</strong>.
-        </p>
-        <p>
-            Silakan login kembali menggunakan akun Anda untuk melanjutkan ke sistem.
-        </p>
+    <div class="container">
+        <i class="fas fa-user-lock icon-lock"></i>
         
-        <!-- BUTTON LOGIN DITAMBAHKAN -->
-        <button class="btn-login" onclick="openLogin()">
-            Login Administrator
-        </button>
-    </div>
-</div>
+        <h1>403</h1>
+        <h2>Akses Dibatasi</h2>
+        <p>
+            Mohon maaf, Anda tidak memiliki hak akses yang cukup untuk membuka halaman ini. 
+            Laman ini dilindungi untuk alasan keamanan dan privasi data.
+        </p>
 
-<script>
-function openLogin() {
-    // Memanggil modal yang ada di sidebar.php
-    // Pastikan ID modalnya sesuai, biasanya 'loginModal'
-    const modal = document.getElementById('loginModal');
-    if(modal) {
-        modal.classList.add('active');
-    } else {
-        alert('Modal login tidak ditemukan. Pastikan sidebar.php termuat.');
-    }
-}
-</script>
+        <div style="display:flex; justify-content: center; gap: 10px;">
+            <a href="javascript:history.back()" class="btn" style="background:#e0e0e0; color:#444; box-shadow:none;">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+            <a href="index.php" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Login Ulang
+            </a>
+        </div>
+    </div>
 
 </body>
 </html>
