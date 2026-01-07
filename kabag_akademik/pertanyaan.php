@@ -212,11 +212,18 @@ $q = mysqli_query($koneksi, "SELECT * FROM pertanyaan ORDER BY id_pertanyaan DES
                     </td>
                     <td style="text-align:center;">
                         <div class="action-group">
-                            <a href="javascript:void(0)" class="btn-copy" onclick="copyText('<?= addslashes($row['email']) ?>')">
-                                <i class="fas fa-at"></i> Copy Email
-                            </a>
-                            <a href="javascript:void(0)" class="btn-copy" onclick="copyText('<?= addslashes($row['pesan']) ?>')">
-                                <i class="fas fa-quote-left"></i> Copy Pesan
+                            <?php 
+                                // Prepare Gmail link components
+                                $emailParam = rawurlencode($row['email']);
+                                $subjectParam = rawurlencode("Balasan: Pertanyaan KIP Kuliah (ID: " . $row['id_pertanyaan'] . ")");
+                                $bodyContent = "Halo " . $row['nama'] . ",\n\nMenjawab pertanyaan Anda:\n\"" . $row['pesan'] . "\"\n\n==============================\n\nJAWABAN:\n";
+                                $bodyParam = rawurlencode($bodyContent);
+                                
+                                // Direct Gmail Compose URL
+                                $gmailLink = "https://mail.google.com/mail/?view=cm&fs=1&to=$emailParam&su=$subjectParam&body=$bodyParam";
+                            ?>
+                            <a href="<?= $gmailLink ?>" target="_blank" class="btn-copy">
+                                <i class="fab fa-google"></i> Balas via Gmail
                             </a>
                             <?php if ($isBelum): ?>
                                 <a href="?done=<?= $row['id_pertanyaan'] ?>" class="btn-done" onclick="return confirm('Tandai sudah dibalas?')">

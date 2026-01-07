@@ -58,6 +58,20 @@ $q_tanya = mysqli_query($koneksi,
     "SELECT COUNT(*) FROM pertanyaan WHERE status_balasan='belum'");
 $h_tanya = mysqli_fetch_row($q_tanya)[0] ?? 0;
 
+// ==================== CHART DATA EXTENSION ====================
+
+// A. Saran Trend (Per Month)
+$saran_labels = [];
+$saran_data = [];
+// Group by Year-Month
+$q_saran_trend = mysqli_query($koneksi, "SELECT DATE_FORMAT(tanggal, '%M %Y') as periode, COUNT(*) as jml, MAX(tanggal) as tgl_sort FROM saran GROUP BY YEAR(tanggal), MONTH(tanggal) ORDER BY tgl_sort ASC LIMIT 12");
+while($r = mysqli_fetch_assoc($q_saran_trend)){
+    $saran_labels[] = $r['periode'];
+    $saran_data[] = (int)$r['jml'];
+}
+// Color for Saran (Single color)
+$saran_colors = array_fill(0, count($saran_labels), '#7b35d4');
+
 
 // --- DATA FOR CHARTS ---
 
@@ -103,6 +117,7 @@ $c_tahapan = getChartStats($koneksi, 'pedoman_tahapan', 'status');
 $c_prestasi = getChartStats($koneksi, 'mahasiswa_prestasi', 'status');
 $c_lapor = getChartStats($koneksi, 'laporan', 'status_tindak');
 $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
+$c_tanya = getChartStats($koneksi, 'pertanyaan', 'status_balasan');
 
 ?>
 
@@ -181,6 +196,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
             margin-bottom: 40px;
         }
 
+        /* STAT_CARD MATCHING PENGURUS */
         .stat-card {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -198,19 +214,14 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
         
         .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(78, 10, 138, 0.15); }
 
-        /* Colored top border for variety */
-        .stat-card::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, #6a11cb, #2575fc);
-        }
-
+        /* Icon Base Style */
         .stat-icon {
             width: 50px; height: 50px;
             border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: white;
+            font-size: 24px; color: white;
             flex-shrink: 0;
-            background: linear-gradient(135deg, #4e0a8a, #7b35d4);
+            /* Gradient handled inline per card */
         }
 
         .stat-info h3 { margin: 0; font-size: 24px; color: #4e0a8a; font-weight: 800; }
@@ -222,10 +233,9 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
             background: #ff4757; color: white;
             font-size: 10px; padding: 2px 6px; border-radius: 10px;
             font-weight: bold;
-            /* Dynamic JS handled usually, here static css logic for demo */
         }
 
-        /* CHART GRID - Auto fit for multiple charts */
+        /* CHART GRID */
         .chart-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -237,13 +247,18 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
             padding: 25px;
             border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(78, 10, 138, 0.05);
+            border: 1px solid rgba(123, 53, 212, 0.1);
+            transition: .3s ease;
             display: flex; flex-direction: column;
         }
         
+        .chart-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(78, 10, 138, 0.15); }
+        
         .chart-card h3 {
             margin: 0 0 15px 0;
-            font-size: 16px; color: #4e0a8a; font-weight: 700;
+            font-size: 18px; color: #4e0a8a; font-weight: 700;
             border-bottom: 2px solid #f3e8ff; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
         }
         
         .chart-container { height: 250px; width: 100%; position: relative; }
@@ -279,7 +294,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
         
         <!-- 1. Validasi Berita -->
         <div class="stat-card animate-up delay-1">
-            <div class="stat-icon icon-berita"><i class="fa-solid fa-newspaper"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #6a11cb, #2575fc);"><i class="fa-solid fa-newspaper"></i></div>
             <div class="stat-info">
                 <h3><?= $h_berita ?></h3>
                 <p>Validasi Berita</p>
@@ -289,7 +304,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 2. Validasi SK -->
         <div class="stat-card animate-up delay-2">
-            <div class="stat-icon icon-sk"><i class="fa-solid fa-file-signature"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #ff9966, #ff5e62);"><i class="fa-solid fa-file-signature"></i></div>
             <div class="stat-info">
                 <h3><?= $h_sk ?></h3>
                 <p>Validasi SK</p>
@@ -298,7 +313,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 3. Validasi Pedoman -->
         <div class="stat-card animate-up delay-3">
-            <div class="stat-icon icon-tahapan"><i class="fa-solid fa-book"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);"><i class="fa-solid fa-book"></i></div>
             <div class="stat-info">
                 <h3><?= $h_pedoman ?></h3>
                 <p>Validasi Pedoman</p>
@@ -307,7 +322,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 4. Validasi Tahapan -->
         <div class="stat-card animate-up delay-4">
-            <div class="stat-icon icon-tahapan"><i class="fa-solid fa-list-check"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);"><i class="fa-solid fa-list-check"></i></div>
             <div class="stat-info">
                 <h3><?= $h_tahapan ?></h3>
                 <p>Validasi Tahapan</p>
@@ -316,16 +331,16 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 5. Validasi Jumlah KIP (Mahasiswa Pending) -->
         <div class="stat-card animate-up delay-5">
-            <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"><i class="fa-solid fa-coins"></i></div>
             <div class="stat-info">
                 <h3><?= $h_kip ?></h3>
                 <p>Validasi Jml KIP</p>
             </div>
         </div>
         
-        <!-- 6. Validasi Prestasi (Adding this as extra since it's usually needed too) -->
+        <!-- 6. Validasi Prestasi -->
         <div class="stat-card animate-up delay-6">
-            <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"><i class="fa-solid fa-user-graduate"></i></div>
             <div class="stat-info">
                 <h3><?= $h_prestasi ?></h3>
                 <p>Validasi Prestasi</p>
@@ -334,7 +349,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 7. Lihat Laporan -->
         <div class="stat-card animate-up delay-7">
-            <div class="stat-icon icon-lapor"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);"><i class="fa-solid fa-chart-line"></i></div>
             <div class="stat-info">
                 <h3><?= $h_lapor ?></h3>
                 <p>Laporan Masuk</p>
@@ -343,7 +358,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 8. Lihat Evaluasi -->
         <div class="stat-card animate-up delay-8">
-            <div class="stat-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);"><i class="fa-solid fa-clipboard-check"></i></div>
             <div class="stat-info">
                 <h3><?= $h_eval ?></h3>
                 <p>Cek Evaluasi</p>
@@ -352,7 +367,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 9. CRUD User (Total) -->
         <div class="stat-card animate-up delay-9">
-            <div class="stat-icon"><i class="fa-solid fa-users-cog"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #89f7fe, #66a6ff);"><i class="fa-solid fa-users-cog"></i></div>
             <div class="stat-info">
                 <h3><?= $h_user ?></h3>
                 <p>Total User</p>
@@ -361,7 +376,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 10. Saran -->
         <div class="stat-card animate-up delay-10">
-            <div class="stat-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #c471f5, #fa71cd);"><i class="fa-solid fa-lightbulb"></i></div>
             <div class="stat-info">
                 <h3><?= $h_saran ?></h3>
                 <p>Saran Masuk</p>
@@ -370,7 +385,7 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
         <!-- 11. Pertanyaan (Unanswered) -->
         <div class="stat-card animate-up delay-10">
-            <div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #48c6ef, #6f86d6);"><i class="fa-solid fa-circle-question"></i></div>
             <div class="stat-info">
                 <h3><?= $h_tanya ?></h3>
                 <p>Pertanyaan</p>
@@ -415,6 +430,18 @@ $c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
         <div class="chart-card animate-up delay-7">
             <h3><i class="fa-solid fa-clipboard-check"></i> Statistik Evaluasi</h3>
             <div class="chart-container"><canvas id="cEval"></canvas></div>
+        </div>
+
+        <!-- 8. Saran (Trend) -->
+        <div class="chart-card animate-up delay-8">
+            <h3><i class="fa-solid fa-lightbulb"></i> Trend Saran Masuk</h3>
+            <div class="chart-container"><canvas id="cSaran"></canvas></div>
+        </div>
+
+        <!-- 9. Pertanyaan (Status) -->
+        <div class="chart-card animate-up delay-9">
+            <h3><i class="fa-solid fa-circle-question"></i> Statistik Pertanyaan</h3>
+            <div class="chart-container"><canvas id="cPertanyaan"></canvas></div>
         </div>
     </div>
 
@@ -472,6 +499,8 @@ createChart('cTahapan', 'Jumlah Tahapan', <?= json_encode($c_tahapan['labels']) 
 createChart('cPrestasi', 'Jumlah Prestasi', <?= json_encode($c_prestasi['labels']) ?>, <?= json_encode($c_prestasi['data']) ?>, <?= json_encode($c_prestasi['colors']) ?>);
 createChart('cLapor', 'Jumlah Laporan', <?= json_encode($c_lapor['labels']) ?>, <?= json_encode($c_lapor['data']) ?>, <?= json_encode($c_lapor['colors']) ?>);
 createChart('cEval', 'Jumlah Evaluasi', <?= json_encode($c_eval['labels']) ?>, <?= json_encode($c_eval['data']) ?>, <?= json_encode($c_eval['colors']) ?>);
+createChart('cSaran', 'Jumlah Saran', <?= json_encode($saran_labels) ?>, <?= json_encode($saran_data) ?>, <?= json_encode($saran_colors) ?>);
+createChart('cPertanyaan', 'Jumlah Pertanyaan', <?= json_encode($c_tanya['labels']) ?>, <?= json_encode($c_tanya['data']) ?>, <?= json_encode($c_tanya['colors']) ?>);
 </script>
 
 </body>

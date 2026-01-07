@@ -247,12 +247,21 @@ if (isset($_POST['simpan'])) {
                 padding: 80px 15px 40px 15px;
             }
         }
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <div class="form-card">
+    <div class="form-card animate-up">
         <h2>Tambah Berita Baru</h2>
 
         <form method="post" enctype="multipart/form-data">

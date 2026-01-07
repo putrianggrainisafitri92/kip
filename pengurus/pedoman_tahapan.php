@@ -53,18 +53,44 @@ $labels = [
         .btn-hapus { background: #ffebee; color: #c62828; }
         .btn-hapus:hover { background: #c62828; color: white; }
 
-        @media (max-width: 992px) { .content { margin-left: 0; padding: 80px 15px; } }
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) { 
+            .content { margin-left: 0; padding: 80px 20px; } 
+        }
+        @media (max-width: 768px) {
+            .header-section { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header-section h2 { font-size: 22px; }
+            .card { padding: 15px; }
+            th, td { padding: 10px; font-size: 13px; }
+            .btn { padding: 6px 10px; font-size: 11px; }
+            .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .btn-add { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <div class="header-section">
+    <div class="header-section animate-up">
         <h2>Kelola Tahapan & Jadwal</h2>
     </div>
 
-    <?php foreach ($categories as $cat): ?>
-        <div class="card">
+    <?php 
+    $delay = 1; 
+    foreach ($categories as $cat): 
+        $delayTime = $delay * 0.1;
+    ?>
+        <div class="card animate-up" style="animation-delay: <?= $delayTime ?>s;">
             <div class="card-header">
                 <div class="card-title">
                     <i class="fas fa-calendar-alt"></i> <?= $labels[$cat] ?>
@@ -137,7 +163,10 @@ $labels = [
             </table>
             </div>
         </div>
-    <?php endforeach; ?>
+        </div>
+    <?php 
+        $delay++;
+    endforeach; ?>
 
 </div>
 

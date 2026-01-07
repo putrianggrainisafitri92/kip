@@ -46,17 +46,36 @@ $q = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan ORDER BY status ASC, 
         .modal-content { background: white; margin: 15vh auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
         .close { float: right; font-size: 24px; cursor: pointer; }
 
-        @media (max-width: 992px) { .content { margin-left: 0; padding: 80px 15px; } }
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) { 
+            .content { margin-left: 0; padding: 30px 20px; } 
+        }
+        @media (max-width: 768px) {
+            .header-section h2 { font-size: 24px; }
+            th, td { padding: 10px; font-size: 13px; }
+            .btn { font-size: 11px; padding: 6px 10px; }
+            .table-responsive { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="content">
-    <div class="header-section">
+    <div class="header-section animate-up">
         <h2>Validasi Tahapan & Jadwal</h2>
     </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive animate-up" style="animation-delay: 0.1s;">
         <table>
             <thead>
                 <tr>

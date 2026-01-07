@@ -209,20 +209,30 @@ $q = mysqli_query($koneksi, "SELECT * FROM pedoman ORDER BY id_pedoman DESC");
             line-height: 1;
         }
         .close:hover { color: #4e0a8a; }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 
 <body>
 
 <div class="content">
-    <div class="header-section">
+    <div class="header-section animate-up">
         <h2>Kelola Pedoman</h2>
         <a href="pedoman_upload.php" class="btn-add-news">
             <i class="fas fa-plus"></i> Upload Pedoman
         </a>
     </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive animate-up" style="animation-delay: 0.1s;">
         <table>
             <thead>
                 <tr>
