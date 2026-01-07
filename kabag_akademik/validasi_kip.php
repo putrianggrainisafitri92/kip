@@ -244,6 +244,15 @@ $q = mysqli_query($koneksi, "
             color: white;
             justify-content: center;
         }
+
+        /* SEARCH & ANIMATION */
+        .table-container { animation: fadeInUp 0.8s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .search-box { margin-bottom: 20px; position: relative; animation: fadeInUp 0.6s ease-out; }
+        .search-input { width: 100%; padding: 15px 45px 15px 20px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: 'Poppins', sans-serif; font-size: 14px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box; }
+        .search-input:focus { border-color: #7b35d4; box-shadow: 0 8px 20px rgba(123, 53, 212, 0.1); outline: none; }
+        .search-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px; }
     </style>
 </head>
 <body>
@@ -254,7 +263,12 @@ $q = mysqli_query($koneksi, "
     </div>
 
     <div class="table-container">
-        <table>
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Cari Skema, Tahun, atau Pengunggah...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <table id="dataTable">
             <thead>
                 <tr>
                     <th style="width: 50px; text-align:center;">No</th>
@@ -270,7 +284,7 @@ $q = mysqli_query($koneksi, "
                 <?php 
                 $no = 1;
                 while($batch = mysqli_fetch_array($q)) { 
-                    $admin_username = 'Unknown';
+                    $admin_username = 'Admin / Import'; // Default fallback if id_admin is missing
                     if(!empty($batch['id_admin'])){
                         $st = $koneksi->prepare("SELECT username FROM admin WHERE id_admin = ?");
                         $st->bind_param("i", $batch['id_admin']);
@@ -391,6 +405,19 @@ window.onclick = function(event){
         }
     });
 }
+</script>
+
+<script>
+    // Live Search
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('table tbody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
 </script>
 
 </body>

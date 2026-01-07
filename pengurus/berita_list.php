@@ -4,7 +4,7 @@ if($_SESSION['level'] != '11') die("Akses ditolak!");
 include "../koneksi.php";
 
 // Ambil semua berita milik admin 1
-$q = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
+$q_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
 ?>
 
 <?php include "sidebar.php"; ?>
@@ -199,15 +199,12 @@ $q = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
             line-height: 1;
         }
         .close:hover { color: #4e0a8a; }
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-up {
-            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            opacity: 0;
-        }
+    </style>
+    <style>
+        .search-box { margin-bottom: 20px; position: relative; animation: fadeInUp 0.6s ease-out; }
+        .search-input { width: 100%; padding: 15px 45px 15px 20px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: 'Poppins'; font-size: 14px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.03); box-sizing: border-box; }
+        .search-input:focus { border-color: #7b35d4; box-shadow: 0 8px 20px rgba(123, 53, 212, 0.1); outline: none; }
+        .search-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px; }
     </style>
 </head>
 
@@ -220,9 +217,15 @@ $q = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
             <i class="fas fa-plus"></i> Tambah Berita
         </a>
     </div>
+
+    <!-- Search Box -->
+    <div class="search-box animate-up" style="animation-delay: 0.1s;">
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari Berita...">
+        <i class="fas fa-search search-icon"></i>
+    </div>
     
     <div class="table-responsive animate-up" style="animation-delay: 0.1s;">
-        <table>
+        <table id="dataTable">
             <thead>
                 <tr>
                     <th>Judul Berita</th>
@@ -233,7 +236,7 @@ $q = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = mysqli_fetch_assoc($q)) { 
+                <?php while($row = mysqli_fetch_assoc($q_berita)) { 
                     $statusClass = strtolower($row['status']);
                     $catatan = !empty($row['catatan_revisi']) ? htmlspecialchars($row['catatan_revisi']) : "-";
                 ?>
@@ -304,5 +307,17 @@ window.onclick = function(event){
 }
 </script>
 
+<script>
+    // Live Search
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#dataTable tbody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
 </body>
 </html>

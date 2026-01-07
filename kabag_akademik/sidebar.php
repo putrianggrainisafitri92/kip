@@ -90,7 +90,7 @@
             border-radius: 10px;
             font-size: 20px;
             cursor: pointer;
-            z-index: 11000;
+            z-index: 99999;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             align-items: center;
             justify-content: center;
@@ -107,6 +107,7 @@
             color: white;
             font-size: 20px;
             cursor: pointer;
+            z-index: 11000;
         }
 
         /* Overlay Background */
@@ -130,7 +131,7 @@
                 left: 0;
             }
             .mobile-toggle {
-                display: flex;
+                display: flex !important;
             }
             .close-sidebar {
                 display: block;
@@ -143,6 +144,9 @@
     </style>
 </head>
 <body>
+
+
+
 
 <button class="mobile-toggle" id="btnToggle">
     <i class="fa-solid fa-bars"></i>
@@ -218,28 +222,38 @@
     </a>
 </div>
 
+
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
     const btnToggle = document.getElementById('btnToggle');
     const btnClose = document.getElementById('btnClose');
     const sidebar = document.getElementById('sidebarMenu');
     const overlay = document.getElementById('overlay');
 
-    function toggleSidebar() {
-        sidebar.classList.toggle('show');
-    }
+    if(btnToggle && sidebar) {
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+        }
 
-    btnToggle.addEventListener('click', toggleSidebar);
-    btnClose.addEventListener('click', toggleSidebar);
-    overlay.addEventListener('click', toggleSidebar);
+        btnToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        if(btnClose) btnClose.addEventListener('click', toggleSidebar);
+        if(overlay) overlay.addEventListener('click', toggleSidebar);
+    }
 
     // Auto active link
     const currentUrl = window.location.pathname.split('/').pop();
     const links = document.querySelectorAll('.sidebar a');
     links.forEach(link => {
-        if (link.getAttribute('href') === currentUrl) {
-            link.classList.add('active');
-        }
+        if (link.getAttribute('href') === currentUrl) link.classList.add('active');
     });
+
+});
 </script>
 
 </body>

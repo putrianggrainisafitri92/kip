@@ -90,7 +90,7 @@
             border-radius: 10px;
             font-size: 20px;
             cursor: pointer;
-            z-index: 11000;
+            z-index: 99999;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             align-items: center;
             justify-content: center;
@@ -107,6 +107,7 @@
             color: white;
             font-size: 20px;
             cursor: pointer;
+            z-index: 11000;
         }
 
         /* Overlay Background */
@@ -130,7 +131,7 @@
                 left: 0;
             }
             .mobile-toggle {
-                display: flex;
+                display: flex !important;
             }
             .close-sidebar {
                 display: block;
@@ -143,6 +144,17 @@
     </style>
 </head>
 <body>
+
+<?php
+// Notification Logic (Pengurus)
+$n_ber=0; $n_ped=0; $n_tahap=0; $n_pres=0;
+if(isset($koneksi)){
+    $q=$koneksi->query("SELECT COUNT(*) FROM berita WHERE status='rejected' OR status='revisi'"); if($q)$n_ber=$q->fetch_row()[0];
+    $q=$koneksi->query("SELECT COUNT(*) FROM pedoman WHERE status='rejected' OR status='revisi'"); if($q)$n_ped=$q->fetch_row()[0];
+    $q=$koneksi->query("SELECT COUNT(*) FROM pedoman_tahapan WHERE status='rejected' OR status='revisi'"); if($q)$n_tahap=$q->fetch_row()[0];
+    $q=$koneksi->query("SELECT COUNT(*) FROM mahasiswa_prestasi WHERE status='rejected' OR status='revisi'"); if($q)$n_pres=$q->fetch_row()[0];
+}
+?>
 
 <button class="mobile-toggle" id="btnToggle">
     <i class="fa-solid fa-bars"></i>
@@ -167,18 +179,22 @@
 
     <a href="berita_list.php">
         <i class="fa-solid fa-newspaper"></i> Kelola Berita
+        <?php if($n_ber>0) echo "<span class='badge' style='background:#ff9800; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:auto;'>$n_ber</span>"; ?>
     </a>
 
     <a href="pedoman_list.php">
         <i class="fa-solid fa-book"></i> Kelola Pedoman
+        <?php if($n_ped>0) echo "<span class='badge' style='background:#ff9800; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:auto;'>$n_ped</span>"; ?>
     </a>
 
     <a href="pedoman_tahapan.php">
         <i class="fa-solid fa-list-check"></i> Kelola Tahapan & Jadwal
+        <?php if($n_tahap>0) echo "<span class='badge' style='background:#ff9800; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:auto;'>$n_tahap</span>"; ?>
     </a>
 
     <a href="prestasi_list.php">
         <i class="fa-solid fa-trophy"></i> Mahasiswa Berprestasi
+        <?php if($n_pres>0) echo "<span class='badge' style='background:#ff9800; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:auto;'>$n_pres</span>"; ?>
     </a>
 
     <a href="bantuan.php">
@@ -190,28 +206,73 @@
     </a>
 </div>
 
+<audio id="notifSound" src="data:audio/mp3;base64,//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//uQxAsAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" preload="auto"></audio>
+<div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 100000;"></div>
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
     const btnToggle = document.getElementById('btnToggle');
     const btnClose = document.getElementById('btnClose');
     const sidebar = document.getElementById('sidebarMenu');
     const overlay = document.getElementById('overlay');
 
-    function toggleSidebar() {
-        sidebar.classList.toggle('show');
+    if(btnToggle && sidebar) {
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+        }
+
+        btnToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        if(btnClose) btnClose.addEventListener('click', toggleSidebar);
+        if(overlay) overlay.addEventListener('click', toggleSidebar);
     }
 
-    btnToggle.addEventListener('click', toggleSidebar);
-    btnClose.addEventListener('click', toggleSidebar);
-    overlay.addEventListener('click', toggleSidebar);
-
-    // Auto active link
     const currentUrl = window.location.pathname.split('/').pop();
     const links = document.querySelectorAll('.sidebar a');
     links.forEach(link => {
-        if (link.getAttribute('href') === currentUrl) {
-            link.classList.add('active');
-        }
+        if (link.getAttribute('href') === currentUrl) link.classList.add('active');
     });
+
+    // Notif Pengurus
+    let lastCount = -1;
+    function showToast(msg) {
+        const c = document.getElementById('toast-container');
+        if(!c) return;
+        const t = document.createElement('div');
+        t.style.cssText = "background:#fff; color:#333; padding:15px; margin-top:10px; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.2); border-left:5px solid #ff9800; display:flex; align-items:center; gap:10px; animation:slideIn 0.5s;";
+        t.innerHTML = `<i class='fa-solid fa-bell' style='color:#ff9800'></i><div><b>Info Pengurus</b><br>${msg}</div>`;
+        c.appendChild(t);
+        const a = document.getElementById('notifSound');
+        if(a) a.play().catch(()=>{});
+        setTimeout(()=>{ t.remove(); }, 5000);
+    }
+    
+    // Add Keyframes
+    const s = document.createElement('style');
+    s.innerHTML = "@keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }";
+    document.head.appendChild(s);
+
+    function check() {
+        fetch('get_notif.php').then(r=>r.json()).then(d=>{
+            if(d.count !== undefined) {
+                let c = parseInt(d.count);
+                if(c > 0 && c > lastCount && lastCount != -1) showToast(d.message);
+                lastCount = c;
+            }
+        }).catch(()=>{});
+    }
+    setInterval(check, 10000);
+    check();
+    
+    document.body.addEventListener('click', function(){
+        const a = document.getElementById('notifSound');
+        if(a) { a.volume=0; a.play().then(()=>{ a.pause(); a.currentTime=0; a.volume=1; }).catch(()=>{}); }
+    }, {once:true});
+});
 </script>
 
 </body>
