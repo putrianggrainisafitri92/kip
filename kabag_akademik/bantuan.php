@@ -279,6 +279,7 @@ include 'sidebar.php';
     <div class="guide-grid" id="guideGrid">
         <?php
         $guides = [
+<<<<<<< HEAD
     ["icon" => "fa-solid fa-gauge-high", "title" => "Dashboard", "desc" => "Halaman utama untuk memantau ringkasan data, grafik statistik validasi, dan waktu sistem secara real-time."],
     ["icon" => "fa-solid fa-newspaper", "title" => "Validasi Berita", "desc" => "Meninjau dan memvalidasi berita yang diajukan oleh Pengurus sebelum ditampilkan ke publik."],
     ["icon" => "fa-solid fa-file-signature", "title" => "Validasi SK", "desc" => "Memeriksa keabsahan Surat Keputusan (SK) KIP-K. Anda dapat menyetujui atau menolak dengan catatan revisi."],
@@ -306,6 +307,32 @@ foreach ($guides as $index => $g) {
         </div>
     </div>";
 }
+=======
+            ["icon" => "fas fa-th-large", "title" => "Dashboard", "desc" => "Melihat ringkasan data, grafik validasi, dan waktu sistem secara real-time."],
+            ["icon" => "fas fa-newspaper", "title" => "Validasi Berita", "desc" => "Meninjau berita yang diajukan Pengurus. Berita butuh persetujuan Anda untuk tampil di halaman publik."],
+            ["icon" => "fas fa-file-invoice", "title" => "Validasi SK", "desc" => "Melakukan validasi terhadap Surat Keputusan. Tombol reject akan memunculkan popup catatan revisi."],
+            ["icon" => "fas fa-book", "title" => "Pusat Pedoman", "desc" => "Mengelola dokumen pedoman pendaftaran. Pastikan file PDF sudah sah sebelum disebarkan."],
+            ["icon" => "fas fa-id-card", "title" => "Batch KIP", "desc" => "Validasi data mahasiswa penerima KIP secara kolektif per skema dan tahun angkatan."],
+            ["icon" => "fas fa-award", "title" => "Validasi Prestasi", "desc" => "Kurasi data prestasi mahasiswa yang layak dipublikasikan sebagai apresiasi kampus."],
+            ["icon" => "fas fa-exclamation-triangle", "title" => "Monitoring Laporan", "desc" => "Melihat keluhan atau laporan kendala dari mahasiswa terkait sistem atau pencairan dana."],
+            ["icon" => "fas fa-clipboard-check", "title" => "Evaluasi Akademik", "desc" => "Verifikasi rutin nilai dan berkas semesteran mahasiswa KIP-K untuk menentukan keberlanjutan beasiswa."],
+            ["icon" => "fas fa-user-shield", "title" => "Kontrol User", "desc" => "Otoritas untuk menambah atau mengedit akun Admin 1 (Pengurus) dan Admin 2 di sistem."],
+            ["icon" => "fas fa-envelope-open-text", "title" => "Saran & Pertanyaan", "desc" => "Menampung masukan pengguna dan menjawab pertanyaan publik secara efisien."]
+        ];
+
+        foreach ($guides as $index => $g) {
+            $delay = $index * 0.1;
+            echo "
+            <div class='guide-card' style='transition-delay: {$delay}s'>
+                <div class='pop-dot'></div>
+                <div class='card-inner'>
+                    <div class='icon-box'><i class='{$g['icon']}'></i></div>
+                    <h3>{$g['title']}</h3>
+                    <p>{$g['desc']}</p>
+                </div>
+            </div>";
+        }
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
         ?>
     </div>
 

@@ -537,7 +537,7 @@ include 'koneksi.php';
             <thead class="bg-purple-700 text-white">
               <tr>
                 <th class="py-3 px-4 w-10">#</th>
-                <th class="py-3 px-4">Nama File</th>
+                <th class="py-3 px-4">Nama Pedoman</th>
                 <th class="py-3 px-4 w-48 text-center">Aksi</th>
               </tr>
             </thead>
@@ -567,17 +567,7 @@ include 'koneksi.php';
                   }
 
                   // Cleaning Filename for display
-                  $rawName = $row['nama_file'];
-                  // Remove extension
-                  $cleanName = pathinfo($rawName, PATHINFO_FILENAME);
-                  // Remove date prefix if matches YYYYMMDD-
-                  $cleanName = preg_replace('/^\d{8}-/', '', $cleanName);
-                  // Remove potential hash suffix like _abc123
-                  $cleanName = preg_replace('/_[a-f0-9]{6,}$/i', '', $cleanName);
-                  // Replace dashes/underscores with spaces
-                  $cleanName = str_replace(['-', '_'], ' ', $cleanName);
-                  // Capitalize first letters
-                  $displayName = ucwords($cleanName);
+                  $displayName = htmlspecialchars($row['nama_file']);
 
                   echo "
                     <tr class='border-b hover:bg-purple-50'>

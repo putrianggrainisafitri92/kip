@@ -269,6 +269,7 @@ include "../koneksi.php";
     </div>
 
     <div class="guide-grid" id="guideGrid">
+<<<<<<< HEAD
         <!-- 1. Dashboard -->
         <div class="guide-card">
             <div class="pop-dot"></div>
@@ -286,6 +287,13 @@ include "../koneksi.php";
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-file-invoice"></i></div>
             <h3>2. Pengelolaan Dokumen SK</h3>
+=======
+        <!-- Kelola SK -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-file-invoice"></i></div>
+            <h3>1. Pengelolaan Dokumen SK</h3>
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
             <ul class="steps">
                 <li><div class="step-num">1</div> Klik menu <b>SK KIP</b> -> <b>Tambah SK</b>.</li>
                 <li><div class="step-num">2</div> Isi Nama, Tahun, dan nomor SK.</li>
@@ -294,11 +302,19 @@ include "../koneksi.php";
             </ul>
         </div>
 
+<<<<<<< HEAD
         <!-- 3. Manajemen Mahasiswa -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-users"></i></div>
             <h3>3. Manajemen Mahasiswa</h3>
+=======
+        <!-- Manajemen Mahasiswa -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-users"></i></div>
+            <h3>2. Manajemen Mahasiswa</h3>
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
             <ul class="steps">
                 <li><div class="step-num">1</div> Gunakan menu <b>Import Excel</b> untuk data massal.</li>
                 <li><div class="step-num">2</div> Gunakan menu <b>Cari</b> untuk edit data satuan.</li>
@@ -310,11 +326,19 @@ include "../koneksi.php";
             </div>
         </div>
 
+<<<<<<< HEAD
         <!-- 4. Pelaporan -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-flag"></i></div>
             <h3>4. Menangani Laporan</h3>
+=======
+        <!-- Pelaporan -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-flag"></i></div>
+            <h3>3. Menangani Laporan</h3>
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
             <ul class="steps">
                 <li><div class="step-num">1</div> Buka menu <b>Monitoring Laporan</b>.</li>
                 <li><div class="step-num">2</div> Tinjau bukti lampiran aduan mahasiswa.</li>
@@ -323,18 +347,28 @@ include "../koneksi.php";
             </ul>
         </div>
 
+<<<<<<< HEAD
         <!-- 5. Evaluasi -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-check-double"></i></div>
             <h3>5. Evaluasi Kinerja</h3>
+=======
+        <!-- Evaluasi -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-check-double"></i></div>
+            <h3>4. Evaluasi Kinerja</h3>
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
             <ul class="steps">
                 <li><div class="step-num">1</div> Verifikasi berkas semesteran yang diunggah mahasiswa.</li>
                 <li><div class="step-num">2</div> Beri status <b>Verified</b> jika data sesuai.</li>
                 <li><div class="step-num">3</div> Cetak formulir fisik via tombol <b>Generate PDF</b>.</li>
             </ul>
         </div>
+    </div>
 
+<<<<<<< HEAD
         <!-- 6. Bantuan -->
         <div class="guide-card">
             <div class="pop-dot"></div>
@@ -348,6 +382,8 @@ include "../koneksi.php";
         </div>
     </div>
 
+=======
+>>>>>>> 5aacb94924f591cbbd3502ad80e2e6f2445cc3a0
     <div style="text-align:center; margin-top:50px; color:#aaa; font-size:0.85rem;">
         <i class="fas fa-shield-alt"></i> Panel Administrator KIP-Kuliah Politeknik Negeri Lampung.
     </div>
