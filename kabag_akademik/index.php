@@ -1,28 +1,109 @@
 <?php
 session_start();
 include '../protect.php';
-check_level(13);       
+check_level(13);
 include '../koneksi.php';
 include 'sidebar.php';
 
 // Ambil nama lengkap dari session
-$nama = isset($_SESSION['nama_lengkap']) ? $_SESSION['nama_lengkap'] : "User";
+$nama = isset($_SESSION['nama_lengkap']) ? $_SESSION['nama_lengkap'] : "admin";
 
-// Hitung data untuk statistik
-function getCount($koneksi, $table, $status) {
-    $q = mysqli_query($koneksi, "SELECT COUNT(*) AS jml FROM $table WHERE status='$status'");
-    return mysqli_fetch_assoc($q)['jml'];
+// ==================== QUERY STATISTIK (Task List / To-Do) ====================
+
+// 1. Validasi Berita (Pending)
+$q_berita = mysqli_query($koneksi, "SELECT COUNT(*) FROM berita WHERE status='pending'");
+$h_berita = mysqli_fetch_row($q_berita)[0];
+
+// 2. Validasi SK (Pending)
+$q_sk = mysqli_query($koneksi, "SELECT COUNT(*) FROM sk_kipk WHERE status='pending'");
+$h_sk = mysqli_fetch_row($q_sk)[0];
+
+// 3. Validasi Pedoman (Pending)
+$q_pedoman = mysqli_query($koneksi, "SELECT COUNT(*) FROM pedoman WHERE status='pending'");
+$h_pedoman = mysqli_fetch_row($q_pedoman)[0];
+
+// 4. Validasi Tahapan (Pending)
+$q_tahapan = mysqli_query($koneksi, "SELECT COUNT(*) FROM pedoman_tahapan WHERE status='pending'");
+$h_tahapan = mysqli_fetch_row($q_tahapan)[0];
+
+// 5. Validasi Jumlah KIP (Mahasiswa Pending)
+$q_kip = mysqli_query($koneksi, "SELECT COUNT(*) FROM mahasiswa_kip WHERE status='pending'");
+$h_kip = mysqli_fetch_row($q_kip)[0];
+
+// 6. Validasi Prestasi (Pending)
+$q_prestasi = mysqli_query($koneksi, "SELECT COUNT(*) FROM mahasiswa_prestasi WHERE status='pending'");
+$h_prestasi = mysqli_fetch_row($q_prestasi)[0];
+
+// 7. Lihat Laporan (Pending + Diproses)
+$q_lapor = mysqli_query($koneksi, "SELECT COUNT(*) FROM laporan WHERE status_tindak='pending' OR status_tindak='diproses'");
+$h_lapor = mysqli_fetch_row($q_lapor)[0];
+
+// 8. Lihat Evaluasi (Belum Diverifikasi)
+// Assuming table 'evaluasi' and column 'status_verifikasi' being NULL or 'Belum Diverifikasi'
+// Or counting plain records if no complex status logic exists yet. Let's check logic used in charts:
+// Chart used 'status_verifikasi'.
+$q_eval = mysqli_query($koneksi, "SELECT COUNT(*) FROM evaluasi WHERE status_verifikasi IS NULL OR status_verifikasi='Belum Diverifikasi' OR status_verifikasi='pending'");
+$h_eval = mysqli_fetch_row($q_eval)[0];
+
+// 9. Total User (CRUD User)
+$q_user = mysqli_query($koneksi, "SELECT COUNT(*) FROM admin");
+$h_user = mysqli_fetch_row($q_user)[0];
+
+// 10. Saran (Total)
+$q_saran = mysqli_query($koneksi, "SELECT COUNT(*) FROM saran");
+$h_saran = mysqli_fetch_row($q_saran)[0];
+
+// 11. Pertanyaan (Belum Dijawab)
+$q_tanya = mysqli_query($koneksi, 
+    "SELECT COUNT(*) FROM pertanyaan WHERE status_balasan='belum'");
+$h_tanya = mysqli_fetch_row($q_tanya)[0] ?? 0;
+
+
+// --- DATA FOR CHARTS ---
+
+function getChartStats($koneksi, $table, $col_status) {
+    $labels = []; 
+    $data = []; 
+    $colors = [];
+    
+    // Default colors
+    $c_green = '#4caf50';
+    $c_orange = '#ff9800';
+    $c_red = '#f44336';
+    $c_def = '#4e0a8a';
+
+    $q = mysqli_query($koneksi, "SELECT $col_status, COUNT(*) as jml FROM $table GROUP BY $col_status");
+    
+    while($r = mysqli_fetch_assoc($q)) {
+        $st_raw = $r[$col_status];
+        if ($st_raw == '' || $st_raw == null) $st_raw = 'Belum';
+        
+        $st = strtolower($st_raw);
+        $labels[] = ucfirst($st_raw);
+        $data[] = (int)$r['jml'];
+
+        // Assign Color
+        if (in_array($st, ['approved', 'approve', 'selesai', 'diterima', 'verified', 'sudah', 'valid'])) {
+            $colors[] = $c_green;
+        } elseif (in_array($st, ['rejected', 'reject', 'ditolak', 'gagal', 'tidak valid'])) {
+            $colors[] = $c_red;
+        } elseif (in_array($st, ['pending', 'diproses', 'proses', 'menunggu', 'belum', 'belum diverifikasi'])) {
+            $colors[] = $c_orange;
+        } else {
+            $colors[] = $c_def;
+        }
+    }
+    return ['labels' => $labels, 'data' => $data, 'colors' => $colors];
 }
 
-$pending_berita = getCount($koneksi, 'berita', 'pending');
-$pending_sk = getCount($koneksi, 'sk_kipk', 'pending');
-$pending_kip = getCount($koneksi, 'mahasiswa_kip', 'pending');
-$pending_pedoman = getCount($koneksi, 'pedoman', 'pending');
+$c_berita = getChartStats($koneksi, 'berita', 'status');
+$c_sk = getChartStats($koneksi, 'sk_kipk', 'status');
+$c_pedoman = getChartStats($koneksi, 'pedoman', 'status');
+$c_tahapan = getChartStats($koneksi, 'pedoman_tahapan', 'status');
+$c_prestasi = getChartStats($koneksi, 'mahasiswa_prestasi', 'status');
+$c_lapor = getChartStats($koneksi, 'laporan', 'status_tindak');
+$c_eval = getChartStats($koneksi, 'evaluasi', 'status_verifikasi');
 
-$approved_berita = getCount($koneksi, 'berita', 'approved');
-$approved_sk = getCount($koneksi, 'sk_kipk', 'approved');
-$approved_kip = getCount($koneksi, 'mahasiswa_kip', 'approved');
-$approved_pedoman = getCount($koneksi, 'pedoman', 'approved');
 ?>
 
 <!DOCTYPE html>
@@ -33,352 +114,364 @@ $approved_pedoman = getCount($koneksi, 'pedoman', 'approved');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --sidebar-width: 240px;
-            --primary-purple: #4e0a8a;
-            --accent-purple: #7b35d4;
-            --glass-white: rgba(255, 255, 255, 0.95);
-        }
 
+    <style>
+        * { box-sizing: border-box; }
+        
         body {
             margin: 0;
-            padding: 0;
             font-family: 'Poppins', sans-serif;
             background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
             background-size: cover;
-            min-height: 100vh;
+            overflow-x: hidden;
+            color: #333;
         }
 
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 30px;
-            transition: 0.3s ease;
-        }
-
-        /* WELCOME SECTION */
-        .welcome-section {
-            background: var(--glass-white);
-            border-radius: 24px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.2);
-            animation: fadeInDown 0.8s ease-out;
-            backdrop-filter: blur(10px);
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .welcome-text h2 {
-            margin: 0;
-            color: var(--primary-purple);
-            font-weight: 800;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        
+        .animate-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
         }
+        
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+        .delay-5 { animation-delay: 0.25s; }
+        .delay-6 { animation-delay: 0.3s; }
+        .delay-7 { animation-delay: 0.35s; }
+        .delay-8 { animation-delay: 0.4s; }
+        .delay-9 { animation-delay: 0.45s; }
+        .delay-10 { animation-delay: 0.5s; }
 
-        .welcome-text p {
-            margin: 8px 0 0;
-            color: #555;
-            font-size: 1.1rem;
-        }
-
-        .datetime-box {
-            text-align: right;
-            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+        /* HEADER */
+        .header-bar {
+            margin-left: 240px;
+            background: linear-gradient(90deg, #4e0a8a, #7b35d4);
+            padding: 15px 30px;
             color: white;
-            padding: 15px 25px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(78, 10, 138, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: sticky; top: 0; z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        #jamRealtime { font-weight: 600; font-size: 1.2rem; display: block; }
+        .header-left { font-size: 20px; font-weight: 600; display: flex; align-items: center; }
+        .header-right { font-size: 14px; font-weight: 500; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px; }
 
-        /* QUICK INFO BOXES */
+        /* MAIN CONTENT */
+        .main-container {
+            margin-left: 240px;
+            padding: 30px;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* STATS GRID - 5 items per row ideally, but auto-fit */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
         .stat-card {
-            background: var(--glass-white);
-            border-radius: 24px;
-            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.1);
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: transform 0.3s;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
         }
+        
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(78, 10, 138, 0.15); }
 
-        .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(78, 10, 138, 0.15);
+        /* Colored top border for variety */
+        .stat-card::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
         }
 
         .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            color: white;
+            width: 50px; height: 50px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: white;
             flex-shrink: 0;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #4e0a8a, #7b35d4);
         }
 
-        .stat-info h3 { margin: 0; font-size: 2.2rem; font-weight: 800; color: var(--primary-purple); }
-        .stat-info p { margin: 2px 0 0; color: #666; font-size: 0.95rem; font-weight: 600; text-transform: uppercase; }
+        .stat-info h3 { margin: 0; font-size: 24px; color: #4e0a8a; font-weight: 800; }
+        .stat-info p { margin: 5px 0 0; font-size: 12px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* CHART SECTION */
-        .dashboard-row {
+        /* Notification Badge for high numbers */
+        .alert-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: #ff4757; color: white;
+            font-size: 10px; padding: 2px 6px; border-radius: 10px;
+            font-weight: bold;
+            /* Dynamic JS handled usually, here static css logic for demo */
+        }
+
+        /* CHART GRID - Auto fit for multiple charts */
+        .chart-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 25px;
         }
 
-        .chart-container {
-            background: var(--glass-white);
-            border-radius: 28px;
-            padding: 35px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(78, 10, 138, 0.05);
+            display: flex; flex-direction: column;
         }
-
-        .pending-list-card {
-            background: var(--glass-white);
-            border-radius: 28px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
+        
+        .chart-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px; color: #4e0a8a; font-weight: 700;
+            border-bottom: 2px solid #f3e8ff; padding-bottom: 10px;
         }
-
-        .chart-header h3, .pending-list-card h3 {
-            margin: 0 0 25px 0;
-            color: var(--primary-purple);
-            font-weight: 700;
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .pending-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px dashed rgba(0,0,0,0.1);
-        }
-        .pending-item:last-child { border-bottom: none; }
-        .pending-label { font-weight: 500; font-size: 1rem; color: #444; }
-        .pending-count {
-            background: #ffecb3;
-            color: #ff8f00;
-            padding: 5px 12px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
+        
+        .chart-container { height: 250px; width: 100%; position: relative; }
 
         /* RESPONSIVE */
-        @media (max-width: 1200px) {
-            .dashboard-row { grid-template-columns: 1fr; }
-        }
-
         @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 0;
-                padding: 85px 15px 40px 15px;
-            }
-            .welcome-section {
-                flex-direction: column;
-                text-align: center;
-                gap: 25px;
-                padding: 30px 20px;
-            }
-            .datetime-box { text-align: center; width: 100%; box-sizing: border-box; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .header-bar, .main-container { margin-left: 0; }
+            .header-bar { padding-left: 60px; } 
         }
-
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .welcome-text h2 { font-size: 1.5rem; }
-            .stat-card { padding: 25px; }
+        @media (max-width: 768px) {
+            .chart-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
+
 <body>
 
-<div class="main-content">
-    
-    <!-- WELCOME SECTION -->
-    <div class="welcome-section">
-        <div class="welcome-text">
-            <h2>Panel Kabag Akademik</h2>
-            <p>Selamat datang kembali, <b><?= htmlspecialchars($nama); ?></b> 👋</p>
-        </div>
-        <div class="datetime-box">
-            <span id="jamRealtime">Memuat...</span>
-        </div>
+<div class="header-bar animate-up">
+    <div class="header-left">
+        <i class="fas fa-desktop mr-2"></i> 
+        <span>Dashboard Kabag — <?= htmlspecialchars($nama) ?></span>
     </div>
+    <div class="header-right">
+        <i class="far fa-clock"></i>
+        <span id="liveClock">Loading...</span>
+    </div>
+</div>
 
-    <!-- QUICK STATS -->
+<div class="main-container">
+
+    <!-- DASHBOARD STATS (11 Items) -->
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #FF512F, #DD2476);">
-                <i class="fas fa-newspaper"></i>
-            </div>
+        
+        <!-- 1. Validasi Berita -->
+        <div class="stat-card animate-up delay-1">
+            <div class="stat-icon icon-berita"><i class="fa-solid fa-newspaper"></i></div>
             <div class="stat-info">
-                <h3><?= $approved_berita ?></h3>
-                <p>Berita Aktif</p>
+                <h3><?= $h_berita ?></h3>
+                <p>Validasi Berita</p>
+                <?php if($h_berita > 0) echo '<span class="alert-badge">!</span>'; ?>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #1D976C, #93F9B9);">
-                <i class="fas fa-file-signature"></i>
-            </div>
+
+        <!-- 2. Validasi SK -->
+        <div class="stat-card animate-up delay-2">
+            <div class="stat-icon icon-sk"><i class="fa-solid fa-file-signature"></i></div>
             <div class="stat-info">
-                <h3><?= $approved_sk ?></h3>
-                <p>SK Tervalidasi</p>
+                <h3><?= $h_sk ?></h3>
+                <p>Validasi SK</p>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #2193b0, #6dd5ed);">
-                <i class="fas fa-user-graduate"></i>
-            </div>
+
+        <!-- 3. Validasi Pedoman -->
+        <div class="stat-card animate-up delay-3">
+            <div class="stat-icon icon-tahapan"><i class="fa-solid fa-book"></i></div>
             <div class="stat-info">
-                <h3><?= $approved_kip ?></h3>
-                <p>Mahasiswa KIP</p>
+                <h3><?= $h_pedoman ?></h3>
+                <p>Validasi Pedoman</p>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #8E2DE2, #4A00E0);">
-                <i class="fas fa-book"></i>
-            </div>
+
+        <!-- 4. Validasi Tahapan -->
+        <div class="stat-card animate-up delay-4">
+            <div class="stat-icon icon-tahapan"><i class="fa-solid fa-list-check"></i></div>
             <div class="stat-info">
-                <h3><?= $approved_pedoman ?></h3>
-                <p>Pedoman Aktif</p>
+                <h3><?= $h_tahapan ?></h3>
+                <p>Validasi Tahapan</p>
             </div>
         </div>
+
+        <!-- 5. Validasi Jumlah KIP (Mahasiswa Pending) -->
+        <div class="stat-card animate-up delay-5">
+            <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_kip ?></h3>
+                <p>Validasi Jml KIP</p>
+            </div>
+        </div>
+        
+        <!-- 6. Validasi Prestasi (Adding this as extra since it's usually needed too) -->
+        <div class="stat-card animate-up delay-6">
+            <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_prestasi ?></h3>
+                <p>Validasi Prestasi</p>
+            </div>
+        </div>
+
+        <!-- 7. Lihat Laporan -->
+        <div class="stat-card animate-up delay-7">
+            <div class="stat-icon icon-lapor"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_lapor ?></h3>
+                <p>Laporan Masuk</p>
+            </div>
+        </div>
+
+        <!-- 8. Lihat Evaluasi -->
+        <div class="stat-card animate-up delay-8">
+            <div class="stat-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_eval ?></h3>
+                <p>Cek Evaluasi</p>
+            </div>
+        </div>
+
+        <!-- 9. CRUD User (Total) -->
+        <div class="stat-card animate-up delay-9">
+            <div class="stat-icon"><i class="fa-solid fa-users-cog"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_user ?></h3>
+                <p>Total User</p>
+            </div>
+        </div>
+
+        <!-- 10. Saran -->
+        <div class="stat-card animate-up delay-10">
+            <div class="stat-icon"><i class="fa-solid fa-lightbulb"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_saran ?></h3>
+                <p>Saran Masuk</p>
+            </div>
+        </div>
+
+        <!-- 11. Pertanyaan (Unanswered) -->
+        <div class="stat-card animate-up delay-10">
+            <div class="stat-icon"><i class="fa-solid fa-circle-question"></i></div>
+            <div class="stat-info">
+                <h3><?= $h_tanya ?></h3>
+                <p>Pertanyaan</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- DASHBOARD CONTENT ROW -->
-    <div class="dashboard-row">
-        <!-- CHART -->
-        <div class="chart-container">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-bar"></i> Statistik Data Tervalidasi</h3>
-            </div>
-            <div style="height: 350px;">
-                <canvas id="mainChart"></canvas>
-            </div>
+    <!-- CHARTS GRID: Matching the Stats Boxes where applicable -->
+    <div class="chart-grid">
+        <!-- 1. Berita -->
+        <div class="chart-card animate-up delay-1">
+            <h3><i class="fa-solid fa-newspaper"></i> Statistik Berita</h3>
+            <div class="chart-container"><canvas id="cBerita"></canvas></div>
         </div>
-
-        <!-- PENDING TASKS LIST -->
-        <div class="pending-list-card">
-            <h3><i class="fas fa-tasks"></i> Tugas Validasi</h3>
-            <div class="pending-item">
-                <span class="pending-label">Berita Baru</span>
-                <span class="pending-count"><?= $pending_berita ?></span>
-            </div>
-            <div class="pending-item">
-                <span class="pending-label">Penerimaan SK</span>
-                <span class="pending-count"><?= $pending_sk ?></span>
-            </div>
-            <div class="pending-item">
-                <span class="pending-label">Data Mahasiswa</span>
-                <span class="pending-count"><?= $pending_kip ?></span>
-            </div>
-            <div class="pending-item">
-                <span class="pending-label">Dokumen Pedoman</span>
-                <span class="pending-count"><?= $pending_pedoman ?></span>
-            </div>
-            <div style="margin-top: 30px; text-align: center;">
-                <p style="font-size: 0.85rem; color: #888; font-style: italic;">
-                    Klik menu di sidebar untuk memproses validasi data di atas.
-                </p>
-            </div>
+        <!-- 2. SK -->
+        <div class="chart-card animate-up delay-2">
+            <h3><i class="fa-solid fa-file-signature"></i> Statistik SK</h3>
+            <div class="chart-container"><canvas id="cSK"></canvas></div>
+        </div>
+        <!-- 3. Pedoman -->
+        <div class="chart-card animate-up delay-3">
+            <h3><i class="fa-solid fa-book"></i> Statistik Pedoman</h3>
+            <div class="chart-container"><canvas id="cPedoman"></canvas></div>
+        </div>
+        <!-- 4. Tahapan -->
+        <div class="chart-card animate-up delay-4">
+            <h3><i class="fa-solid fa-list-check"></i> Statistik Tahapan</h3>
+            <div class="chart-container"><canvas id="cTahapan"></canvas></div>
+        </div>
+        <!-- 5. Prestasi -->
+        <div class="chart-card animate-up delay-5">
+            <h3><i class="fa-solid fa-user-graduate"></i> Statistik Prestasi</h3>
+            <div class="chart-container"><canvas id="cPrestasi"></canvas></div>
+        </div>
+        <!-- 6. Laporan -->
+        <div class="chart-card animate-up delay-6">
+            <h3><i class="fa-solid fa-chart-line"></i> Statistik Laporan</h3>
+            <div class="chart-container"><canvas id="cLapor"></canvas></div>
+        </div>
+        <!-- 7. Evaluasi -->
+        <div class="chart-card animate-up delay-7">
+            <h3><i class="fa-solid fa-clipboard-check"></i> Statistik Evaluasi</h3>
+            <div class="chart-container"><canvas id="cEval"></canvas></div>
         </div>
     </div>
 
 </div>
 
-<!-- SCRIPT DATETIME -->
 <script>
-function updateTime() {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+// CLOCK
+function updateClock() {
     const now = new Date();
-    const dateStr = now.toLocaleDateString('id-ID', options);
-    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById("jamRealtime").innerHTML = `${dateStr} | ${timeStr}`;
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('liveClock').textContent = 
+        `${now.toLocaleDateString('id-ID', options)} — ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
 }
-setInterval(updateTime, 1000);
-updateTime();
-</script>
+setInterval(updateClock, 1000);
+updateClock();
 
-<!-- SCRIPT CHART -->
-<script>
-const ctx = document.getElementById('mainChart').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Berita', 'SK KIP', 'Data KIP', 'Pedoman'],
-        datasets: [{
-            label: 'Data Tervalidasi',
-            data: [
-                <?= $approved_berita ?>,
-                <?= $approved_sk ?>,
-                <?= $approved_kip ?>,
-                <?= $approved_pedoman ?>
-            ],
-            backgroundColor: [
-                'rgba(221, 36, 118, 0.7)',
-                'rgba(29, 151, 108, 0.7)',
-                'rgba(33, 147, 176, 0.7)',
-                'rgba(142, 45, 226, 0.7)'
-            ],
-            borderColor: [
-                '#DD2476', '#1D976C', '#2193b0', '#8E2DE2'
-            ],
-            borderWidth: 2,
-            borderRadius: 12
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false }
+// CHART CONFIG HELPER
+function createChart(ctxId, labelName, labels, data, colors) {
+    new Chart(document.getElementById(ctxId), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: labelName,
+                data: data,
+                backgroundColor: colors,
+                borderRadius: 6,
+                barPercentage: 0.6
+            }]
         },
-        scales: {
-            y: { 
-                beginAtZero: true,
-                grid: { color: 'rgba(0,0,0,0.05)' }
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { 
+                    backgroundColor: 'rgba(78, 10, 138, 0.9)',
+                    titleFont: { family: 'Poppins' },
+                    bodyFont: { family: 'Poppins' }
+                }
             },
-            x: {
-                grid: { display: false }
+            scales: { 
+                y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                x: { grid: { display: false } }
             }
         }
-    }
-});
+    });
+}
+
+// RENDER CHARTS
+createChart('cBerita', 'Jumlah Berita', <?= json_encode($c_berita['labels']) ?>, <?= json_encode($c_berita['data']) ?>, <?= json_encode($c_berita['colors']) ?>);
+createChart('cSK', 'Jumlah SK', <?= json_encode($c_sk['labels']) ?>, <?= json_encode($c_sk['data']) ?>, <?= json_encode($c_sk['colors']) ?>);
+createChart('cPedoman', 'Jumlah Pedoman', <?= json_encode($c_pedoman['labels']) ?>, <?= json_encode($c_pedoman['data']) ?>, <?= json_encode($c_pedoman['colors']) ?>);
+createChart('cTahapan', 'Jumlah Tahapan', <?= json_encode($c_tahapan['labels']) ?>, <?= json_encode($c_tahapan['data']) ?>, <?= json_encode($c_tahapan['colors']) ?>);
+createChart('cPrestasi', 'Jumlah Prestasi', <?= json_encode($c_prestasi['labels']) ?>, <?= json_encode($c_prestasi['data']) ?>, <?= json_encode($c_prestasi['colors']) ?>);
+createChart('cLapor', 'Jumlah Laporan', <?= json_encode($c_lapor['labels']) ?>, <?= json_encode($c_lapor['data']) ?>, <?= json_encode($c_lapor['colors']) ?>);
+createChart('cEval', 'Jumlah Evaluasi', <?= json_encode($c_eval['labels']) ?>, <?= json_encode($c_eval['data']) ?>, <?= json_encode($c_eval['colors']) ?>);
 </script>
 
 </body>

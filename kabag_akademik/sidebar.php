@@ -177,6 +177,10 @@
         <i class="fa-solid fa-book"></i> Validasi Pedoman
     </a>
 
+    <a href="validasi_tahapan_pedoman.php">
+        <i class="fa-solid fa-list-check"></i> Validasi Tahapan
+    </a>
+
     <a href="validasi_kip.php">
         <i class="fa-solid fa-coins"></i> Validasi Jumlah KIP
     </a>

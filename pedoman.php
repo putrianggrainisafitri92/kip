@@ -335,26 +335,17 @@ include 'koneksi.php';
       </p>
 
       <div class="grid md:grid-cols-5 grid-cols-2 gap-3 text-gray-700 mb-4">
-        <div class="p-3 bg-white border rounded-xl shadow text-center">
-          <i class="fas fa-wallet text-purple-700"></i>
-          <p class="font-semibold">Rp 800.000</p>
-        </div>
-        <div class="p-3 bg-white border rounded-xl shadow text-center">
-          <i class="fas fa-wallet text-purple-700"></i>
-          <p class="font-semibold">Rp 950.000</p>
-        </div>
-        <div class="p-3 bg-white border rounded-xl shadow text-center">
-          <i class="fas fa-wallet text-purple-700"></i>
-          <p class="font-semibold">Rp 1.100.000</p>
-        </div>
-        <div class="p-3 bg-white border rounded-xl shadow text-center">
-          <i class="fas fa-wallet text-purple-700"></i>
-          <p class="font-semibold">Rp 1.250.000</p>
-        </div>
-        <div class="p-3 bg-white border rounded-xl shadow text-center">
-          <i class="fas fa-wallet text-purple-700"></i>
-          <p class="font-semibold">Rp 1.400.000</p>
-        </div>
+        <?php
+        $q_biaya = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan WHERE kategori='biaya_hidup' AND status='approved' ORDER BY urutan ASC");
+        while($b = mysqli_fetch_assoc($q_biaya)) {
+            echo '
+            <div class="p-3 bg-white border rounded-xl shadow text-center transform hover:scale-105 transition duration-300">
+              <i class="fas fa-wallet text-purple-700 text-xl mb-1"></i>
+              <p class="font-semibold text-purple-800">'.htmlspecialchars($b['judul']).'</p>
+              <span class="text-xs text-gray-500 block mt-1">'.htmlspecialchars($b['deskripsi']).'</span>
+            </div>';
+        }
+        ?>
       </div>
 
       <p class="text-gray-700">
@@ -363,7 +354,8 @@ include 'koneksi.php';
         <a href="https://kip-kuliah.kemdiktisaintek.go.id/" 
            class="text-purple-700 font-semibold underline" target="_blank">
           kip-kuliah.kemdiktisaintek.go.id
-        </a>
+        </a> 
+        dan validasi di kabag_akademik
       </p>
     </div>
 
@@ -394,37 +386,32 @@ include 'koneksi.php';
     <i class="fas fa-stream text-purple-600"></i> Tahapan Umum 2026
   </h4>
 
-  <div class="space-y-5">
     <?php
-    $steps = [
-      ["Pendaftaran Akun", "4 Februari – 31 Oktober 2026"],
-      ["Seleksi SNBP", "4 – 18 Februari 2026"],
-      ["Seleksi SNBT", "11 – 27 Maret 2026"],
-      ["Mandiri PTN", "4 Juni – 30 September 2026"],
-      ["Mandiri PTS", "4 Juni – 31 Oktober 2026"],
-    ];
-
+    $q_umum = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan WHERE kategori='tahapan_umum' AND status='approved' ORDER BY urutan ASC");
     $no = 1;
-    foreach ($steps as $s) {
-      echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
-        <div class=\"bg-purple-600 text-white w-12 h-12 flex items-center justify-center rounded-full font-bold\">
-          {$no}
+    if (mysqli_num_rows($q_umum) > 0) {
+      while ($s = mysqli_fetch_assoc($q_umum)) {
+        echo "
+        <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
+          <div class=\"bg-purple-600 text-white w-12 h-12 flex items-center justify-center rounded-full font-bold\">
+            {$no}
+          </div>
+          <div>
+            <h4 class=\"font-bold text-purple-700 text-lg flex items-center gap-2\">
+              <i class='fas fa-arrow-circle-right text-purple-600'></i> ".htmlspecialchars($s['judul'])."
+            </h4>
+            <p class=\"text-gray-600 text-sm flex items-center gap-2\">
+              <i class='fas fa-clock text-purple-500'></i> ".htmlspecialchars($s['deskripsi'])."
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 class=\"font-bold text-purple-700 text-lg flex items-center gap-2\">
-            <i class='fas fa-arrow-circle-right text-purple-600'></i> {$s[0]}
-          </h4>
-          <p class=\"text-gray-600 text-sm flex items-center gap-2\">
-            <i class='fas fa-clock text-purple-500'></i> {$s[1]}
-          </p>
-        </div>
-      </div>
-      ";
-      $no++;
+        ";
+        $no++;
+      }
+    } else {
+        echo "<p class='text-center text-gray-500'>Belum ada data tahapan umum.</p>";
     }
     ?>
-  </div>
 </div>
 
 
@@ -435,34 +422,28 @@ include 'koneksi.php';
     <i class="fas fa-graduation-cap text-purple-600"></i> Proses Seleksi Masuk SNBP
   </h4>
 
-  <div class="space-y-5">
     <?php
-    $snbp = [
-      ["Registrasi Akun SNBP Siswa", "13 Januari – 18 Februari 2026"],
-      ["Pendaftaran SNBP", "4 – 18 Februari 2026"],
-      ["Pengumuman Hasil SNBP", "18 Maret 2026"],
-      ["Masa Unduh Kartu Peserta SNBP", "4 Februari – 30 April 2026"],
-    ];
-
-    foreach ($snbp as $step) {
-      echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
-        <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
-          <i class=\"fas fa-check\"></i>
+    $q_snbp = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan WHERE kategori='snbp' AND status='approved' ORDER BY urutan ASC");
+    if (mysqli_num_rows($q_snbp) > 0) {
+      while ($step = mysqli_fetch_assoc($q_snbp)) {
+        echo "
+        <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
+          <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
+            <i class=\"fas fa-check\"></i>
+          </div>
+          <div>
+            <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
+              <i class=\"fas fa-arrow-right text-purple-600\"></i> ".htmlspecialchars($step['judul'])."
+            </h4>
+            <p class='text-gray-600 text-sm flex items-center gap-2'>
+              <i class='fas fa-clock text-purple-500'></i> ".htmlspecialchars($step['deskripsi'])."
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
-            <i class=\"fas fa-arrow-right text-purple-600\"></i> {$step[0]}
-          </h4>
-          <p class='text-gray-600 text-sm flex items-center gap-2'>
-            <i class='fas fa-clock text-purple-500'></i> {$step[1]}
-          </p>
-        </div>
-      </div>
-      ";
+        ";
+      }
     }
     ?>
-  </div>
 </div>
 
 
@@ -473,36 +454,28 @@ include 'koneksi.php';
     <i class="fas fa-file-signature text-purple-600"></i> Proses Seleksi Masuk UTBK–SNBT
   </h4>
 
-  <div class="space-y-5">
     <?php
-    $utbk = [
-      ["Registrasi Akun SNPMB Siswa", "13 Januari – 27 Maret 2026"],
-      ["Pendaftaran UTBK-SNBT", "11 – 27 Maret 2026"],
-      ["Pembayaran Biaya UTBK", "11 – 28 Maret 2026"],
-      ["Pelaksanaan UTBK", "23 April – 3 Mei 2026"],
-      ["Pengumuman Hasil SNBT", "28 Mei 2026"],
-      ["Masa Unduh Sertifikat UTBK", "3 Juni – 31 Juli 2026"],
-    ];
-
-    foreach ($utbk as $step) {
-      echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
-        <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
-          <i class=\"fas fa-check\"></i>
+    $q_utbk = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan WHERE kategori='utbk' AND status='approved' ORDER BY urutan ASC");
+    if (mysqli_num_rows($q_utbk) > 0) {
+      while ($step = mysqli_fetch_assoc($q_utbk)) {
+        echo "
+        <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition step-card'>
+          <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
+            <i class=\"fas fa-check\"></i>
+          </div>
+          <div>
+            <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
+              <i class=\"fas fa-arrow-right text-purple-600\"></i> ".htmlspecialchars($step['judul'])."
+            </h4>
+            <p class='text-gray-600 text-sm flex items-center gap-2'>
+              <i class='fas fa-clock text-purple-500'></i> ".htmlspecialchars($step['deskripsi'])."
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
-            <i class=\"fas fa-arrow-right text-purple-600\"></i> {$step[0]}
-          </h4>
-          <p class='text-gray-600 text-sm flex items-center gap-2'>
-            <i class='fas fa-clock text-purple-500'></i> {$step[1]}
-          </p>
-        </div>
-      </div>
-      ";
+        ";
+      }
     }
     ?>
-  </div>
 </div>
 
 
@@ -513,33 +486,28 @@ include 'koneksi.php';
     <i class="fas fa-id-card text-purple-600"></i> Proses KIP Kuliah
   </h4>
 
-  <div class="space-y-5">
     <?php
-    $kip = [
-      ["Registrasi/Pendaftaran Akun KIP-K", "3 Februari – 31 Oktober 2025"],
-      ["Seleksi KIP-K di Perguruan Tinggi", "1 Juli – 31 Oktober 2025"],
-      ["Penetapan Penerima Baru", "1 Juli – 31 Oktober 2025"],
-    ];
-
-    foreach ($kip as $step) {
-      echo "
-      <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition'>
-        <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
-          <i class=\"fas fa-check\"></i>
+    $q_kip = mysqli_query($koneksi, "SELECT * FROM pedoman_tahapan WHERE kategori='kip' AND status='approved' ORDER BY urutan ASC");
+    if (mysqli_num_rows($q_kip) > 0) {
+      while ($step = mysqli_fetch_assoc($q_kip)) {
+        echo "
+        <div class='group flex gap-4 p-6 bg-white rounded-xl border border-purple-200 shadow hover:shadow-lg transition'>
+          <div class='w-12 h-12 bg-purple-600 text-white flex items-center justify-center rounded-full'>
+            <i class=\"fas fa-check\"></i>
+          </div>
+          <div>
+            <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
+              <i class=\"fas fa-arrow-right text-purple-600\"></i> ".htmlspecialchars($step['judul'])."
+            </h4>
+            <p class='text-gray-600 text-sm flex items-center gap-2'>
+              <i class='fas fa-clock text-purple-500'></i> ".htmlspecialchars($step['deskripsi'])."
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 class='font-bold text-purple-700 text-lg flex items-center gap-2'>
-            <i class=\"fas fa-arrow-right text-purple-600\"></i> {$step[0]}
-          </h4>
-          <p class='text-gray-600 text-sm flex items-center gap-2'>
-            <i class='fas fa-clock text-purple-500'></i> {$step[1]}
-          </p>
-        </div>
-      </div>
-      ";
+        ";
+      }
     }
     ?>
-  </div>
 </div>
 
 

@@ -269,7 +269,7 @@ include "../koneksi.php";
     </div>
 
     <div class="guide-grid" id="guideGrid">
-        <!-- Dashboard -->
+        <!-- 1. Dashboard -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-desktop"></i></div>
@@ -281,7 +281,7 @@ include "../koneksi.php";
             </ul>
         </div>
 
-        <!-- Berita -->
+        <!-- 2. Kelola Berita -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-edit"></i></div>
@@ -294,11 +294,37 @@ include "../koneksi.php";
             </ul>
         </div>
 
-        <!-- Prestasi -->
+        <!-- 3. Kelola Pedoman -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-book"></i></div>
+            <h3>3. Kelola Pedoman</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Masuk menu <b>Pedoman</b> -> <b>Upload File</b>.</li>
+                <li><div class="step-num">2</div> Pilih file format <b>PDF</b> (Maks 10MB).</li>
+                <li><div class="step-num">3</div> Kirim dan pastikan file muncul di tabel.</li>
+            </ul>
+        </div>
+
+        <!-- 4. Kelola Tahapan & Jadwal -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-list-check"></i></div>
+            <h3>4. Kelola Tahapan & Jadwal</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Buka menu <b>Kelola Tahapan & Jadwal</b>.</li>
+                <li><div class="step-num">2</div> Edit jadwal tanggal atau tambah poin baru.</li>
+                <li><div class="step-num">3</div> Data akan berstatus <b>Pending</b> saat disimpan.</li>
+                <li><div class="step-num">4</div> Tunggu persetujuan Kabag sebelum tampil di web.</li>
+                <li><div class="step-num">5</div> Jika direvisi, cek tombol "Lihat" di kolom status.</li>
+            </ul>
+        </div>
+
+        <!-- 5. Mahasiswa Berprestasi -->
         <div class="guide-card">
             <div class="pop-dot"></div>
             <div class="icon-box"><i class="fas fa-trophy"></i></div>
-            <h3>3. Input Prestasi</h3>
+            <h3>5. Mahasiswa Berprestasi</h3>
             <ul class="steps">
                 <li><div class="step-num">1</div> Buka menu <b>Prestasi</b> -> <b>Tambah Data</b>.</li>
                 <li><div class="step-num">2</div> Isi Nama, NPM, dan deskripsi inspiratif.</li>
@@ -311,15 +337,15 @@ include "../koneksi.php";
             </div>
         </div>
 
-        <!-- Pedoman -->
+        <!-- 6. Bantuan -->
         <div class="guide-card">
             <div class="pop-dot"></div>
-            <div class="icon-box"><i class="fas fa-file-pdf"></i></div>
-            <h3>4. Upload Pedoman</h3>
+            <div class="icon-box"><i class="fas fa-circle-question"></i></div>
+            <h3>6. Bantuan</h3>
             <ul class="steps">
-                <li><div class="step-num">1</div> Masuk menu <b>Pedoman</b> -> <b>Upload File</b>.</li>
-                <li><div class="step-num">2</div> Pilih file format <b>PDF</b> (Maks 10MB).</li>
-                <li><div class="step-num">3</div> Kirim dan pastikan file muncul di tabel.</li>
+                <li><div class="step-num">1</div> Halaman ini adalah menu <b>Bantuan</b>.</li>
+                <li><div class="step-num">2</div> Berisi panduan langkah demi langkah.</li>
+                <li><div class="step-num">3</div> Hubungi admin jika ada kendala.</li>
             </ul>
         </div>
     </div>

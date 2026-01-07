@@ -173,6 +173,10 @@
         <i class="fa-solid fa-book"></i> Kelola Pedoman
     </a>
 
+    <a href="pedoman_tahapan.php">
+        <i class="fa-solid fa-list-check"></i> Kelola Tahapan & Jadwal
+    </a>
+
     <a href="prestasi_list.php">
         <i class="fa-solid fa-trophy"></i> Mahasiswa Berprestasi
     </a>
