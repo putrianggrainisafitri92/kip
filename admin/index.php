@@ -1,7 +1,6 @@
 <?php
 session_start();
 include "protect.php";
-include "sidebar.php";
 include "../koneksi.php";
 
 // ==================== QUERY STATISTIK ====================
@@ -180,6 +179,7 @@ if ($q_eval && $q_eval->num_rows > 0) {
     <title>Dashboard Admin | KIP Kuliah Polinela</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
