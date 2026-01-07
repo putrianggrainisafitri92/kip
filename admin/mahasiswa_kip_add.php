@@ -3,7 +3,7 @@ include "../koneksi.php";
 include "protect.php";             
 include "sidebar.php";             
 
-require '../composer-test/vendor/autoload.php';
+require __DIR__ . '/../composer-test/vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 $jurusanMap = [

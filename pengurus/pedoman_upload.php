@@ -18,9 +18,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $nama_file = basename($_FILES["file"]["name"]);
-    $fileSize  = $_FILES["file"]["size"];
-    $ext       = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
+    $nama_pedoman = mysqli_real_escape_string($koneksi, $_POST['nama_pedoman']);
+    $nama_asli    = basename($_FILES["file"]["name"]);
+    $fileSize     = $_FILES["file"]["size"];
+    $ext          = strtolower(pathinfo($nama_asli, PATHINFO_EXTENSION));
+
+    if (empty($nama_pedoman)) {
+        echo "<script>alert('Nama pedoman wajib diisi!'); window.history.back();</script>";
+        exit;
+    }
 
     if ($ext != "pdf") {
         echo "<script>alert('Hanya file PDF yang diperbolehkan!'); window.history.back();</script>";
@@ -32,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $nama_baru = pathinfo($nama_file, PATHINFO_FILENAME) . "_" . uniqid() . ".pdf";
+    $nama_baru = pathinfo($nama_asli, PATHINFO_FILENAME) . "_" . uniqid() . ".pdf";
     $target_file = $target_dir . $nama_baru;
     $file_path_db = "uploads/pedoman/" . $nama_baru;
 
     if (move_uploaded_file($_FILES["file"]["tmp_name"], $target_file)) {
         $stmt = $koneksi->prepare("INSERT INTO pedoman (nama_file, file_path) VALUES (?, ?)");
-        $stmt->bind_param("ss", $nama_file, $file_path_db);
+        $stmt->bind_param("ss", $nama_pedoman, $file_path_db);
         if ($stmt->execute()) {
             echo "<script>alert('File berhasil diupload!'); window.location.href='pedoman_list.php';</script>";
             exit;
@@ -112,18 +118,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #f1e4ff;
         }
 
-        input[type=file] {
+        input[type=file], input[type=text] {
             width: 100%;
             padding: 15px;
             border-radius: 12px;
-            border: 2px dashed rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
             background: rgba(255,255,255,0.1);
             color: white;
             font-size: 14px;
             transition: all 0.3s;
             box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input[type=file] {
+            border: 2px dashed rgba(255,255,255,0.3);
             cursor: pointer;
             margin-bottom: 25px;
+        }
+
+        input[type=text] {
+            margin-bottom: 20px;
+        }
+
+        input[type=text]:focus {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            outline: none;
         }
 
         input[type=file]:hover {
@@ -223,8 +244,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h2>Upload Pedoman</h2>
 
         <form method="post" enctype="multipart/form-data">
-            <label>Pilih File Pedoman (Format: PDF, Max 10MB)</label>
-            <input type="file" name="file" accept="application/pdf" required>
+            <div style="margin-bottom: 25px;">
+                <label>Nama Pedoman</label>
+                <input type="text" name="nama_pedoman" placeholder="Contoh: Panduan KIP-K 2024" required>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label>Pilih File Pedoman (Format: PDF, Max 10MB)</label>
+                <input type="file" name="file" accept="application/pdf" required>
+            </div>
 
             <button type="submit" class="btn-upload">
                 <i class="fas fa-cloud-upload-alt"></i> Upload File Pedoman

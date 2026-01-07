@@ -13,347 +13,336 @@ include "../koneksi.php";
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Bantuan Pengurus - KIP Kuliah Polinela</title>
+    <title>Tatacara Penggunaan - Pengurus</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-purple: #6a11cb;
-            --secondary-purple: #2575fc;
-            --deep-purple: #4e0a8a;
-            --glass-purple: rgba(78, 10, 138, 0.9);
+            --primary-purple: #4e0a8a;
             --accent-purple: #7b35d4;
+            --bg-light: #f8f2ff;
+            --glass-white: rgba(255, 255, 255, 0.85);
         }
 
         body {
-            margin: 0;
-            padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: url('../assets/bg-pelaporan.jpg') no-repeat center center fixed;
-            background-size: cover;       
-            background-attachment: fixed; 
-            color: white;
+            background: var(--bg-light);
+            margin: 0;
+            color: #333;
             overflow-x: hidden;
         }
 
-        .main-content {
-            margin-left: 230px;
-            padding: 40px 20px;
-            transition: 0.3s ease;
+        /* ===== BACKGROUND ANIMATIONS ===== */
+        .animated-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8f2ff 0%, #e0d0ff 100%);
+        }
+
+        .bg-circle {
+            position: absolute;
+            background: rgba(123, 53, 212, 0.05);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .c1 { width: 400px; height: 400px; top: -100px; right: -100px; animation-delay: 0s; }
+        .c2 { width: 300px; height: 300px; bottom: -50px; left: -50px; animation-delay: -5s; }
+        .c3 { width: 200px; height: 200px; top: 40%; left: 10%; animation-delay: -10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* ===== CONTENT WRAPPER ===== */
+        .content {
+            margin-left: 240px;
+            padding: 60px 40px;
             min-height: 100vh;
+            transition: 0.3s ease;
+            position: relative;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: var(--glass-purple);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeInPage 1s cubic-bezier(0.4, 0, 0.2, 1);
+        /* ===== HEADER SECTION ===== */
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes fadeInPage {
-            from { opacity: 0; transform: translateY(50px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h2 {
-            color: #fff;
-            padding-bottom: 20px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-size: 2.5rem;
+        .header-section h2 {
+            color: var(--primary-purple);
+            font-size: 38px;
             font-weight: 800;
-            text-transform: uppercase;
+            margin: 0;
+            display: inline-block;
+            position: relative;
+        }
+
+        .header-section h2 span {
+            color: var(--accent-purple);
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
             letter-spacing: 2px;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border-bottom: 2px dashed rgba(255,255,255,0.2);
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
-        .guide-section {
-            margin-bottom: 40px;
-            opacity: 0;
-            transform: translateX(-30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .guide-section.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .guide-section h3 {
-            font-size: 1.5rem;
-            color: #f1e4ff;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-            font-weight: 700;
-        }
-
-        .icon-box {
-            width: 55px;
-            height: 55px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        }
-
-        .guide-section:hover .icon-box {
-            background: #fff;
-            color: var(--deep-purple);
-            transform: rotate(360deg) scale(1.1);
-        }
-
-        .guide-content {
-            background: rgba(255,255,255,0.05);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            line-height: 1.8;
-            transition: 0.4s;
+        .header-section .line {
+            width: 100px;
+            height: 6px;
+            background: var(--accent-purple);
+            margin: 20px auto;
+            border-radius: 10px;
             position: relative;
             overflow: hidden;
         }
 
-        .guide-content::before {
+        .header-section .line::after {
             content: '';
             position: absolute;
-            top: 0; left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, #ba68ff, #7b35d4);
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: white;
+            animation: sweep 2s infinite;
         }
 
-        .guide-section:hover .guide-content {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            border-color: rgba(255,255,255,0.2);
+        @keyframes sweep {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
         }
 
-        .guide-content p {
-            margin-top: 0;
-            font-weight: 500;
-            color: #f8f2ff;
+        /* ===== GUIDE GRID ===== */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
         }
 
-        .guide-content ul {
-            padding-left: 0;
-            list-style: none;
-            margin-bottom: 0;
+        .guide-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            padding: 35px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(123, 53, 212, 0.1);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .guide-content li {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            font-size: 0.95rem;
+        .guide-card.show { opacity: 1; transform: translateY(0); }
+
+        .guide-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(123, 53, 212, 0.12);
+            border-color: var(--accent-purple);
+            background: white;
         }
 
-        .step-badge {
-            background: linear-gradient(135deg, #ba68ff, #7b35d4);
-            color: #fff;
-            padding: 5px 14px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(123, 53, 212, 0.3);
-            text-transform: uppercase;
-        }
-
-        .tip-box {
-            background: rgba(37, 117, 252, 0.2);
-            border: 1px solid rgba(37, 117, 252, 0.3);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            font-size: 0.85rem;
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: #f0e6ff;
+            color: var(--accent-purple);
+            border-radius: 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: 0.4s ease;
         }
 
-        /* Float Animation */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .float-anim {
-            animation: float 3s ease-in-out infinite;
-            display: inline-block;
+        .guide-card:hover .icon-box {
+            background: var(--accent-purple);
+            color: white;
+            transform: rotateY(360deg);
         }
 
-        /* Pulse Animation */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .pulse-anim:hover {
-            animation: pulse 1.5s infinite;
+        .guide-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.25rem;
+            color: var(--primary-purple);
+            font-weight: 800;
         }
 
-        /* Responsive Improvements */
+        /* ===== STEP STYLING ===== */
+        .steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .steps li {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #555;
+            display: flex;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .step-num {
+            background: #eee;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: var(--primary-purple);
+        }
+
+        .guide-card:hover .step-num {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .important-box {
+            background: #f0f7ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #444;
+        }
+
+        .pop-dot {
+            position: absolute;
+            width: 8px; height: 8px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            top: 20px; right: 20px;
+            opacity: 0.2;
+        }
+
+        .guide-card:hover .pop-dot { animation: ping 1s infinite; opacity: 0.5; }
+
+        @keyframes ping {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 0;
-                padding: 80px 15px 40px 15px;
-            }
-            .container {
-                padding: 30px 20px;
-                border-radius: 20px;
-            }
-            h2 { font-size: 1.8rem; }
+            .content { margin-left: 0; padding: 100px 20px 40px 20px; }
+            .header-section h2 { font-size: 28px; }
         }
 
-        @media (max-width: 600px) {
-            h2 { 
-                font-size: 1.4rem; 
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .guide-section h3 { font-size: 1.2rem; }
-            .guide-content { padding: 20px; }
-            .step-badge { padding: 4px 10px; font-size: 0.7rem; }
-        }
-
-        .footer-info {
-            margin-top: 60px;
-            text-align: center;
-            opacity: 0.7;
-            font-style: italic;
-            animation: fadeIn 2s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 0.7; }
+        @media (max-width: 480px) {
+            .guide-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div class="animated-bg">
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+    <div class="bg-circle c3"></div>
+</div>
+
 <?php include "sidebar.php"; ?>
 
-<div class="main-content">
-    <div class="container">
-        <h2><i class="fas fa-question-circle float-anim"></i> Bantuan Pengurus</h2>
+<div class="content">
+    <div class="header-section">
+        <h2>Tatacara Penggunaan Web <span>Panduan Langkah demi Langkah Pengurus</span></h2>
+        <div class="line"></div>
+    </div>
 
-        <!-- SECTION 1: DASHBOARD -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-gauge"></i></div> 1. Dashboard Statistik</h3>
-            <div class="guide-content">
-                <p>Pantau semua aktivitas Anda dalam satu tampilan ringkas:</p>
-                <ul>
-                    <li><i class="fas fa-chart-pie" style="color:#ba68ff"></i> <b>Visualisasi Data:</b> Lihat perbandingan status berita dan pedoman (Pending, Approved, Revisit) melalui grafik interaktif.</li>
-                    <li><i class="fas fa-sync" style="color:#ba68ff"></i> <b>Statistik Real-time:</b> Data diperbarui secara otomatis ketika ada perubahan status dari Kabag Akademik.</li>
-                </ul>
+    <div class="guide-grid" id="guideGrid">
+        <!-- Dashboard -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-desktop"></i></div>
+            <h3>1. Dashboard</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Login ke akun Pengurus.</li>
+                <li><div class="step-num">2</div> Cek grafik berita & prestasi di halaman utama.</li>
+                <li><div class="step-num">3</div> Pantau status validasi dari Kabag Akademik.</li>
+            </ul>
+        </div>
+
+        <!-- Berita -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-edit"></i></div>
+            <h3>2. Kelola Berita</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Klik menu <b>Berita</b>, lalu <b>Tambah Berita</b>.</li>
+                <li><div class="step-num">2</div> Isi konten dan unggah <b>Thumbnail</b> utama.</li>
+                <li><div class="step-num">3</div> Tambah lampiran foto via <b>Slot Gambar Tambahan</b>.</li>
+                <li><div class="step-num">4</div> Simpan dan tunggu verifikasi administrator.</li>
+            </ul>
+        </div>
+
+        <!-- Prestasi -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-trophy"></i></div>
+            <h3>3. Input Prestasi</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Buka menu <b>Prestasi</b> -> <b>Tambah Data</b>.</li>
+                <li><div class="step-num">2</div> Isi Nama, NPM, dan deskripsi inspiratif.</li>
+                <li><div class="step-num">3</div> Pilih file foto bukti piagam/kemenangan.</li>
+            </ul>
+            <div class="important-box">
+                <b>Tips Multi-Upload:</b><br>
+                • HP: Tekan lama file di galeri.<br>
+                • PC: Gunakan Tombol Ctrl + Klik.
             </div>
         </div>
 
-        <!-- SECTION 2: UPLOAD BERITA -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-newspaper"></i></div> 2. Pengelolaan Berita</h3>
-            <div class="guide-content">
-                <p>Langkah-langkah untuk mempublikasikan kegiatan KIP-Kuliah:</p>
-                <ul>
-                    <li><span class="step-badge">Langkah 1</span> Klik menu <b>Kelola Berita</b> dan pilih tombol <b>+ Tambah Berita</b>.</li>
-                    <li><span class="step-badge">Langkah 2</span> Masukkan <b>Judul</b> dan tentukan <b>Tanggal Kegiatan</b> yang sesuai.</li>
-                    <li><span class="step-badge">Langkah 3</span> Tambahkan <b>Gambar</b> utama dan deskripsi gambar (caption).</li>
-                    <li><span class="step-badge">Langkah 4</span> Gunakan tombol <b>+ Tambah Slot Gambar</b> jika Anda ingin mengupload banyak foto sekaligus.</li>
-                    <li><span class="step-badge">Langkah 5</span> Klik <b>Simpan Berita</b>. Status akan menjadi <i>Pending</i> menunggu validasi.</li>
-                </ul>
-            </div>
+        <!-- Pedoman -->
+        <div class="guide-card">
+            <div class="pop-dot"></div>
+            <div class="icon-box"><i class="fas fa-file-pdf"></i></div>
+            <h3>4. Upload Pedoman</h3>
+            <ul class="steps">
+                <li><div class="step-num">1</div> Masuk menu <b>Pedoman</b> -> <b>Upload File</b>.</li>
+                <li><div class="step-num">2</div> Pilih file format <b>PDF</b> (Maks 10MB).</li>
+                <li><div class="step-num">3</div> Kirim dan pastikan file muncul di tabel.</li>
+            </ul>
         </div>
+    </div>
 
-        <!-- SECTION 3: UPLOAD PEDOMAN -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-book"></i></div> 3. Pengelolaan Pedoman</h3>
-            <div class="guide-content">
-                <p>Bagaimana cara mengunggah dokumen aturan/pedoman baru:</p>
-                <ul>
-                    <li><span class="step-badge">Langkah 1</span> Pilih file dengan format <b>PDF</b> (Maksimal ukuran: 10 MB).</li>
-                    <li><span class="step-badge">Langkah 2</span> Berikan nama file yang informatif agar mudah dicari oleh mahasiswa.</li>
-                    <li><span class="step-badge">Langkah 3</span> Setelah diupload, Anda dapat memantau apakah pedoman disetujui atau memerlukan revisi di tabel daftar pedoman.</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- SECTION 4: UPLOAD PRESTASI (FIXED) -->
-        <div class="guide-section">
-            <h3><div class="icon-box pulse-anim"><i class="fas fa-trophy"></i></div> 4. Mahasiswa Berprestasi</h3>
-            <div class="guide-content">
-                <p>Berikan apresiasi terbaik bagi mahasiswa penerima KIP-Kuliah:</p>
-                <ul>
-                    <li><span class="step-badge">Langkah 1</span> Isi data identitas (<b>Nama</b>, <b>NIM/NPM</b>, dan <b>Jurusan</b> mahasiswa).</li>
-                    <li><span class="step-badge">Langkah 2</span> Berikan <b>Judul Prestasi</b> yang menarik (Contoh: Juara 1 Olimpiade Nasional).</li>
-                    <li><span class="step-badge">Langkah 3</span> Pilih <b>Tanggal Perolehan</b> prestasi tersebut.</li>
-                    <li><span class="step-badge">Langkah 4</span> Tuliskan <b>Deskripsi</b> cerita singkat yang inspiratif tentang perjalanan prestasi mereka.</li>
-                    <li><span class="step-badge">Langkah 5</span> Unggah foto/piagam kualitas tinggi (Resolusi baik).</li>
-                </ul>
-                <div class="tip-box">
-                    <i class="fas fa-lightbulb"></i>
-                    <div>
-                        <b>Tips Upload Multi-Foto:</b><br>
-                        • <b>Laptop:</b> Tahan tombol <code>Ctrl</code> atau <code>Shift</code> sambil klik file-file foto.<br>
-                        • <b>Smartphone:</b> Tekan lama pada salah satu foto di galeri, lalu centang foto lainnya yang ingin diupload.
-                    </div>
-                </div>
-                <div style="margin-top:15px; font-size: 0.9rem; color: #f1e4ff;">
-                    <i class="fas fa-check-circle"></i> Setelah dikirim, data akan masuk ke dashboard pengecekan Kabag Akademik sebelum ditampilkan ke publik.
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-info">
-            <p><i class="fas fa-info-circle"></i> Panel dikembangkan untuk mempermudah alur kerja administratif KIP-Kuliah Polinela. Butuh bantuan teknis? Hubungi Admin IT.</p>
-        </div>
+    <div style="text-align:center; margin-top:50px; color:#aaa; font-size:0.85rem;">
+        <i class="fas fa-info-circle"></i> Gunakan browser terbaru (Chrome/Edge) untuk performa terbaik.
     </div>
 </div>
 
 <script>
-    // Reveal animations on scroll
-    document.addEventListener('DOMContentLoaded', function() {
-        const sections = document.querySelectorAll('.guide-section');
-        
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.guide-card');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('show');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1 });
 
-        sections.forEach(section => {
-            observer.observe(section);
+        cards.forEach((card, i) => {
+            card.style.transitionDelay = (i * 0.1) + 's';
+            observer.observe(card);
         });
     });
 </script>

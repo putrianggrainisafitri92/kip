@@ -303,7 +303,7 @@ include 'sidebar.php';
                     </td>
                     <td>
                         <?php if(!empty($row['deskripsi'])): ?>
-                            <button class="btn btn-detail" onclick="showTextModal('Deskripsi Prestasi', `<?= addslashes($row['deskripsi']) ?>`)">
+                            <button class="btn btn-detail" onclick="showTextModal('Deskripsi Prestasi', <?= htmlspecialchars(json_encode($row['deskripsi']), ENT_QUOTES, 'UTF-8') ?>)">
                                 <i class="fas fa-file-alt"></i> Detail
                             </button>
                         <?php else: ?>
@@ -317,8 +317,8 @@ include 'sidebar.php';
                     </td>
                     <td>
                         <?php if(!empty($row['catatan_revisi'])): ?>
-                            <button class="btn btn-detail" style="color:#d32f2f; background:#fff0f0;" onclick="showTextModal('Catatan Revisi', `<?= addslashes($row['catatan_revisi']) ?>`)">
-                                <i class="fas fa-comment-dots"></i> Lihat
+                            <button class="btn btn-detail" style="color:#d32f2f; background:#fff0f0;" onclick="showTextModal('Catatan Revisi', <?= htmlspecialchars(json_encode($row['catatan_revisi']), ENT_QUOTES, 'UTF-8') ?>)">
+                                <i class="fas fa-file-alt"></i> Lihat
                             </button>
                         <?php else: ?>
                             <span class="text-muted">-</span>
@@ -376,7 +376,15 @@ include 'sidebar.php';
 <script>
 function showTextModal(title, content) {
     document.getElementById('textModalTitle').innerText = title;
-    document.getElementById('textModalBody').innerHTML = content.replace(/\n/g, '<br>');
+    // Sangat agresif mengganti semua variasi line break
+    let formattedContent = content
+        .replace(/\\r\\n/g, '<br>')
+        .replace(/\\n/g, '<br>')
+        .replace(/\\r/g, '<br>')
+        .replace(/\r\n/g, '<br>')
+        .replace(/\n/g, '<br>')
+        .replace(/\r/g, '<br>');
+    document.getElementById('textModalBody').innerHTML = formattedContent;
     document.getElementById('textModal').style.display = "block";
 }
 
